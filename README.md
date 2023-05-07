@@ -1,5 +1,15 @@
 # Book_My_Show_Clone
 
+##Features
+
+### Account Creation 
+### Home Page to view all available movies
+### Movie Page to check availability
+### Theatre Mapping Page
+### Booking Confirmation Page
+### Page to view all the current and previous bookings
+
+
 This template should help get you started developing with Vue 3 in Vite.
 
 ## Recommended IDE Setup
