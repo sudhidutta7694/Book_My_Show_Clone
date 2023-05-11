@@ -1,6 +1,24 @@
 <!-- eslint-disable vue/multi-word-component-names -->
+<script setup>
+import { RouterView } from 'vue-router'
+</script>
+
 <template>
-  <main>
-    <h1>Here are the Movies</h1>
-  </main>
+  <div>
+    <MovieComponent />
+    <Router-view />
+  </div>
 </template>
+
+<script>
+
+
+import MovieComponent from '../components/Movies.vue';
+
+export default {
+  name: 'App',
+  components: {
+    MovieComponent,
+  },
+};
+</script>
