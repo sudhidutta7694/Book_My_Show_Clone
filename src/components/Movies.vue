@@ -29,7 +29,7 @@
       .then(data => {
       this.movies = data.results;
       this.loading = false;
-      console.log(data); // Display the response in the console
+      console.log(data); 
     })
     .catch(error => {
       console.error('Error:', error);
