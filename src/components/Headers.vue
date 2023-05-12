@@ -4,10 +4,10 @@
     <div class="container mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between items-center py-6 md:py-8">
             <div class="flex items-center">
-                <a href="/" class="flex items-center mr-6">
+                <router-link to="/" class="flex items-center mr-6">
                   <img class="w-[20vw] md:w-[12vw] lg:w-[8vw] lg:h-[7vh] mx-4" src="../../favicon.ico" alt="Logo" />
 
-                </a>
+                </router-link>
                 <div class="hidden md:block">
                     <router-link to="/" class="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors duration-300" active-class="text-white bg-gray-800">
                         Movies
@@ -28,6 +28,14 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17l-5-5m0 0l5-5m-5 5h12" />
                         </svg>
                     </button>
+                    <div v-if="false" class="lg:absolute mx-1 mt-1 ml-2 rounded bg-gray-300">
+                        <ul>
+                            <li class="flex justify-around items-center p-2 pb-3 space-x-2 border-b border-black w-64">
+                                <img src="../../favicon.ico" class="w-10" />
+                                <span>Movie name</span>
+                            </li>
+                        </ul>
+                    </div>
                 </form>
                 <button type="button" class="block md:hidden text-gray-400 hover:text-white focus:text-white focus:outline-none" @click="isMenuOpen = !isMenuOpen">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -36,6 +44,14 @@
                 </button>
                 <router-link to="/login" class="bg-gray-800 text-white px-3 py-2 rounded-md text-sm font-medium transition-colors duration-300 ml-4">
                   Login
+                </router-link>
+                <button type="button" class="block md:hidden text-gray-400 hover:text-white focus:text-white focus:outline-none" @click="isMenuOpen = !isMenuOpen">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+                </button>
+                <router-link to="/register" class="bg-gray-800 text-white px-3 py-2 rounded-md text-sm font-medium transition-colors duration-300 ml-4">
+                 Register
               </router-link>
             </div>
         </div>
@@ -76,6 +92,13 @@ export default {
   
   
 <style scoped>
+nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 100;
+  }
 .navbar {
     background-color: #141414;
 }
