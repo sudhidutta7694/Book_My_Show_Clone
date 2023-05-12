@@ -37,7 +37,8 @@ const router = createRouter({
     {
       path: '/overview/:id',
       name: 'overview',
-      component: Overview
+      component: Overview,
+      props: true
     },
   ]
 })
