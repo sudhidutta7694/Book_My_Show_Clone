@@ -4,7 +4,7 @@
     <img src="https://cdn.dribbble.com/users/121337/screenshots/916951/small-load.gif" alt="Loading ...">
   </div>
   <div class="bg-slate-800 content p-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-8">
-    <div class="flex flex-col justify-center items-center bg-slate-700 rounded-xl hover:scale-105" v-for="movie in movies" :key="movie.id" @click="handleMovieClick(movie.id)">
+    <div class="flex flex-col justify-center items-center bg-slate-700 rounded-xl hover:opacity-70 transition-all ease-in-out duration-400" v-for="movie in movies" :key="movie.id" @click="handleMovieClick(movie.id)">
       <router-link :to="{ name: 'overview', params: { id: movie.id } }"><img :src="getImageUrl(movie.poster_path)" :alt="movie.title" class="rounded-lg shadow-lg"></router-link>
       <div class="mt-4 text-center">
         <h3 class="text-gray-100 text-lg font-semibold">{{ movie.title }}</h3>
