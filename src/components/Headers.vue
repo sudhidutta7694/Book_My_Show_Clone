@@ -22,29 +22,33 @@
             </div>
             <div class="flex items-center">
                 <form class="relative mr-6">
-                    <input type="text" placeholder="Search here" class="border border-gray-300 rounded-full py-2 px-4 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-colors duration-300" />
+                    <input type="text" placeholder="Search here" v-model="searchQuery" @input="searchMovies" class="border border-gray-300 hover:bg-gray-400 rounded-full py-2 px-4 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-colors duration-300" />
                     <button type="submit" class="absolute right-0 top-0 bottom-0 px-4 py-2 text-gray-400 hover:text-gray-100 transition-colors duration-300">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17l-5-5m0 0l5-5m-5 5h12" />
                         </svg>
                     </button>
-                    <div v-if="false" class="lg:absolute mx-1 mt-1 ml-2 rounded bg-gray-300">
+                    <div v-if="searchResultsWithPoster.length > 0 && visible" class="cursor-pointer lg:absolute mx-1 mt-1 ml-2 rounded-xl bg-gray-300 overflow-y-auto max-h-96">
                         <ul>
-                            <li class="flex justify-around items-center p-2 pb-3 space-x-2 border-b border-black w-64">
-                                <img src="../../favicon.ico" class="w-10" />
-                                <span>Movie name</span>
-                            </li>
+                            <li v-for="movie in searchResultsWithPoster" :key="movie.id" class="flex opacity-90 hover:bg-gray-400 gap-3 hover:opacity-100 items-center p-2 pb-3 w-64" @click="logMovieId(movie.id)">
+                            <router-link :to="{ name: 'overview', params: { id: movie.id } }">
+                                <div class="flex gap-3">
+                                    <img class="rounded-lg w-10" :src="getMoviePosterURL(movie.poster_path)" />
+                                    <span class="text-gray-700 hover:text-gray-800">{{ movie.title }}</span>
+                                </div>
+                            </router-link>
+                          </li> 
                         </ul>
-                    </div>
+                      </div>                     
                 </form>
                 <button type="button" class="block md:hidden text-gray-400 hover:text-white focus:text-white focus:outline-none" @click="isMenuOpen = !isMenuOpen">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
                     </svg>
                 </button>
-                <router-link to="/login" class="bg-gray-800 text-white px-3 py-2 rounded-md text-sm font-medium transition-colors duration-300 ml-4">
+                <!-- <router-link to="/login" class="bg-gray-800 text-white px-3 py-2 rounded-md text-sm font-medium transition-colors duration-300 ml-4">
                   Login
-                </router-link>
+                </router-link> -->
                 <button type="button" class="block md:hidden text-gray-400 hover:text-white focus:text-white focus:outline-none" @click="isMenuOpen = !isMenuOpen">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
@@ -72,24 +76,66 @@
 </nav>
 </template>
 
-  
-  
 <script>
-import {
-    ref
-} from 'vue';
+import { ref, computed } from 'vue';
+import axios from 'axios';
+
+const API_KEY = '1dc8f67cb5ee2d801ef91ff145b4c3a9';
 
 export default {
-    setup() {
-        const isOpen = ref(false);
+  name: 'Movies',
+  data() {
+    return {
+        visible: true,
+    }
+  },
+  setup() {
+    const searchQuery = ref('');
+    const searchResults = ref([]);
 
-        return {
-            isOpen
-        };
+    const searchMovies = async () => {
+      if (searchQuery.value.trim() === '') {
+        searchResults.value = [];
+        return;
+      }
+
+      try {
+        const response = await axios.get(`https://api.themoviedb.org/3/search/movie?api_key=${API_KEY}&query=${searchQuery.value}`);
+        searchResults.value = response.data.results;
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    const getMoviePosterURL = (posterPath) => {
+      if (!posterPath) {
+        return ''; // Return a default image or placeholder if no poster path is available
+      }
+      return `https://image.tmdb.org/t/p/w200${posterPath}`;
+    };
+
+    const searchResultsWithPoster = computed(() => {
+      return searchResults.value.filter(movie => movie.poster_path);
+    });
+
+    return {
+      searchQuery,
+      searchResults,
+      searchMovies,
+      getMoviePosterURL,
+      searchResultsWithPoster,
+    };
+  },
+  methods: {
+    logMovieId(movieId) {
+      console.log(movieId);
+      this.visible = !this.visible;
+      this.searchQuery = '';
     },
+  }
 };
 </script>
-  
+ 
   
 <style scoped>
 nav {

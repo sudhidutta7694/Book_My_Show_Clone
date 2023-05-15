@@ -1,5 +1,6 @@
+<!-- eslint-disable vue/multi-word-component-names -->
 <template>
-  <div v-if="loading" class="bg-slate-800 h-[80vh] flex justify-center items-center">
+  <div v-if="loading" class="bg-gray-900 flex justify-center items-center">
     <!-- <svg class="animate-spin h-5 w-5 mr-3" viewBox="0 0 24 24"></svg> -->
     <img src="https://cdn.dribbble.com/users/121337/screenshots/916951/small-load.gif" alt="Loading ...">
   </div>
