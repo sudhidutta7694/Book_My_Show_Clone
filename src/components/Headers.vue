@@ -54,9 +54,14 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
                 </svg>
                 </button>
-                <router-link to="/" class="bg-gray-800 text-white px-3 py-2 rounded-md text-sm font-medium transition-colors duration-300 ml-4">
+                <div class="flex shadow-xl justify-center items-center cursor-pointer p-3 gap-3 rounded-xl opacity-90 bg-slate-700 text-red-700 hover:opacity-100">
+                  <!-- <div class="w-10 h-10 flex justify-center items-center flex-shrink-0" /> -->
+                  <div class="rounded-full p-3 bg-slate-600 hover:drop-shadow-lg"><span class="far fa-user text-gray-200"></span></div>
+                  <div class="font-mono text-lg font-bold">{{ store.username }}</div>
+                  </div>
+                <!-- <router-link to="/" class="bg-gray-800 text-white px-3 py-2 rounded-md text-sm font-medium transition-colors duration-300 ml-4">
                  Register
-              </router-link>
+              </router-link> -->
             </div>
         </div>
     </div>
@@ -80,11 +85,13 @@
 import { ref, computed } from 'vue';
 import axios from 'axios';
 import { useRouter } from 'vue-router';
+import { useStore } from "../store"
 
 const API_KEY = '1dc8f67cb5ee2d801ef91ff145b4c3a9';
 
 export default {
   name: 'Movies',
+  props: ['username'],
   data() {
     return {
         visible: true,
@@ -94,6 +101,7 @@ export default {
     const searchQuery = ref('');
     const searchResults = ref([]);
     const router = useRouter();
+    const store = useStore()
     const searchMovies = async () => {
       if (searchQuery.value.trim() === '') {
         searchResults.value = [];
@@ -125,7 +133,8 @@ export default {
       searchMovies,
       getMoviePosterURL,
       searchResultsWithPoster,
-      router
+      router,
+      store
     };
   },
   methods: {

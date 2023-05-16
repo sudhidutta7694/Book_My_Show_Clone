@@ -84,6 +84,7 @@ export default Vue.component('LoginComponent', {
 <script>
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
+import { useStore } from '../store';
 
 export default {
   setup() {
@@ -91,23 +92,29 @@ export default {
     const password = ref('');
     const router = useRouter();
 
+    const store = useStore()
+
     const handleLogin = () => {
-  // Retrieve user data from local storage
-  const userData = JSON.parse(localStorage.getItem('users'));
+      // Retrieve user data from local storage
+      const userData = JSON.parse(localStorage.getItem('users'))
 
-  // Find the user with matching email and password
-  const user = userData.find(user => user.email === email.value && user.password === password.value);
+      // Find the user with matching email and password
+      const user = userData.find(user => user.email === email.value && user.password === password.value)
 
-  // Check if user exists•••
-  if (user) {
-    // Redirect to home page if the user exists
-    router.push('/home');
-    alert("You are logged in!")
-  } else {
-    // Show a prompt if the user doesn't exist
-    alert('User does not exist');
-  }
-};
+      // Check if user exists
+      if (user) {
+        // Set the username in the Pinia store
+        store.setUsername(user.username)
+
+        // Redirect to home page if the user exists
+        router.push('/home')
+        alert('You are logged in!')
+      } else {
+        // Show a prompt if the user doesn't exist
+        alert('User does not exist')
+      }
+    }
+
 
 
     return {
