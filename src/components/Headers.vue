@@ -4,12 +4,12 @@
     <div class="container mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between items-center py-6 md:py-8">
             <div class="flex items-center">
-                <router-link to="/" class="flex items-center mr-6">
+                <router-link to="/home" class="flex items-center mr-6">
                   <img class="w-[20vw] md:w-[12vw] lg:w-[8vw] lg:h-[7vh] mx-4" src="../../favicon.ico" alt="Logo" />
 
                 </router-link>
                 <div class="hidden md:block">
-                    <router-link to="/" class="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors duration-300" active-class="text-white bg-gray-800">
+                    <router-link to="/home" class="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors duration-300" active-class="text-white bg-gray-800">
                         Movies
                     </router-link>
                     <router-link to="/genres" class="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors duration-300" active-class="text-white bg-gray-800">
@@ -54,7 +54,7 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
                 </svg>
                 </button>
-                <router-link to="/register" class="bg-gray-800 text-white px-3 py-2 rounded-md text-sm font-medium transition-colors duration-300 ml-4">
+                <router-link to="/" class="bg-gray-800 text-white px-3 py-2 rounded-md text-sm font-medium transition-colors duration-300 ml-4">
                  Register
               </router-link>
             </div>
@@ -79,6 +79,7 @@
 <script>
 import { ref, computed } from 'vue';
 import axios from 'axios';
+import { useRouter } from 'vue-router';
 
 const API_KEY = '1dc8f67cb5ee2d801ef91ff145b4c3a9';
 
@@ -92,7 +93,7 @@ export default {
   setup() {
     const searchQuery = ref('');
     const searchResults = ref([]);
-
+    const router = useRouter();
     const searchMovies = async () => {
       if (searchQuery.value.trim() === '') {
         searchResults.value = [];
@@ -124,6 +125,7 @@ export default {
       searchMovies,
       getMoviePosterURL,
       searchResultsWithPoster,
+      router
     };
   },
   methods: {
@@ -131,6 +133,7 @@ export default {
       console.log(movieId);
       this.visible = !this.visible;
       this.searchQuery = '';
+      this.router.push(`/overview/${movieId}`)
     },
   }
 };

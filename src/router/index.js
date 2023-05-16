@@ -10,7 +10,7 @@ const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
-      path: '/',
+      path: '/home',
       name: 'movies',
       component: Movies
     },
@@ -30,7 +30,7 @@ const router = createRouter({
       component: Login
     },
     {
-      path: '/register',
+      path: '/',
       name: 'register',
       component: Register
     },

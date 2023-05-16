@@ -1,6 +1,6 @@
 <!-- eslint-disable vue/multi-word-component-names -->
 <template>
-    <div class="lg:flex">
+    <div class="relative lg:flex">
         <div class="lg:w-1/2 xl:max-w-screen-sm">
             <div class="py-12 bg-indigo-100 lg:bg-white flex justify-center lg:justify-start lg:px-12">
                 <div class="cursor-pointer flex items-center">
@@ -20,11 +20,11 @@
                 <h2 class="text-center text-4xl text-indigo-900 font-display font-semibold lg:text-left xl:text-5xl
                 xl:text-bold">Log in</h2>
                 <div class="mt-12">
-                    <form @submit.prevent="handleSu">
+                    <form @submit.prevent="handleLogin">
                         <div>
                             <div class="text-sm font-bold text-gray-700 tracking-wide">Email Address</div>
-                            <input class="w-full text-lg py-2 border-b border-gray-300 focus:outline-none focus:border-indigo-500" type="" placeholder="mike@gmail.com">
-                        </div>
+                            <input v-model="email" class="w-full text-lg py-2 border-b border-gray-300 focus:outline-none focus:border-indigo-500" type="email" placeholder="mike@gmail.com">
+                          </div>
                         <div class="mt-8">
                             <div class="flex justify-between items-center">
                                 <div class="text-sm font-bold text-gray-700 tracking-wide">
@@ -37,7 +37,7 @@
                                     </a>
                                 </div>
                             </div>
-                            <input class="w-full text-lg py-2 border-b border-gray-300 focus:outline-none focus:border-indigo-500" type="" placeholder="Enter your password">
+                            <input v-model="password" class="w-full text-lg py-2 border-b border-gray-300 focus:outline-none focus:border-indigo-500" type="password" placeholder="Enter your password">
                         </div>
                         <div class="mt-10">
                             <button class="bg-indigo-500 text-gray-100 p-4 w-full rounded-full tracking-wide
@@ -48,7 +48,7 @@
                         </div>
                     </form>
                     <div class="mt-12 text-sm font-display font-semibold text-gray-700 text-center">
-                        Don't have an account ? <RouterLink to="/register" class="cursor-pointer text-indigo-600 hover:text-indigo-800">Sign up</RouterLink>
+                        Don't have an account ? <RouterLink to="/" class="cursor-pointer text-indigo-600 hover:text-indigo-800">Sign up</RouterLink>
                     </div>
                 </div>
             </div>
@@ -111,17 +111,39 @@ export default Vue.component('LoginComponent', {
 </script> -->
 
 <script>
-import {
-    ref
-} from 'vue';
+import { ref } from 'vue';
+import { useRouter } from 'vue-router';
 
 export default {
-    setup() {
-        const isOpen = ref(false);
+  setup() {
+    const email = ref('');
+    const password = ref('');
+    const router = useRouter();
 
-        return {
-            isOpen
-        };
-    },
+    const handleLogin = () => {
+  // Retrieve user data from local storage
+  const userData = JSON.parse(localStorage.getItem('users'));
+
+  // Find the user with matching email and password
+  const user = userData.find(user => user.email === email.value && user.password === password.value);
+
+  // Check if user exists•••
+  if (user) {
+    // Redirect to home page if the user exists
+    router.push('/home');
+    alert("You are logged in!")
+  } else {
+    // Show a prompt if the user doesn't exist
+    alert('User does not exist');
+  }
+};
+
+
+    return {
+      email,
+      password,
+      handleLogin,
+    };
+  },
 };
 </script>
