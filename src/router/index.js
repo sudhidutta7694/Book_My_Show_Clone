@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import Movies from '../views/Movies.vue'
-import Genres from '../views/Genres.vue'
+import Home from '../views/Movies.vue'
+import Movies from '../components/All.vue'
 import Actors from '../views/Actors.vue'
 import Login from '../views/LoginView.vue'
 import Register from '../views/RegisterView.vue'
@@ -11,13 +11,13 @@ const router = createRouter({
   routes: [
     {
       path: '/home',
-      name: 'movies',
-      component: Movies
+      name: 'home',
+      component: Home
     },
     {
-      path: '/genres',
-      name: 'genres',
-      component: Genres
+      path: '/movies',
+      name: 'movies',
+      component: Movies
     },
     {
       path: '/actors',

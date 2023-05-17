@@ -1,7 +1,7 @@
 // import './assets/main.css'
 // import { createApp } from 'vue'
 // import { createPinia } from 'pinia'
-// import api from './services/api'
+
 // import {pinia} from './store';
 
 
@@ -9,9 +9,8 @@
 
 
 
-// // Set $http property on app.config.globalProperties
-// app.config.globalProperties.$http = api;
-// app.config.productionTip = false;
+// Set $http property on app.config.globalProperties
+
 
 // import App from './App.vue'
 // import router from './router'
@@ -24,11 +23,14 @@
 import { createApp } from 'vue'
 import App from './App.vue'
 import router from './router'
+import api from './services/api'
 import { createPinia } from 'pinia'
 
 const app = createApp(App)
 const pinia = createPinia()
 app.use(router).use(pinia)
+app.config.globalProperties.$http = api;
+app.config.productionTip = false;
 
 app.mount('#app')
 

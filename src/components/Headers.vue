@@ -10,10 +10,10 @@
                 </router-link>
                 <div class="hidden md:block">
                     <router-link to="/home" class="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors duration-300" active-class="text-white bg-gray-800">
-                        Movies
+                        Home
                     </router-link>
-                    <router-link to="/genres" class="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors duration-300" active-class="text-white bg-gray-800">
-                        Genres
+                    <router-link to="/movies" class="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors duration-300" active-class="text-white bg-gray-800">
+                        Movies
                     </router-link>
                     <router-link to="/actors" class="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors duration-300" active-class="text-white bg-gray-800">
                         Actors
@@ -67,10 +67,10 @@
     </div>
     <div class="md:hidden bg-gray-900">
         <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-            <router-link to="/" class="text-gray-300 hover:text-white block px-3 py-2 rounded-md text-base font-medium">
+            <router-link to="/home" class="text-gray-300 hover:text-white block px-3 py-2 rounded-md text-base font-medium">
                 Movies
             </router-link>
-            <router-link to="/genres" class="text-gray-300 hover:text-white block px-3 py-2 rounded-md text-base font-medium">
+            <router-link to="/movies" class="text-gray-300 hover:text-white block px-3 py-2 rounded-md text-base font-medium">
                 Genres
             </router-link>
             <router-link to="/actors" class="text-gray-300 hover:text-white block px-3 py-2 rounded-md text-base font-medium">
