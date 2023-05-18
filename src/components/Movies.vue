@@ -1,7 +1,6 @@
 <!-- eslint-disable vue/multi-word-component-names -->
 <template>
   <div v-if="loading" class="bg-gray-900 flex justify-center items-center">
-    <!-- <svg class="animate-spin h-5 w-5 mr-3" viewBox="0 0 24 24"></svg> -->
     <img src="https://cdn.dribbble.com/users/121337/screenshots/916951/small-load.gif" alt="Loading ...">
   </div>
   <div class="bg-slate-800 content p-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-8">
@@ -24,7 +23,7 @@ export default {
     };
   },
   mounted() {
-    fetch(`https://api.themoviedb.org/3/movie/popular?api_key=1dc8f67cb5ee2d801ef91ff145b4c3a9&language=en-US&page=1&total_pages=1000`)
+    fetch(`https://api.themoviedb.org/3/movie/popular?api_key=1dc8f67cb5ee2d801ef91ff145b4c3a9&page=1&total_pages=1000`)
       .then(response => response.json())
       .then(data => {
         this.movies = data.results;

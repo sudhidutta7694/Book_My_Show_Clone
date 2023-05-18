@@ -1,7 +1,7 @@
 <!-- eslint-disable vue/multi-word-component-names -->
 <template>
     <div class="content bg-slate-800 flex flex-col gap-4 justify-center items-center">
-      <div class="mt-12 filters flex justify-center items-center gap-4 mb-4">
+      <div class="mt-12 filters flex justify-end items-center gap-4">
         <label for="language" class="text-gray-200 font-semi-bold text-2xl self-center">Language:</label>
         <select id="language" v-model="selectedLanguage" class="w-32 border border-black">
           <option value="">All</option>
@@ -28,7 +28,7 @@
             <router-link :to="{ name: 'overview', params: { id: movie.id } }">
                 <img :src="getMoviePosterURL(movie.poster_path)" alt="Movie Poster" class="rounded-lg shadow-lg" />
             </router-link>
-          <div class="movie-details">
+          <div class="movie-details text-center">
             <h3 class="text-gray-100 text-lg font-semibold">{{ movie.title }}</h3>
             <p class="text-gray-300">Rating: {{ movie.vote_average }}</p>
           </div>

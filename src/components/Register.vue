@@ -63,33 +63,6 @@
     </div>
 </template>
 
-<!-- <script>
-import {
-    ref
-} from 'vue';
-
-export default {
-    setup() {
-        const isOpen = ref(false);
-
-        return {
-            isOpen
-        };
-    },
-    data() {
-        return {
-            username: '',
-            email: '', 
-            password: '',
-            confirm_password: ''
-        }
-    },
-    methods: {
-        
-    }
-};
-</script> -->
-
 <script>
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
@@ -117,10 +90,9 @@ export default {
 
       // Store the updated user data in local storage
       localStorage.setItem('users', JSON.stringify(existingUsers));
-
       console.log('User data stored successfully.');
-      alert("You are registered")
-      router.push('/login')
+      
+      router.push('/login');
     };
 
     return {
@@ -132,6 +104,7 @@ export default {
   },
 };
 </script>
+
 
 
 <style scoped>
@@ -146,5 +119,16 @@ export default {
   .border-t-10 {
     border-top-width: 10px;
   }
-  
+  .slide-in-out-enter-active,
+.slide-in-out-leave-active {
+  transition: transform 0.3s ease-out;
+}
+
+.slide-in-out-enter {
+  transform: translateX(100%);
+}
+
+.slide-in-out-leave-to {
+  transform: translateX(100%);
+}
 </style>
