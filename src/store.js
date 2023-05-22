@@ -1,29 +1,63 @@
 import { defineStore } from 'pinia';
+import { getFirestore, doc, getDoc, setDoc, updateDoc } from 'firebase/firestore';
 
 export const useStore = defineStore('store', {
   state: () => ({
     username: '',
+    uid: '',
   }),
   actions: {
-    setUsername(username) {
+    async setUsername(username, uid) {
       this.username = username;
-      localStorage.setItem('session', JSON.stringify({ username }));
+      this.uid = uid;
+      const sessionData = { username, uid };
+
+      // Update the username in Firestore
+      const db = getFirestore();
+      const userDoc = doc(db, 'users', uid);
+      await updateDoc(userDoc, { username });
+
+      // Set the session data in Firestore
+      const sessionDoc = doc(db, 'sessions', uid);
+      await setDoc(sessionDoc, sessionData);
+
+       // Store the username in local storage
+      localStorage.setItem('username', username);
     },
     clearUsername() {
       this.username = '';
-      localStorage.removeItem('session');
+      this.uid = '';
+
+      // Remove the session data from Firestore
+      const db = getFirestore();
+      const sessionDoc = doc(db, 'sessions', this.uid);
+      sessionDoc.delete();
     },
-    initializeSession() {
-      const sessionData = localStorage.getItem('session');
-      if (sessionData) {
-        const { username } = JSON.parse(sessionData);
-        this.username = username;
+    async initializeSession() {
+      const db = getFirestore();
+      const sessionDoc = doc(db, 'sessions', this.uid);
+      const sessionSnapshot = await getDoc(sessionDoc);
+
+      if (sessionSnapshot.exists()) {
+        const sessionData = sessionSnapshot.data();
+        this.username = sessionData.username;
+        this.uid = sessionData.uid;
       }
     },
   },
   // Initialize the session when the store is created
   // This will ensure the username is set on page reload
-  created() {
-    this.initializeSession();
+  async onInit() {
+    const storedUsername = localStorage.getItem('username');
+    if (storedUsername) {
+      this.username = storedUsername;
+    } else {
+      await this.initializeSession();
+    }
+  },
+  // Save session data to sessionStorage on state change
+  onStateChanged() {
+    const sessionData = JSON.stringify({ username: this.username, uid: this.uid });
+    localStorage.setItem('session', sessionData);
   },
 });
