@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import { getFirestore, doc, getDoc, setDoc, updateDoc } from 'firebase/firestore';
+import { getFirestore, doc, getDoc, setDoc, deleteDoc } from 'firebase/firestore';
 
 export const useStore = defineStore('store', {
   state: () => ({
@@ -15,23 +15,23 @@ export const useStore = defineStore('store', {
       // Update the username in Firestore
       const db = getFirestore();
       const userDoc = doc(db, 'users', uid);
-      await updateDoc(userDoc, { username });
+      await setDoc(userDoc, { username });
 
       // Set the session data in Firestore
       const sessionDoc = doc(db, 'sessions', uid);
       await setDoc(sessionDoc, sessionData);
 
-       // Store the username in local storage
+      // Store the username in local storage
       localStorage.setItem('username', username);
     },
-    clearUsername() {
+    async clearUsername() {
       this.username = '';
       this.uid = '';
 
       // Remove the session data from Firestore
       const db = getFirestore();
       const sessionDoc = doc(db, 'sessions', this.uid);
-      sessionDoc.delete();
+      await deleteDoc(sessionDoc);
     },
     async initializeSession() {
       const db = getFirestore();
@@ -55,9 +55,10 @@ export const useStore = defineStore('store', {
       await this.initializeSession();
     }
   },
-  // Save session data to sessionStorage on state change
+  // Save session data to localStorage on state change
   onStateChanged() {
     const sessionData = JSON.stringify({ username: this.username, uid: this.uid });
     localStorage.setItem('session', sessionData);
   },
 });
+

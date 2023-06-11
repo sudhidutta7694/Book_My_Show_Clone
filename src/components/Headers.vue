@@ -99,116 +99,110 @@
   </template>
 
   <script>
-import { ref, computed, onMounted } from 'vue';
-import axios from 'axios';
-import { useRouter } from 'vue-router';
-import { useStore } from '../store';
-import { getAuth, onAuthStateChanged } from 'firebase/auth';
-import { getFirestore, doc, getDoc } from 'firebase/firestore';
-
-const API_KEY = '1dc8f67cb5ee2d801ef91ff145b4c3a9';
-
-export default {
-  name: 'Headers',
-  setup() {
-    const searchQuery = ref('');
-    const searchResults = ref([]);
-    const router = useRouter();
-    const store = useStore();
-    const storedUsername = ref('');
-    const visible = ref(true);
-
-    const auth = getAuth();
-    const db = getFirestore();
-
-    const getFirestoreUsername = async (uid) => {
-      try {
-        const userDoc = doc(db, 'users', uid);
-        const userSnapshot = await getDoc(userDoc);
-        if (userSnapshot.exists()) {
-          const userData = userSnapshot.data();
-          storedUsername.value = userData.username;
-          store.dispatch('setUsername', userData.username);
-        }
-      } catch (error) {
-        console.error(error);
-      }
-    };
-
-    onMounted(() => {
-      // Listen for changes in the user's authentication state
-      onAuthStateChanged(auth, (user) => {
-        if (user) {
-          const { uid } = user;
-          getFirestoreUsername(uid);
-        }
-      });
-    });
-
-    const searchMovies = async () => {
-      if (searchQuery.value.trim() === '') {
-        searchResults.value = [];
-        return;
-      }
-
-      try {
-        const response = await axios.get(
-          `https://api.themoviedb.org/3/search/movie?api_key=${API_KEY}&query=${searchQuery.value}`
-        );
-        searchResults.value = response.data.results;
-      } catch (error) {
-        console.error(error);
-      }
-    };
-
-    const getMoviePosterURL = (posterPath) => {
-      if (!posterPath) {
-        return '';
-      }
-      return `https://image.tmdb.org/t/p/w200${posterPath}`;
-    };
-
-    const searchResultsWithPoster = computed(() => {
-      return searchResults.value.filter((movie) => movie.poster_path);
-    });
-
-    const logMovieId = (movieId) => {
-      console.log(movieId);
-      router.push(`/overview/${movieId}`);
-      visible.value = false;
-    };
-
-    const logout = async () => {
-      try {
-        await auth.signOut();
-        store.dispatch('clearUsername');
-        localStorage.removeItem('username');
-        router.push('/login');
-      } catch (error) {
-        console.error(error);
-      }
-    };
-
-    return {
-      searchQuery,
-      searchResults,
-      searchMovies,
-      getMoviePosterURL,
-      searchResultsWithPoster,
-      logMovieId,
-      router,
-      store,
-      storedUsername,
-      logout,
-      visible,
-    };
-  },
-};
-</script>
-
-   
+  import { ref, computed, onMounted } from 'vue';
+  import axios from 'axios';
+  import { useRouter } from 'vue-router';
+  import { useStore } from '../store';
+  import { getAuth, onAuthStateChanged } from 'firebase/auth';
+  import { getFirestore, doc, getDoc } from 'firebase/firestore';
   
-
+  const API_KEY = '1dc8f67cb5ee2d801ef91ff145b4c3a9';
+  
+  export default {
+    setup() {
+      const searchQuery = ref('');
+      const searchResults = ref([]);
+      const router = useRouter();
+      const store = useStore();
+      const storedUsername = ref('');
+      const visible = ref(true);
+      const auth = getAuth();
+      const db = getFirestore();
+  
+      const getFirestoreUsername = async (uid) => {
+        try {
+          const userDoc = doc(db, 'users', uid);
+          const userSnapshot = await getDoc(userDoc);
+          if (userSnapshot.exists()) {
+            const userData = userSnapshot.data();
+            storedUsername.value = userData.username;
+            store.setUsername(userData.username, uid);
+          }
+        } catch (error) {
+          console.error(error);
+        }
+      };
+  
+      onMounted(() => {
+        // Listen for changes in the user's authentication state
+        onAuthStateChanged(auth, (user) => {
+          if (user) {
+            const { uid } = user;
+            getFirestoreUsername(uid);
+          }
+        });
+      });
+  
+      const searchMovies = async () => {
+        if (searchQuery.value.trim() === '') {
+          searchResults.value = [];
+          return;
+        }
+  
+        try {
+          const response = await axios.get(
+            `https://api.themoviedb.org/3/search/movie?api_key=${API_KEY}&query=${searchQuery.value}`
+          );
+          searchResults.value = response.data.results;
+        } catch (error) {
+          console.error(error);
+        }
+      };
+  
+      const getMoviePosterURL = (posterPath) => {
+        if (!posterPath) {
+          return '';
+        }
+        return `https://image.tmdb.org/t/p/w200${posterPath}`;
+      };
+  
+      const searchResultsWithPoster = computed(() => {
+        return searchResults.value.filter((movie) => movie.poster_path);
+      });
+  
+      const logMovieId = (movieId) => {
+        console.log(movieId);
+        router.push(`/overview/${movieId}`);
+        visible.value = false;
+      };
+  
+      const logout = async () => {
+        try {
+          await auth.signOut();
+          // store.clearUsername(storedUsername.value)
+          localStorage.removeItem('username');
+          router.push('/login');
+        } catch (error) {
+          console.error(error);
+        }
+      };
+  
+      return {
+        searchQuery,
+        searchResults,
+        searchMovies,
+        getMoviePosterURL,
+        searchResultsWithPoster,
+        logMovieId,
+        router,
+        store,
+        storedUsername,
+        logout,
+        visible,
+      };
+    },
+  };
+  </script>
   
   <style scoped>
   nav {

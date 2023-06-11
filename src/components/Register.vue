@@ -1,3 +1,4 @@
+<!-- eslint-disable vue/multi-word-component-names -->
 <template>
   <div class="signup-1 bg-white flex items-center relative h-screen">
     <div class="overlay absolute inset-0 z-0 bg-black opacity-75"></div>
@@ -47,7 +48,7 @@
               </div>
             </div>
 
-            <p class="text-sm text-center text-gray-200 mt-6">By signing up, you agree to our <a href="#" class="text-red-600 hover:underline">Terms</a> and <a href="#" class="text-red-600 hover:underline">Privacy Policy</a></p>
+            <p class="text-sm text-center text-gray-200 mt-6">By signing up, you agree to our <RouterLink to="/terms" href="#" class="text-red-600 hover:underline">Terms</RouterLink> and <RouterLink to="/terms" href="#" class="text-red-600 hover:underline">Privacy Policy</RouterLink></p>
 
             <div class="text-center mt-6 md:mt-12">
               <button class="bg-red-700 hover:bg-red-800 text-gray-200 text-xl py-2 px-4 md:px-6 rounded transition-colors duration-300">Sign Up <span class="far fa-paper-plane ml-2"></span></button>
@@ -75,6 +76,8 @@ import { useRouter } from 'vue-router';
 import { collection, addDoc, getDocs, query, where } from 'firebase/firestore';
 import { db } from '@/firebase';
 import { GoogleAuthProvider, signInWithPopup, getAuth } from 'firebase/auth';
+// import { storeToRefs } from 'pinia';
+import { useStore } from '@/store';
 
 export default {
   setup() {
@@ -83,6 +86,7 @@ export default {
     const password = ref('');
     const router = useRouter();
     const isUserAlreadyRegistered = ref(false);
+    const store = useStore();
 
     const handleSubmit = async () => {
       try {
@@ -124,9 +128,10 @@ export default {
         };
 
         const docRef = await addDoc(collection(db, 'users'), newUser);
+        store.setUsername(displayName, email)
         console.log('User data stored successfully. Document ID:', docRef.id);
 
-        router.push('/login');
+        router.push('/home');
       } catch (error) {
         console.error('Error signing up with Google:', error);
       }

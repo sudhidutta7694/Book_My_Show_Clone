@@ -5,7 +5,7 @@
         <label for="language" class="text-gray-200 font-semi-bold text-2xl self-center">Language:</label>
         <select id="language" v-model="selectedLanguage" class="w-32 border border-black">
           <option value="">All</option>
-          <option v-for="language in languages" :key="language">{{ language }}</option>
+          <option v-for="(language, index) in languages" :key="index" :value="language.code">{{ language.name }}</option>
         </select>
   
         <label for="genre" class="text-gray-200 font-semi-bold text-2xl self-center">Genre:</label>
@@ -49,7 +49,17 @@
         selectedGenre: '',
         selectedYear: '',
         movies: [],
-        languages: ['en', 'bn', 'hi','es', 'fr', 'ja', 'ar', 'ru', 'de', 'ko', 'el'], // Use language codes
+        languages: [
+        { name: 'English', code: 'en' },
+        { name: 'Bengali', code: 'bn' },
+        { name: 'Hindi', code: 'hi' },
+        { name: 'Espanol', code: 'es' },
+        { name: 'French', code: 'fr' },
+        { name: 'Japanese', code: 'ja' },
+        { name: 'Arabic', code: 'ar' },
+        { name: 'Russian', code: 'ru' },
+        { name: 'Korean', code: 'ko' },
+      ],
         genres: [],
         showButton: true,
       };
@@ -86,8 +96,8 @@
           with_genres: this.selectedGenre || "",
           primary_release_year: this.selectedYear || "",
           sort_by: "popularity.desc",
-          include_adult: false,
-          include_video: false,
+          include_adult: true,
+          include_video: true,
           page: 1,
         },
       }
