@@ -26,7 +26,7 @@
 <script>
 import { useStore } from '@/store';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
-import { getFirestore, collection, doc, getDocs, setDoc, deleteDoc } from 'firebase/firestore';
+import { getFirestore, collection, doc, getDocs, setDoc, deleteDoc, FieldValue } from 'firebase/firestore';
 
 export default {
   data() {
@@ -37,7 +37,6 @@ export default {
     };
   },
   async mounted() {
-    const store = useStore(); // Get the Pinia store instance
 
     const auth = getAuth();
     const db = getFirestore();
@@ -79,26 +78,44 @@ export default {
     favoriteMovie(movieId) {
       const { uid } = useStore(); // Get the Pinia store instance
       const user = uid;
-      const db = getFirestore(); // Add this line to access the Firestore instance
+      const db = getFirestore(); // Access the Firestore instance
 
       if (user) {
         // User is logged in, add/remove movie from favorites in Firestore
-        const favoritesRef = collection(doc(db, 'users', user.uid), 'favorites');
-        const index = this.favorites.includes(movieId) ? this.favorites.indexOf(movieId) : -1;
+        const favoritesRef = doc(db, 'users', user);
+        const index = Array.isArray(this.favorites) ? this.favorites.indexOf(movieId) : -1;
         if (index > -1) {
           // Remove from favorites
           this.favorites.splice(index, 1);
-          deleteDoc(doc(favoritesRef, movieId));
+          // Construct the update object to remove the movieId from favorites array
+          const updateObj = {
+            favorites: this.favorites
+          };
+
+          // Update the favorites field in the user's document
+          setDoc(favoritesRef, updateObj, { merge: true });
         } else {
           // Add to favorites
           this.favorites.push(movieId);
-          setDoc(doc(favoritesRef, movieId), { movieId });
+          console.log(this.favorites)
+          // Construct the update object to add the movieId to favorites array
+          const updateObj = {
+            favorites: this.favorites
+          };
+
+          // Update the favorites field in the user's document
+          setDoc(favoritesRef, updateObj, { merge: true });
         }
+        // Update the favorites in the Pinia store
+        const store = useStore()
+        store.updateFavorites(this.favorites);
       } else {
         // User is not logged in, prompt them to log in
         alert('Please log in to add movies to your favorites.');
       }
-    },
+    }
+    ,
+
     fetchFavoriteMovies(userId, db) {
       const favoritesRef = collection(doc(db, 'users', userId), 'favorites');
       getDocs(favoritesRef)

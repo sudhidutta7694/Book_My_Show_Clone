@@ -1,72 +1,121 @@
-<!-- eslint-disable vue/multi-word-component-names -->
 <template>
-  <div>
-    <h1>Currently Streaming Movies</h1>
-    <ul>
-      <li v-for="movie in movies" :key="movie.id">
-        <h2>{{ movie.title }}</h2>
-        <p>Showtimes:</p>
-        <ul>
-          <li v-for="showtime in movie.showtimes" :key="showtime.cinema_id">
-            <span>{{ showtime.start_at }}</span>
-            <span>{{ showtime.cinema_name }}</span>
-          </li>
-        </ul>
-      </li>
-    </ul>
+  <div class="location-container">
+    <h2>Location Information</h2>
+
+    <div v-if="loading" class="loading-message">Loading...</div>
+
+    <div v-else>
+      <div v-if="error" class="error-message">{{ error }}</div>
+
+      <div v-else-if="location">
+        <div class="location-details">
+          <div class="location-item">
+            <span class="item-label">City:</span>
+            <span class="item-value">{{ location.city }}</span>
+          </div>
+
+          <div class="location-item">
+            <span class="item-label">State:</span>
+            <span class="item-value">{{ location.region_name }}</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
   </div>
 </template>
 
 <script>
 import axios from 'axios';
+import languagesData from '/home/sudhi/Book_My_Show_Clone/src/components/languages.json';
 
-const API_ENDPOINT = 'https://api.internationalshowtimes.com/v4/movies';
 
 export default {
   data() {
     return {
-      movies: [],
+      location: null,
+      loading: true,
+      error: null,
+      apiKey: 'f242c2d97d84a0f2c3f287db26198b93',
     };
   },
-  async mounted() {
-    try {
-      const response = await axios.get(API_ENDPOINT, {
-        params: {
-          location: 'New York', // Replace with your desired location
-          fields: 'id,title,showtimes',
-        },
-        headers: {
-          'X-API-Key': 'YourAPIKeyHere', // Replace with your actual API key
-        },
-      });
+  mounted() {
+    this.fetchLocation();
+  },
+  methods: {
+    async fetchLocation() {
+  try {
+    const response = await axios.get(`http://api.ipstack.com/check?access_key=${this.apiKey}`);
+    this.location = response.data;
+    this.loading = false;
 
-      this.movies = response.data.movies;
-    } catch (error) {
-      console.error(error);
+    console.log('City:', this.location.city);
+    console.log('State:', this.location.region_name);
+
+    // Access the languages for the state
+    const stateName = this.location.region_name;
+    const state = languagesData.states.find(state => state.name === stateName);
+
+    if (state) {
+      const languages = state.languages;
+      console.log('Languages:');
+      languages.forEach(language => {
+        console.log(language.name);
+      });
+    } else {
+      console.log('State not found.');
     }
+  } catch (error) {
+    this.error = 'Failed to fetch location.';
+    console.error('Error:', error);
+    this.loading = false;
+  }
+},
+
   },
 };
 </script>
 
-<style>
-h1 {
-  color: #333;
-}
-
-ul {
-  list-style: none;
-  padding: 0;
-}
-
-li {
-  margin-bottom: 20px;
+<style scoped>
+.location-container {
+  max-width: 400px;
+  margin: 200px auto;
+  padding: 20px;
+  background-color: #f7f7f7;
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 h2 {
-  margin-bottom: 5px;
+  margin-top: 0;
+  margin-bottom: 20px;
+  font-size: 24px;
+  text-align: center;
 }
 
-span {
+.loading-message,
+.error-message {
+  margin-bottom: 20px;
+  font-style: italic;
+  text-align: center;
+}
+
+.location-details {
+  display: flex;
+  flex-direction: column;
+}
+
+.location-item {
+  display: flex;
+  margin-bottom: 10px;
+}
+
+.item-label {
+  font-weight: bold;
   margin-right: 10px;
+}
+
+.item-value {
+  flex-grow: 1;
 }
 </style>
