@@ -1,3 +1,4 @@
+<!-- eslint-disable vue/multi-word-component-names -->
 <template>
   <div class="location-container">
     <h2>Location Information</h2>
@@ -22,13 +23,13 @@
       </div>
 
     </div>
+    <router-link :to="{ name: 'chosen', query: { languages: languages.join(',') } }">Go to Movies</router-link>
   </div>
 </template>
 
 <script>
 import axios from 'axios';
 import languagesData from '/home/sudhi/Book_My_Show_Clone/src/components/languages.json';
-
 
 export default {
   data() {
@@ -37,6 +38,7 @@ export default {
       loading: true,
       error: null,
       apiKey: 'f242c2d97d84a0f2c3f287db26198b93',
+      languages: []
     };
   },
   mounted() {
@@ -44,38 +46,33 @@ export default {
   },
   methods: {
     async fetchLocation() {
-  try {
-    const response = await axios.get(`http://api.ipstack.com/check?access_key=${this.apiKey}`);
-    this.location = response.data;
-    this.loading = false;
+      try {
+        const response = await axios.get('https://ipinfo.io/json?token=11314cc12c8406');
+        this.location = response.data;
+        this.loading = false;
 
-    console.log('City:', this.location.city);
-    console.log('State:', this.location.region_name);
+        console.log('City:', this.location.city);
+        console.log('State:', this.location.region);
 
-    // Access the languages for the state
-    const stateName = this.location.region_name;
-    const state = languagesData.states.find(state => state.name === stateName);
+        // Access the languages for the state
+        const stateName = this.location.region;
+        const state = languagesData.states.find(state => state.name === stateName);
 
-    if (state) {
-      const languages = state.languages;
-      console.log('Languages:');
-      languages.forEach(language => {
-        console.log(language.name);
-      });
-    } else {
-      console.log('State not found.');
+        if (state) {
+          this.languages = state.languages.map(language => language.code);
+          console.log('Languages:', this.languages);
+        } else {
+          console.log('State not found.');
+        }
+      } catch (error) {
+        this.error = 'Failed to fetch location.';
+        console.error('Error:', error);
+        this.loading = false;
+      }
     }
-  } catch (error) {
-    this.error = 'Failed to fetch location.';
-    console.error('Error:', error);
-    this.loading = false;
   }
-},
-
-  },
 };
 </script>
-
 <style scoped>
 .location-container {
   max-width: 400px;
