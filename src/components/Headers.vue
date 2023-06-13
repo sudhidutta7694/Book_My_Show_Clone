@@ -15,8 +15,8 @@
                       <router-link to="/movies" class="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors duration-300" active-class="text-white bg-gray-800">
                           Movies
                       </router-link>
-                      <router-link to="/actors" class="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors duration-300" active-class="text-white bg-gray-800">
-                          Actors
+                      <router-link to="/bookings" class="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors duration-300" active-class="text-white bg-gray-800">
+                          Bookings
                       </router-link>
                   </div>
               </div>
@@ -90,8 +90,8 @@
               <router-link to="/movies" class="text-gray-300 hover:text-white block px-3 py-2 rounded-md text-base font-medium">
                   Genres
               </router-link>
-              <router-link to="/actors" class="text-gray-300 hover:text-white block px-3 py-2 rounded-md text-base font-medium">
-                  Actors
+              <router-link to="/bookings" class="text-gray-300 hover:text-white block px-3 py-2 rounded-md text-base font-medium">
+                  Bookings
               </router-link>
           </div>
       </div>

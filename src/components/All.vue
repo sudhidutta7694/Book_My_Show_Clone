@@ -1,6 +1,6 @@
 <!-- eslint-disable vue/multi-word-component-names -->
 <template>
-    <div class="content bg-slate-800 flex flex-col gap-4 justify-center items-center">
+    <div class="content bg-slate-800 min-h-screen flex flex-col gap-4 justify-center items-center">
       <div class="mt-12 filters flex justify-end items-center gap-4">
         <label for="language" class="text-gray-200 font-semi-bold text-2xl self-center">Language:</label>
         <select id="language" v-model="selectedLanguage" class="w-32 border border-black">

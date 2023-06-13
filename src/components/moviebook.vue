@@ -20,7 +20,7 @@
                     <p class="mt-5 text-gray-400 text-xl text-center w-[35vw]">
                         {{ getMovieOverview(movieId) }}
                     </p>
-                    <router-link to="/theater" class="h-[6vh] font-bold rounded hover:bg-yellow-600 active:bg-yellow-700 bg-yellow-500 px-5 py-4 flex justify-center items-center text-black">
+                    <router-link :to="{ name: 'theater', query: {movie: getMovieTitle(movieId)} }" class="h-[6vh] font-bold rounded hover:bg-yellow-600 active:bg-yellow-700 bg-yellow-500 px-5 py-4 flex justify-center items-center text-black">
                         <button class="inline-block ">Book Tickets</button>
                     </router-link>
                 </div>

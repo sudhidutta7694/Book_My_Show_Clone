@@ -22,6 +22,7 @@
             </div>
 
             <div class="border-2 border-solid rounded flex items-center mb-4">
+
               <div class="w-10 h-10 flex justify-center items-center flex-shrink-0">
                 <span class="far fa-envelope  text-gray-200"></span>
               </div>

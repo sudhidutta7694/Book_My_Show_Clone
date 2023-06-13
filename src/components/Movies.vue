@@ -1,6 +1,6 @@
 <!-- eslint-disable vue/multi-word-component-names -->
 <template>
-  <div v-if="loading" class="bg-gray-900 flex justify-center items-center">
+  <div v-if="loading" class="bg-gray-900 min-h-screen flex justify-center items-center">
     <img src="https://cdn.dribbble.com/users/121337/screenshots/916951/small-load.gif" alt="Loading ...">
   </div>
   <div class="bg-slate-800 content p-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-8">

@@ -1,9 +1,10 @@
 <!-- eslint-disable vue/multi-word-component-names -->
 <template>
-  <div class="location-container">
-    <h2>Location Information</h2>
+  <div class="bg-slate-800 p-96 h-screen">
+  <div class="bg-slate-700 location-container">
+    <h2 class="text-white font-semibold">Location Information</h2>
 
-    <div v-if="loading" class="loading-message">Loading...</div>
+    <div v-if="loading" class=" text-green-200 loading-message">Loading...</div>
 
     <div v-else>
       <div v-if="error" class="error-message">{{ error }}</div>
@@ -11,20 +12,21 @@
       <div v-else-if="location">
         <div class="location-details">
           <div class="location-item">
-            <span class="item-label">City:</span>
-            <span class="item-value">{{ location.city }}</span>
+            <span class="text-red-200 item-label">City:</span>
+            <span class="text-gray-200 item-value">{{ location.city }}</span>
           </div>
 
           <div class="location-item">
-            <span class="item-label">State:</span>
-            <span class="item-value">{{ location.region_name }}</span>
+            <span class="text-red-200 item-label">State:</span>
+            <span class="text-gray-200 item-value">{{ location.region }}</span>
           </div>
         </div>
       </div>
 
     </div>
-    <router-link :to="{ name: 'chosen', query: { languages: languages.join(',') } }">Go to Movies</router-link>
+    <router-link class="text-green-200" :to="{ name: 'chosen', query: { languages: languages.join(',') } }">Go to Movies</router-link>
   </div>
+</div>
 </template>
 
 <script>
@@ -76,9 +78,8 @@ export default {
 <style scoped>
 .location-container {
   max-width: 400px;
-  margin: 200px auto;
+  margin: 0 auto;
   padding: 20px;
-  background-color: #f7f7f7;
   border-radius: 4px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
