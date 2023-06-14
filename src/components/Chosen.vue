@@ -16,7 +16,7 @@
               <div class="content p-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-8">
                 <div class="flex flex-col justify-center items-center bg-slate-800 rounded-xl hover:opacity-70 transition-all ease-in-out duration-400"
                   v-for="movie in languageMovies" :key="movie.id" @click="showDetails(movie.id)">
-                  <router-link :to="{ name: 'moviebook', params: { id: movie.id } }"><div class="movie-poster">
+                  <router-link :to="{ name: 'moviebook', query: { id: movie.id, language: getLanguageName(language), city: city, state: state} }"><div class="movie-poster">
                     <img :src="getMoviePosterURL(movie.poster_path)" :alt="movie.title"
                       class="rounded-lg h-max hover:shadow-xl" />
                   </div></router-link>
@@ -46,7 +46,15 @@ export default {
     languages: {
       type: Array,
       required: true
-    }
+    },
+    city: {
+      type: String,
+      required: true,
+    },
+    state: {
+      type: String,
+      required: true,
+    },
   },
   data() {
     return {

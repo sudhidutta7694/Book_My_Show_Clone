@@ -10,6 +10,7 @@ import terms from '../components/terms.vue'
 import MovieBook from '../components/moviebook.vue'
 import theatres from '../components/theater.vue'
 import hall from "../components/Hall.vue"
+import payment from "../components/payment.vue"
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -33,7 +34,10 @@ const router = createRouter({
       path: '/chosen',
       name: 'chosen',
       component: Chosen,
-      props: (route) => ({ languages: route.query.languages.split(',') })
+      props: (route) => ({
+        languages: route.query.languages.split(','),
+        city: route.query.city,
+        state: route.query.state})
     },
     {
       path: '/login',
@@ -52,16 +56,24 @@ const router = createRouter({
       props: true
     },
     {
-      path: '/movie/:id',
+      path: '/movie',
       name: 'moviebook',
       component: MovieBook,
-      props: true
+      props: (route) => ({
+        id: route.query.id,
+        language: route.query.language,
+        city: route.query.city,
+        state: route.query.state})
     },
     {
       path: '/theater',
       name: 'theater',
       component: theatres,
-      props: (route) => ({ movie: route.query.movie })
+      props: (route) => ({ 
+        movie: route.query.movie,
+        language: route.query.language,
+        city: route.query.city,
+        state: route.query.state})
     },
     {
       path: '/hall',
@@ -69,9 +81,26 @@ const router = createRouter({
       component: hall,
       props: route => ({
         theater: route.query.theater ? JSON.parse(route.query.theater) : null,
-        movie: route.query.movie
+        movie: route.query.movie,
+        language: route.query.language,
+        city: route.query.city,
+        state: route.query.state
       })
     },    
+    {
+      path: '/payment',
+      name: 'payment',
+      component: payment,
+      props: route => ({
+        payment: parseInt(route.query.payment),
+        seats: route.query.selectedSeats ? route.query.selectedSeats.split(',') : [],
+        theater: route.query.theater ? JSON.parse(route.query.theater) : null,
+        movie: route.query.movie,
+        language: route.query.language,
+        city: route.query.city,
+        state: route.query.state
+      })
+    },
     {
       path: '/terms',
       name: 'terms',

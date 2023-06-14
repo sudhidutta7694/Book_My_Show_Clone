@@ -5,7 +5,7 @@
         <div class="flex">
             <img :src="getMoviePoster(movieId)" alt="Movie Poster"
                 class="mt-40 w-[25vw] relative rounded-xl shadow:lg hover:opacity-75 transition ease-in"
-                @mouseover="playTrailer=true" @mouseleave="playTrailer=false" @click="playTrailerFullscreen()">
+                @mouseover="playTrailer = true" @mouseleave="playTrailer = false" @click="playTrailerFullscreen()">
             <p v-if="playTrailer" class="absolute text-white font-bold">Play Trailer?</p>
             <div class="mt-5 container mx-auto flex border-b border-gray-600 pb-4 mx-30 items-center justify-center">
                 <div class="ml-5 flex flex-col items-center justify-center gap-10">
@@ -20,7 +20,8 @@
                     <p class="mt-5 text-gray-400 text-xl text-center w-[35vw]">
                         {{ getMovieOverview(movieId) }}
                     </p>
-                    <router-link :to="{ name: 'theater', query: {movie: getMovieTitle(movieId)} }" class="h-[6vh] font-bold rounded hover:bg-yellow-600 active:bg-yellow-700 bg-yellow-500 px-5 py-4 flex justify-center items-center text-black">
+                    <router-link :to="{ name: 'theater', query: { movie: getMovieTitle(id), language: language, city: city, state: state  } }"
+                        class="h-[6vh] font-bold rounded hover:bg-yellow-600 active:bg-yellow-700 bg-yellow-500 px-5 py-4 flex justify-center items-center text-black">
                         <button class="inline-block ">Book Tickets</button>
                     </router-link>
                 </div>
@@ -56,7 +57,24 @@
 
 
 export default {
-    props: ['id'],
+    props: {
+        id: {
+            type: String,
+            required: true,
+        },
+        language: {
+            type: String,
+            required: true,
+        },
+        city: {
+            type: String,
+            required: true,
+        },
+        state: {
+            type: String,
+            required: true,
+        },
+    },
     data() {
         return {
             movieId: null,

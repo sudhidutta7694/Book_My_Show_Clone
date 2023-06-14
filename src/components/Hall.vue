@@ -1,158 +1,73 @@
 <!-- eslint-disable vue/multi-word-component-names -->
 <template>
-    <div class=" h-screen bg-slate-800 flex gap-20 flex-col">
-        <div class="relative flex justify-center">
-        <div class="m-72 absolute z-1000 bg-red-200 h-[20vh] w-[40vw] rounded-xl border border-black hover:shadow shadow-xl shadow-red-100 flex justify-center items-center">
-            <p class="font-sans text-2xl font-bold">All eyes here, please!</p></div>
+    <div class="h-screen bg-slate-800 flex gap-20 flex-col">
+        <div class="mt-40 relative">
+            <div class="flex items-center justify-center gap-6">
+                <label for="select" class="text-gray-200 text-xl font-serif font-semibold">Select the number of
+                    seats:</label>
+                <div>
+                    <select id="select"
+                        class="flex justify-center items-center font-mono font-bold text-md appearance-none py-2 px-4 pr-8 leading-tight text-red-50 bg-black border border-red-300 shadow-sm focus:outline-dashed rounded-full focus:border-red-400 transition-transform ease-in-out duration-1000 hover:text-red-100"
+                        v-model="selectedOption" @change="updateSelectedSeats">
+                        <option v-for="option in seatOptions" :value="option.value" :key="option.value">
+                            {{ option.label }}
+                        </option>
+                    </select>
+                    <div class="pointer-events-none absolute inset-y-0 right-[40.7vw] flex items-center px-2 text-red-300">
+                        <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                            <path d="M10 12l-6-6h12l-6 6z" />
+                        </svg>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="theatre scale-105 bg-slate-900">
+
+        <div class="relatve flex justify-center">
+            <div
+                class="mt-12 absolute z-1000 bg-red-200 h-[20vh] w-[40vw] rounded-xl border border-black hover:shadow shadow-xl shadow-red-100 flex justify-center items-center">
+                <p class="font-sans text-2xl font-bold">All eyes here, please!</p>
+            </div>
+        </div>
+        <div class="mt-12 theatre scale-105 bg-slate-900">
 
 
-            <div class="cinema-seats left">
-                <div class="cinema-row row-1">
-                    <div class="seat"></div>
-                    <div class="seat"></div>
-                    <div class="seat"></div>
-                    <div class="seat"></div>
-                    <div class="seat"></div>
-                    <div class="seat"></div>
-                    <div class="seat"></div>
-                </div>
-
-                <div class="cinema-row row-2">
-                    <div class="seat"></div>
-                    <div class="seat"></div>
-                    <div class="seat"></div>
-                    <div class="seat"></div>
-                    <div class="seat"></div>
-                    <div class="seat"></div>
-                    <div class="seat"></div>
-                </div>
-
-                <div class="cinema-row row-3">
-                    <div class="seat"></div>
-                    <div class="seat"></div>
-                    <div class="seat"></div>
-                    <div class="seat"></div>
-                    <div class="seat"></div>
-                    <div class="seat"></div>
-                    <div class="seat"></div>
-                </div>
-
-                <div class="cinema-row row-4">
-                    <div class="seat"></div>
-                    <div class="seat"></div>
-                    <div class="seat"></div>
-                    <div class="seat"></div>
-                    <div class="seat"></div>
-                    <div class="seat"></div>
-                    <div class="seat"></div>
-                </div>
-
-                <div class="cinema-row row-5">
-                    <div class="seat"></div>
-                    <div class="seat"></div>
-                    <div class="seat"></div>
-                    <div class="seat"></div>
-                    <div class="seat"></div>
-                    <div class="seat"></div>
-                    <div class="seat"></div>
-                </div>
-
-                <div class="cinema-row row-6">
-                    <div class="seat"></div>
-                    <div class="seat"></div>
-                    <div class="seat"></div>
-                    <div class="seat"></div>
-                    <div class="seat"></div>
-                    <div class="seat"></div>
-                    <div class="seat"></div>
-                </div>
-
-                <div class="cinema-row row-7">
-                    <div class="seat"></div>
-                    <div class="seat"></div>
-                    <div class="seat"></div>
-                    <div class="seat"></div>
-                    <div class="seat"></div>
-                    <div class="seat"></div>
-                    <div class="seat"></div>
+            <div class="cinema-seats left" :class="{ 'selected': isSelectedSeat('left') }">
+                <div v-for="row in numberOfRows" :key="row" class="cinema-row" :class="'row-' + row">
+                    <div v-for="seat in seatsPerRow" :key="seat" class="seat"
+                        :class="{ 'selected-seat': isSelectedSeat(getSeatId('left', row, seat)) }"
+                        @click="toggleSeat(getSeatId('left', row, seat))"
+                        :disabled="isSeatDisabled(getSeatId('left', row, seat))"></div>
                 </div>
             </div>
 
-
-            <div class="cinema-seats right">
-                <div class="cinema-row row-1">
-                    <div class="seat"></div>
-                    <div class="seat"></div>
-                    <div class="seat"></div>
-                    <div class="seat"></div>
-                    <div class="seat"></div>
-                    <div class="seat"></div>
-                    <div class="seat"></div>
-                </div>
-
-                <div class="cinema-row row-2">
-                    <div class="seat"></div>
-                    <div class="seat"></div>
-                    <div class="seat"></div>
-                    <div class="seat"></div>
-                    <div class="seat"></div>
-                    <div class="seat"></div>
-                    <div class="seat"></div>
-                </div>
-
-                <div class="cinema-row row-3">
-                    <div class="seat"></div>
-                    <div class="seat"></div>
-                    <div class="seat"></div>
-                    <div class="seat"></div>
-                    <div class="seat"></div>
-                    <div class="seat"></div>
-                    <div class="seat"></div>
-                </div>
-
-                <div class="cinema-row row-4">
-                    <div class="seat"></div>
-                    <div class="seat"></div>
-                    <div class="seat"></div>
-                    <div class="seat"></div>
-                    <div class="seat"></div>
-                    <div class="seat"></div>
-                    <div class="seat"></div>
-                </div>
-
-                <div class="cinema-row row-5">
-                    <div class="seat"></div>
-                    <div class="seat"></div>
-                    <div class="seat"></div>
-                    <div class="seat"></div>
-                    <div class="seat"></div>
-                    <div class="seat"></div>
-                    <div class="seat"></div>
-                </div>
-
-                <div class="cinema-row row-6">
-                    <div class="seat"></div>
-                    <div class="seat"></div>
-                    <div class="seat"></div>
-                    <div class="seat"></div>
-                    <div class="seat"></div>
-                    <div class="seat"></div>
-                    <div class="seat"></div>
-                </div>
-
-                <div class="cinema-row row-7">
-                    <div class="seat"></div>
-                    <div class="seat"></div>
-                    <div class="seat"></div>
-                    <div class="seat"></div>
-                    <div class="seat"></div>
-                    <div class="seat"></div>
-                    <div class="seat"></div>
+            <div class="cinema-seats right" :class="{ 'selected': isSelectedSeat('right') }">
+                <div v-for="row in numberOfRows" :key="row" class="cinema-row" :class="'row-' + row">
+                    <div v-for="seat in seatsPerRow" :key="seat" class="seat"
+                        :class="{ 'selected-seat': isSelectedSeat(getSeatId('right', row, seat)) }"
+                        @click="toggleSeat(getSeatId('right', row, seat))"
+                        :disabled="isSeatDisabled(getSeatId('right', row, seat))"></div>
                 </div>
             </div>
-
+        </div>
+        <div class="mt-[50vh] ml-[40vw] flex flex-col justify-center">
+            <router-link :to="{
+                name: 'payment', query: {
+                    payment: (150 * numSeats),
+                    seats: selectedSeats && selectedSeats.length ? selectedSeats.join(',') : '',
+                    theater: JSON.stringify(theater),
+                    movie: movie,
+                    language: language,
+                    city: city,
+                    state: state
+                }
+            }">
+                <button
+                    class="px-4 py-2 w-[20vw] font-semibold font-mono bg-gray-500 rounded-full disabled:opacity-50 disabled:pointer-events-none"
+                    :class="{ 'bg-green-500': selectedSeats.length >= numSeats }"
+                    :disabled="selectedSeats.length < numSeats">
+                    {{ selectedSeats.length >= numSeats ? `Proceed to Pay - ₹${150 * numSeats}` : 'Select Seats' }}
+                </button>
+            </router-link>
         </div>
     </div>
 </template>
@@ -160,89 +75,111 @@
   
 <script>
 export default {
-    props: ['theater', 'movie'],
+    props: {
+        theater: {
+            type: String,
+            required: true,
+        },
+        movie: {
+            type: String,
+            required: true,
+        },
+        language: {
+            type: String,
+            required: true,
+        },
+        city: {
+            type: String,
+            required: true,
+        },
+        state: {
+            type: String,
+            required: true,
+        },
+    },
     data() {
         return {
-            seats: [
-                { id: 1, active: false },
-                { id: 2, active: false },
-                { id: 3, active: false },
-                { id: 4, active: false },
-                { id: 5, active: false },
-                { id: 6, active: false },
-                { id: 7, active: false },
-                { id: 8, active: false },
-                { id: 9, active: false },
-                { id: 10, active: false },
-                { id: 11, active: false },
-                { id: 12, active: false },
-                { id: 13, active: false },
-                { id: 14, active: false },
-                { id: 15, active: false },
-                { id: 16, active: false },
-                { id: 17, active: false },
-                { id: 18, active: false },
-                { id: 19, active: false },
-                { id: 20, active: false },
-                { id: 21, active: false },
-                { id: 22, active: false },
-                { id: 23, active: false },
-                { id: 24, active: false },
-                { id: 25, active: false },
-                { id: 26, active: false },
-                { id: 27, active: false },
-                { id: 28, active: false },
-                { id: 29, active: false },
-                { id: 30, active: false },
-                { id: 31, active: false },
-                { id: 32, active: false },
-                { id: 33, active: false },
-                { id: 34, active: false },
-                { id: 35, active: false },
-                { id: 36, active: false },
-                { id: 37, active: false },
-                { id: 38, active: false },
-                { id: 39, active: false },
-                { id: 40, active: false },
-                { id: 41, active: false },
-                { id: 42, active: false },
-                { id: 43, active: false },
-                { id: 44, active: false },
-                { id: 45, active: false },
-                { id: 46, active: false },
-                { id: 47, active: false },
-                { id: 48, active: false },
-                { id: 49, active: false },
-                { id: 50, active: false },
-                { id: 51, active: false },
-                { id: 52, active: false },
-                { id: 53, active: false },
-                { id: 54, active: false },
-                { id: 55, active: false },
-                { id: 56, active: false },
-                { id: 57, active: false },
-                { id: 58, active: false },
-                { id: 59, active: false },
-                { id: 60, active: false },
-                { id: 61, active: false },
-                { id: 62, active: false },
-                { id: 63, active: false },
+            selectedOption: '1', // Initial selected option value
+            selectedSeats: [], // Array to store the selected seats
+            numSeats: 1,
+            seatOptions: [
+                { value: '1', label: '1 Seat' },
+                { value: '2', label: '2 Seats' },
+                { value: '3', label: '3 Seats' },
+                { value: '4', label: '4 Seats' },
+                { value: '5', label: '5 Seats' },
+                { value: '6', label: '6 Seats' },
             ],
+            numberOfRows: 7, // Number of rows in the cinema
+            seatsPerRow: 7, // Number of seats per row
         };
     },
+    watch: {
+        selectedOption(newOption) {
+            this.numSeats = parseInt(newOption);
+        },
+    },
     methods: {
-        toggleSeat(id) {
-            this.seats = this.seats.map((seat) => {
-                if (seat.id === id) {
-                    return { ...seat, active: !seat.active };
-                } else {
-                    return seat;
+        updateSelectedSeats() {
+            // Clear the selectedSeats array
+            this.selectedSeats = [];
+
+            // Get the selected option value
+            const numSeats = parseInt(this.selectedOption);
+
+            // Loop through each seat and add it to the selectedSeats array
+            for (let row = 1; row <= this.numberOfRows; row++) {
+                for (let seat = 1; seat <= this.seatsPerRow; seat++) {
+                    const seatId = this.getSeatId('left', row, seat);
+                    if (this.selectedSeats.length < numSeats && this.isSelectedSeat(seatId)) {
+                        this.selectedSeats.push(seatId);
+                    }
                 }
-            });
+            }
+
+            // Log the selected seat values
+            console.log(this.selectedSeats);
+        },
+
+        isSelectedSeat(seatId) {
+            // Check if the seat is selected
+            return this.selectedSeats.includes(seatId);
+        },
+
+        toggleSeat(seatId) {
+            // Get the selected option value
+            const numSeats = parseInt(this.selectedOption);
+
+            // Check if the seat is already selected
+            if (this.isSelectedSeat(seatId)) {
+                // Remove the seat from selectedSeats array
+                this.selectedSeats = this.selectedSeats.filter((seat) => seat !== seatId);
+            } else {
+                // Check if the maximum number of seats has been reached
+                if (this.selectedSeats.length < numSeats) {
+                    // Add the seat to selectedSeats array
+                    this.selectedSeats.push(seatId);
+                }
+            }
+
+            // Log the selected seat values
+            console.log(this.selectedSeats);
+        },
+
+        getSeatId(side, row, seat) {
+            return `${side}-${row}-${seat}`;
+        },
+
+        isSeatDisabled(seatId) {
+            // Check if the seat is disabled based on the selected option value
+            const numSeats = parseInt(this.selectedOption);
+            return this.selectedSeats.length >= numSeats && !this.isSelectedSeat(seatId);
         },
     },
 };
 </script>
+
+
   
 <style scoped>
 .theatre {
@@ -268,8 +205,13 @@ export default {
     box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
 }
 
+.selected-seat {
+    background-color: green;
+    cursor: pointer;
+}
+
 .seat.active {
-    background: rgba(255, 255, 255, 0.6);
+    background: green;
     border-radius: 7px;
 }
 
@@ -352,9 +294,43 @@ export default {
     transform: skewX(-18deg);
 }
 
+.seat.active {
+    background: green;
+    border-radius: 7px;
+}
+
 .right .row-7 .seat {
     transform: skewX(-20deg);
 }
+
+/* New Modifications */
+
+/* Change opacity and background color for selected seats */
+.selected-seat {
+    background: green;
+}
+
+/* Reduce opacity for unselected seats */
+.seat:not(.selected-seat) {
+    opacity: 1;
+}
+
+.disable-hover .seat:hover:before {
+    background: none;
+}
+
+.disabled\:opacity-50[disabled] {
+    opacity: 0.5;
+}
+
+.disabled\:pointer-events-none[disabled] {
+    pointer-events: none;
+}
+
+.bg-green-500 {
+    background-color: #25ce90;
+}
 </style>
+
 
 

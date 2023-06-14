@@ -1,32 +1,31 @@
-<!-- eslint-disable vue/multi-word-component-names -->
 <template>
-  <div class="bg-slate-800 p-96 h-screen">
-  <div class="bg-slate-700 location-container">
-    <h2 class="text-white font-semibold">Location Information</h2>
+  <div class="bg-slate-800 p-96 h-screen flex justify-center items-center">
+    <div class="bg-slate-700 location-container p-6 w-96 rounded-xl">
+      <h2 class="text-white font-semibold mb-6 text-center text-2xl">Location Information</h2>
 
-    <div v-if="loading" class=" text-green-200 loading-message">Loading...</div>
+      <div v-if="loading" class="text-green-200 loading-message">Loading...</div>
 
-    <div v-else>
-      <div v-if="error" class="error-message">{{ error }}</div>
+      <div v-else>
+        <div v-if="error" class="error-message">{{ error }}</div>
 
-      <div v-else-if="location">
-        <div class="location-details">
-          <div class="location-item">
-            <span class="text-red-200 item-label">City:</span>
-            <span class="text-gray-200 item-value">{{ location.city }}</span>
+        <div v-else-if="location" class="flex flex-col gap-3">
+          <div class="location-details text-xl">
+            <div class="location-item">
+              <span class="text-red-200 item-label">City: </span>
+              <span class="text-gray-200 item-value">{{ location.city }}</span>
+            </div>
+
+            <div class="location-item text-xl">
+              <span class="text-red-200 item-label">State: </span>
+              <span class="text-gray-200 item-value">{{ location.region }}</span>
+            </div>
           </div>
 
-          <div class="location-item">
-            <span class="text-red-200 item-label">State:</span>
-            <span class="text-gray-200 item-value">{{ location.region }}</span>
-          </div>
+          <router-link class="text-green-200" :to="getRouterLink">Go to Movies</router-link>
         </div>
       </div>
-
     </div>
-    <router-link class="text-green-200" :to="{ name: 'chosen', query: { languages: languages.join(',') } }">Go to Movies</router-link>
   </div>
-</div>
 </template>
 
 <script>
@@ -72,48 +71,25 @@ export default {
         this.loading = false;
       }
     }
+  },
+  computed: {
+    getRouterLink() {
+      if (this.location) {
+        return {
+          name: 'chosen',
+          query: {
+            languages: this.languages.join(','),
+            city: this.location.city,
+            state: this.location.region
+          }
+        };
+      }
+      return null;
+    }
   }
 };
 </script>
+
 <style scoped>
-.location-container {
-  max-width: 400px;
-  margin: 0 auto;
-  padding: 20px;
-  border-radius: 4px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-h2 {
-  margin-top: 0;
-  margin-bottom: 20px;
-  font-size: 24px;
-  text-align: center;
-}
-
-.loading-message,
-.error-message {
-  margin-bottom: 20px;
-  font-style: italic;
-  text-align: center;
-}
-
-.location-details {
-  display: flex;
-  flex-direction: column;
-}
-
-.location-item {
-  display: flex;
-  margin-bottom: 10px;
-}
-
-.item-label {
-  font-weight: bold;
-  margin-right: 10px;
-}
-
-.item-value {
-  flex-grow: 1;
-}
+/* Styles go here */
 </style>
