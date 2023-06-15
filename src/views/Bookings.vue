@@ -1,3 +1,4 @@
+<!-- eslint-disable vue/multi-word-component-names -->
 <template>
   <div class="bg-slate-800 p-96 h-screen flex justify-center items-center">
     <div class="bg-slate-700 location-container p-6 w-96 rounded-xl">
@@ -30,7 +31,7 @@
 
 <script>
 import axios from 'axios';
-import languagesData from '/home/sudhi/Book_My_Show_Clone/src/components/languages.json';
+import languagesData from '../components/languages.json';
 
 export default {
   data() {

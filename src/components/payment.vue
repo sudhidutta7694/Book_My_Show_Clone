@@ -1,8 +1,8 @@
 <!-- eslint-disable vue/multi-word-component-names -->
 <template>
     <div class="bg-slate-800 h-screen">
-        <div class="m-96 screen flex-center">
-            <form class="popup flex p-lg">
+        <div class="m-96 screen flex-center p-36">
+            <form class="popup scale-110 rounded-xl bg-slate-700 flex p-lg" @submit.prevent="payNow">
                 <div class="close-btn pointer flex-center p-sm">
                     <i class="ai-cross"></i>
                 </div>
@@ -11,31 +11,31 @@
                 <div class="flex-fill flex-vertical">
                     <div class="header flex-between flex-vertical-center">
                         <div class="flex-vertical-center">
-                            <i class="ai-bitcoin-fill size-xl pr-sm f-main-color"></i>
-                            <span class="title">
+                            <!-- <i class="ai-bitcoin-fill size-xl pr-sm f-main-color"></i> -->
+                            <span class=" font-bold text-red-500 text-xl">
                                 <strong>BookFlix</strong><span>Pay</span>
                             </span>
                         </div>
-                        <div class="timer" data-id="timer">
-                            <span>0</span><span>5</span>
+                        <div class="text-white font-mono timer" data-id="timer">
+                            <span class="bg-red-700">0</span><span class="bg-red-700">5</span>
                             <em>:</em>
-                            <span>0</span><span>0</span>
+                            <span class="bg-red-700">0</span><span class="bg-red-700">0</span>
                         </div>
                     </div>
                     <div class="card-data flex-fill flex-vertical">
 
                         <!-- Card Number -->
-                        <div class="flex-between flex-vertical-center">
+                        <div class="flex-between text-white flex-vertical-center">
                             <div class="card-property-title">
                                 <strong>Card Number</strong>
                                 <span>Enter 16-digit card number on the card</span>
                             </div>
-                            <div class="f-main-color pointer"><i class="ai-pencil"></i> Edit</div>
+                            <!-- <div class="f-main-color pointer"><i class="ai-pencil"></i> Edit</div> -->
                         </div>
 
                         <!-- Card Field -->
                         <div class="flex-between">
-                            <div class="card-number flex-vertical-center flex-fill">
+                            <div class="card-number bg-red-100 flex-vertical-center flex-fill">
                                 <div class="card-number-field flex-vertical-center flex-fill">
 
 
@@ -67,11 +67,14 @@
                                     </svg>
 
 
-                                    <input class="numbers" type="number" min="1" max="9999" placeholder="0000">-
-                                    <input class="numbers" type="number" placeholder="0000">-
-                                    <input class="numbers" type="number" placeholder="0000">-
-                                    <input class="numbers" type="number" placeholder="0000" data-bound="carddigits_mock"
-                                        data-def="0000">
+                                    <input v-model="cardNumber" class="bg-red-50 border rounded-lg border-black"
+                                        type="number" min="1" max="9999" placeholder="0000">-
+                                    <input class="bg-red-50 border rounded-lg border-black" type="number"
+                                        placeholder="0000">-
+                                    <input class="bg-red-50 border rounded-lg border-black" type="number"
+                                        placeholder="0000">-
+                                    <input class="bg-red-50 border rounded-lg border-black" type="number" placeholder="0000"
+                                        data-bound="carddigits_mock" data-def="0000">
                                 </div>
                                 <i class="ai-circle-check-fill size-lg f-main-color"></i>
                             </div>
@@ -79,47 +82,54 @@
 
                         <!-- Expiry Date -->
                         <div class="flex-between">
-                            <div class="card-property-title">
+                            <div class="card-property-title text-white">
                                 <strong>Expiry Date</strong>
                                 <span>Enter the expiration date of the card</span>
                             </div>
                             <div class="card-property-value flex-vertical-center">
                                 <div class="input-container half-width">
-                                    <input class="numbers" data-bound="mm_mock" data-def="00" type="number" min="1" max="12"
-                                        step="1" placeholder="MM">
+                                    <input v-model="expiryMonth" pattern="^(0?[1-9]|1[0-2])$" maxlength="2"
+                                        class=" bg-red-50 numbers" data-bound="mm_mock" data-def="00" type="number" min="1"
+                                        max="12" step="1" placeholder="MM" required>
                                 </div>
-                                <span class="m-md">/</span>
+                                <span class="m-md text-gray-200">/</span>
                                 <div class="input-container half-width">
-                                    <input class="numbers" data-bound="yy_mock" data-def="01" type="number" min="23"
-                                        max="99" step="1" placeholder="YY">
+                                    <input v-model="expiryYear" class="bg-red-50 numbers" data-bound="yy_mock" maxlength="2"
+                                        data-def="01" type="number" min="23" max="99" step="1" placeholder="YY" required>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- CCV Number -->
+                        <!-- CVV Number -->
                         <div class="flex-between">
-                            <div class="card-property-title">
-                                <strong>CVC Number</strong>
+                            <div class="card-property-title text-white">
+                                <strong>CVV Number</strong>
                                 <span>Enter card verification code from the back of the card</span>
                             </div>
                             <div class="card-property-value">
                                 <div class="input-container">
-                                    <input id="cvc" type="password">
-                                    <i id="cvc_toggler" data-target="cvc" class="ai-eye-open pointer"></i>
+                                    <input id="cvv" class="font-mono bg-red-50" pattern="\d{3}"
+                                        :type="showPassword ? 'text' : 'password'" required>
+                                    <button type="button" class="flex items-center eye-button"
+                                        @click="showPassword = !showPassword">
+                                        <i id="cvc_toggler" data-target="cvv"
+                                            :class="showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
+                                    </button>
                                 </div>
                             </div>
                         </div>
 
                         <!-- Name -->
                         <div class="flex-between">
-                            <div class="card-property-title">
+                            <div class="card-property-title text-white">
                                 <strong>Cardholder Name</strong>
                                 <span>Enter cardholder's name</span>
                             </div>
                             <div class="card-property-value">
                                 <div class="input-container">
-                                    <input id="name" data-bound="name_mock" data-def="Mr. Cardholder" type="text"
-                                        class="uppercase" placeholder="CARDHOLDER NAME">
+                                    <input v-model="cardholderName" id="name" data-bound="name_mock"
+                                        data-def="Mr. Cardholder" type="text" class="bg-red-50 uppercase"
+                                        placeholder="CARDHOLDER NAME" required>
                                     <i class="ai-person"></i>
                                 </div>
                             </div>
@@ -127,28 +137,46 @@
 
 
                     </div>
-                    <div class="action flex-center">
-                        <button type="submit" class="b-main-color pointer">Pay Now</button>
+                    <div class="flex-center">
+                        <router-link :to="{
+                            name: 'paySuccess', query: {
+                                token: token,
+                                cardNumber: cardNumber,
+                                payment: (1.18 * payment),
+                                seatLength: seatLength,
+                                seats: seats,
+                                theater: JSON.stringify(theater),
+                                movie: movie,
+                                language: language,
+                                city: city,
+                                state: state
+                            }
+                        }">
+                            <button type="submit"
+                                class="w-[25vw] bg-red-600 hover:bg-red-700 text-slate-50 p-2 text-lg rounded-lg font-semibold pointer">Pay
+                                Now</button>
+                        </router-link>
                     </div>
                 </div>
 
                 <!-- SIDEBAR -->
-                <div class="sidebar flex-vertical">
-                    <div>
+                <div class="sidebar mt-[-6vh] flex-vertical">
 
-                    </div>
-                    <div class="purchase-section flex-fill flex-vertical">
+                    <div class="purchase-section flex-fill flex-vertical gap-8 bg-red-100">
 
-                        <div class="card-mockup flex-vertical">
-                            <div class="flex-fill flex-between">
-                                <i class="ai-bitcoin-fill size-xl f-secondary-color"></i>
-                                <i class="ai-wifi size-lg f-secondary-color"></i>
-                            </div>
+                        <div class="card-mockup flex-vertical mt-[-3vh]">
+
                             <div>
-                                <div id="name_mock" class="size-md pb-sm uppercase ellipsis">mr. Cardholder</div>
-                                <div class="size-md pb-md">
+                                <div id="name_mock" class="size-md pb-sm uppercase ellipsis text-center">
+                                    <strong>mr. Cardholder</strong>
+                                </div>
+                                <div class="size-md pb-md text-center">
                                     <strong>
                                         <span class="pr-sm">
+                                            &#x2022;&#x2022;&#x2022;&#x2022;
+                                        </span><span class="pr-sm">
+                                            &#x2022;&#x2022;&#x2022;&#x2022;
+                                        </span><span class="pr-sm">
                                             &#x2022;&#x2022;&#x2022;&#x2022;
                                         </span>
                                         <span id="carddigits_mock">0000</span>
@@ -166,9 +194,23 @@
                                             d="M18,24c0,4.755,2.376,8.95,6,11.48c3.624-2.53,6-6.725,6-11.48s-2.376-8.95-6-11.48 C20.376,15.05,18,19.245,18,24z" />
                                     </svg>
 
-                                    <!--
-                      <svg xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 48 48" width="24px" height="24px"><path fill="#1565C0" d="M45,35c0,2.209-1.791,4-4,4H7c-2.209,0-4-1.791-4-4V13c0-2.209,1.791-4,4-4h34c2.209,0,4,1.791,4,4V35z"/><path fill="#FFF" d="M15.186 19l-2.626 7.832c0 0-.667-3.313-.733-3.729-1.495-3.411-3.701-3.221-3.701-3.221L10.726 30v-.002h3.161L18.258 19H15.186zM17.689 30L20.56 30 22.296 19 19.389 19zM38.008 19h-3.021l-4.71 11h2.852l.588-1.571h3.596L37.619 30h2.613L38.008 19zM34.513 26.328l1.563-4.157.818 4.157H34.513zM26.369 22.206c0-.606.498-1.057 1.926-1.057.928 0 1.991.674 1.991.674l.466-2.309c0 0-1.358-.515-2.691-.515-3.019 0-4.576 1.444-4.576 3.272 0 3.306 3.979 2.853 3.979 4.551 0 .291-.231.964-1.888.964-1.662 0-2.759-.609-2.759-.609l-.495 2.216c0 0 1.063.606 3.117.606 2.059 0 4.915-1.54 4.915-3.752C30.354 23.586 26.369 23.394 26.369 22.206z"/><path fill="#FFC107" d="M12.212,24.945l-0.966-4.748c0,0-0.437-1.029-1.573-1.029c-1.136,0-4.44,0-4.44,0S10.894,20.84,12.212,24.945z"/></svg>
-                      -->
+
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="24px" height="24px">
+                                        <path fill="#F44336" d="M33 11A13 13 0 1 0 33 37A13 13 0 1 0 33 11Z" />
+                                        <path fill="#2196F3"
+                                            d="M28,24h-8c0-0.682,0.068-1.347,0.169-2h7.661c-0.105-0.685-0.255-1.354-0.464-2h-6.732c0.225-0.694,0.508-1.362,0.84-2h5.051c-0.369-0.709-0.804-1.376-1.293-2h-2.465c0.379-0.484,0.79-0.941,1.233-1.367c-0.226-0.218-0.455-0.432-0.696-0.633c-2.252-1.872-5.146-3-8.304-3C7.82,11,2,16.82,2,24s5.82,13,13,13c3.496,0,6.664-1.388,9-3.633c0.443-0.426,0.854-0.883,1.232-1.367h-2.465c-0.489-0.624-0.923-1.291-1.293-2h5.051c0.333-0.638,0.616-1.306,0.841-2h-6.732c-0.209-0.646-0.358-1.315-0.464-2h7.661C27.932,25.347,28,24.682,28,24z" />
+                                    </svg>
+
+
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="24px" height="24px">
+                                        <path fill="#1565C0"
+                                            d="M45,35c0,2.209-1.791,4-4,4H7c-2.209,0-4-1.791-4-4V13c0-2.209,1.791-4,4-4h34c2.209,0,4,1.791,4,4V35z" />
+                                        <path fill="#FFF"
+                                            d="M15.186 19l-2.626 7.832c0 0-.667-3.313-.733-3.729-1.495-3.411-3.701-3.221-3.701-3.221L10.726 30v-.002h3.161L18.258 19H15.186zM17.689 30L20.56 30 22.296 19 19.389 19zM38.008 19h-3.021l-4.71 11h2.852l.588-1.571h3.596L37.619 30h2.613L38.008 19zM34.513 26.328l1.563-4.157.818 4.157H34.513zM26.369 22.206c0-.606.498-1.057 1.926-1.057.928 0 1.991.674 1.991.674l.466-2.309c0 0-1.358-.515-2.691-.515-3.019 0-4.576 1.444-4.576 3.272 0 3.306 3.979 2.853 3.979 4.551 0 .291-.231.964-1.888.964-1.662 0-2.759-.609-2.759-.609l-.495 2.216c0 0 1.063.606 3.117.606 2.059 0 4.915-1.54 4.915-3.752C30.354 23.586 26.369 23.394 26.369 22.206z" />
+                                        <path fill="#FFC107"
+                                            d="M12.212,24.945l-0.966-4.748c0,0-0.437-1.029-1.573-1.029c-1.136,0-4.44,0-4.44,0S10.894,20.84,12.212,24.945z" />
+                                    </svg>
+
 
                                 </div>
                             </div>
@@ -176,16 +218,17 @@
 
                         <ul class="purchase-props">
                             <li class="flex-between">
-                                <span>Company</span>
+                                <span>Company: </span>
                                 <strong>BookFlix</strong>
                             </li>
                             <li class="flex-between">
-                                <span>Order number</span>
-                                <strong>429252965</strong>
+                                <span>Token: </span>
+                                <strong>{{ generateToken() }}</strong>
                             </li>
-                            <li class="flex-between">
-                                <span>Product</span>
-                                <strong>{{ seatLength }} ticket(s) of {{ movie }}</strong>
+                            <li class="flex-between space-x-8">
+                                <span>Product: </span>
+                                <strong>{{ seatLength }} ticket<strong v-if="seatLength !== 1">s</strong> of {{ movie
+                                }}</strong>
                             </li>
                             <li class="flex-between">
                                 <span>GST(18%)</span>
@@ -194,7 +237,7 @@
                         </ul>
                     </div>
                     <div class="separation-line"></div>
-                    <div class="total-section flex-between flex-vertical-center">
+                    <div class="total-section flex-between flex-vertical-center bg-red-100">
                         <div class="flex-fill flex-vertical">
                             <div class="total-label f-secondary-color">You have to Pay</div>
                             <div>
@@ -214,7 +257,7 @@
 
 
 <script>
-
+// import {router} from VueRouter
 export default {
     props: {
         payment: {
@@ -226,7 +269,7 @@ export default {
             required: true,
         },
         theater: {
-            type: String,
+            type: Object,
             required: true,
         },
         movie: {
@@ -245,6 +288,16 @@ export default {
             type: String,
             required: true,
         },
+    },
+    data() {
+        return {
+            cardNumber: '',
+            expiryMonth: '',
+            expiryYear: '',
+            showPassword: false,
+            cardholderName: '',
+            token: ''
+        };
     },
     mounted() {
         this.copyInputValuesToCardMockup();
@@ -273,7 +326,7 @@ export default {
         },
         startTimerCountdown() {
             const timer = document.querySelector('[data-id=timer]');
-            let timeLeft = 5 * 60 + 1;
+            let timeLeft = 5 * 60; // Set the initial time to 5 minutes
 
             const tick = () => {
                 if (timeLeft > 0) {
@@ -285,14 +338,64 @@ export default {
                     timer.children[1].innerText = str[15];
                     timer.children[3].innerText = str[17];
                     timer.children[4].innerText = str[18];
+                } else {
+                    // 5 minutes have passed, close the payment gateway or perform any necessary actions
+                    this.closePaymentGateway();
                 }
             };
 
             setInterval(() => {
                 tick();
             }, 1000);
+
             tick();
         },
+
+        closePaymentGateway() {
+            // router.push("/bookings")
+        },
+        payNow() {
+            // Handle payment submission using the form data
+            console.log('Form Data:', {
+                cardNumber: this.cardNumber,
+                expiryMonth: this.expiryMonth,
+                expiryYear: this.expiryYear,
+                cardholderName: this.cardholderName
+            });
+        },
+        generateToken() {
+            const {
+                payment,
+                seats,
+                theater,
+                movie,
+            } = this.$props;
+
+            // Get the first letter of the movie
+            const movieInitial = movie.charAt(0);
+
+            // Get the initials of the theater
+            const theaterInitials = theater.name
+                .split(' ')
+                .map(word => word.charAt(0))
+                .join('');
+
+            // Generate a random number
+            const randomNumber = Math.floor(Math.random() * 100000000);
+
+            // Combine the bits from the props and the random number to create the order number
+            this.token += `${movieInitial}${payment}${seats.length}${theaterInitials}${randomNumber}`;
+
+            // Trim or pad the order number to make it 10 characters long
+            if (this.token.length < 15) {
+                this.token = this.token.padEnd(15, '0');
+            } else if (this.token.length > 15) {
+                this.token = this.token.slice(0, 15);
+            }
+
+            return this.token;
+        }
+
     },
     computed: {
         seatLength() {
@@ -348,6 +451,7 @@ export default {
 .flex-vertical {
     display: flex;
     flex-direction: column;
+    justify-content: center;
 }
 
 .flex-vertical-center {
@@ -440,7 +544,7 @@ export default {
 }
 
 body {
-    font-size: 14px;
+    font-size: 16px;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -452,26 +556,16 @@ body {
     bottom: 0;
     right: 0;
     top: 0;
-    background: #E3F2FD;
 }
 
 .popup {
     position: relative;
     width: 50em;
     height: 35em;
-    background: #FFFFFF;
     overflow-x: hidden;
     overflow-y: auto;
 }
 
-.popup .close-btn {
-    position: absolute;
-    right: 0;
-    top: 0;
-    background: #FCFCFC;
-    border-bottom-left-radius: var(--radius-sm);
-    transition: background-color 0.25s ease-in-out;
-}
 
 .popup .close-btn:hover {
     background: #EF5350;
@@ -482,7 +576,7 @@ body {
 }
 
 .sidebar {
-    width: 16.5em;
+
     padding-left: 2em;
     padding-top: 5em;
 }
@@ -525,7 +619,6 @@ body {
 }
 
 .card-number {
-    background: #fafafa;
     border: var(--field-border);
     border-radius: var(--radius-md);
     padding: 0.5em 1em;
@@ -538,21 +631,17 @@ body {
 }
 
 .card-number-field input {
-    width: 3em;
+    width: 4em;
     height: 100%;
     padding: 0.5em 0;
-    margin: 0 0.75em;
-    border: none;
-    color: #888888;
-    background: transparent;
+    margin: 0.1em 0.75em;
+    color: black;
     text-align: center;
     font-family: inherit;
     font-weight: 500;
 }
 
 .timer span {
-    background: #311B92;
-    color: #FFFFFF;
     width: 1.2em;
     padding: 4px 0;
     display: inline-block;
@@ -634,8 +723,7 @@ body {
 .purchase-section {
     position: relative;
     overflow: visible;
-    padding: 0 1em 1em 1em;
-    background: var(--sidebar-color);
+    padding: 1em 1em 1em 1em;
     border-top-left-radius: 0.8em;
     border-top-right-radius: 0.8em;
 }
@@ -648,7 +736,7 @@ body {
     border-radius: 50%;
     left: -0.8em;
     bottom: -0.8em;
-    background: #FFFFFF;
+    background-color: rgb(51 65 85);
 }
 
 .purchase-section:after {
@@ -659,43 +747,9 @@ body {
     border-radius: 50%;
     right: -0.8em;
     bottom: -0.8em;
-    background: #FFFFFF;
+    background-color: rgb(51 65 85);
 }
 
-.card-mockup {
-    position: relative;
-    margin: -5em 1em 1.5em 1em;
-    padding: 1.5em 1.2em;
-    height: 15em;
-    border-radius: var(--radius-md);
-    background: #FFFFFF;
-    box-shadow: 0 0.5em 1em 0.125em rgba(0, 0, 0, 0.1);
-}
-
-.card-mockup:after {
-    content: '';
-    position: absolute;
-    width: 25%;
-    top: -0.2em;
-    left: 37.5%;
-    height: 0.2em;
-    background: var(--accent-color);
-    border-top-left-radius: 0.2em;
-    border-top-right-radius: 0.2em;
-}
-
-.card-mockup:before {
-    content: '';
-    position: absolute;
-    top: 0;
-    width: 25%;
-    left: 37.5%;
-    height: 0.5em;
-    background: #2962ff36;
-    border-bottom-left-radius: 0.2em;
-    border-bottom-right-radius: 0.2em;
-    box-shadow: 0 2px 15px 5px #2962ff4d;
-}
 
 .purchase-props {
     margin: 0;
@@ -715,16 +769,13 @@ body {
 }
 
 .separation-line {
-    border-top: 1px dashed #aaa;
+    border-top: 1.5px dashed #818080;
     margin: 0 0.8em;
 }
 
 .total-section {
     position: relative;
-    overflow: hidden;
-
     padding: 1em;
-    background: var(--sidebar-color);
     border-bottom-left-radius: 0.8em;
     border-bottom-right-radius: 0.8em;
 }
@@ -737,7 +788,7 @@ body {
     border-radius: 50%;
     left: -0.8em;
     top: -0.8em;
-    background: #FFFFFF;
+    background-color: rgb(51 65 85);
 }
 
 .total-section:after {
@@ -748,7 +799,7 @@ body {
     border-radius: 50%;
     right: -0.8em;
     top: -0.8em;
-    background: #FFFFFF;
+    background-color: rgb(51 65 85);
 }
 
 .total-label {

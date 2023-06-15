@@ -11,6 +11,7 @@ import MovieBook from '../components/moviebook.vue'
 import theatres from '../components/theater.vue'
 import hall from "../components/Hall.vue"
 import payment from "../components/payment.vue"
+import paySuccess from "../components/paySuccess.vue"
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -95,6 +96,23 @@ const router = createRouter({
         payment: parseInt(route.query.payment),
         seats: route.query.selectedSeats ? route.query.selectedSeats.split(',') : [],
         theater: route.query.theater ? JSON.parse(route.query.theater) : null,
+        movie: route.query.movie,
+        language: route.query.language,
+        city: route.query.city,
+        state: route.query.state
+      })
+    },
+    {
+      path: '/paySuccess',
+      name: 'paySuccess',
+      component: paySuccess,
+      props: route => ({
+        token: route.query.token,
+        cardNumber: route.query.cardNumber,
+        payment: parseInt(route.query.payment),
+        seatLength: parseInt(route.query.seatLength),
+        seats: route.query.seats ? route.query.seats : [],
+        theater: JSON.parse(route.query.theater),
         movie: route.query.movie,
         language: route.query.language,
         city: route.query.city,
