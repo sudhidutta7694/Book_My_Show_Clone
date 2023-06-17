@@ -1,96 +1,66 @@
 <template>
-    <div class="table rounded-xlṭ">
-      <div class="table-row bg-slate-900">
-        <div class="table-cell red-text capitalize font-bold text-center" v-for="(value, field) in bookingData" :key="field">
-          {{ field }}
-        </div>
-      </div>
-      <div class="table-row bg-slate-900">
-        <div class="table-cell" v-for="(value, field) in bookingData" :key="field">
-          <div v-if="field === 'theater'">
-            <div class="table-row">
-              <div class="table-cell subfield capitalize font-bold text-center" v-for="(subValue, subField) in value" :key="subField">
-                {{ subField }}
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="table-row">
-        <div class="table-cell" v-for="(value, field) in bookingData" :key="field">
-          <div v-if="field === 'theater'">
-            <div class="table-row">
-              <div class="table-cell subvalue " v-for="(subValue, subField) in value" :key="subField">
-                {{ subValue }}
-              </div>
-            </div>
-          </div>
-          <div v-else>
-            {{ value }}
-          </div>
-        </div>
-      </div>
-    </div>
-  </template>
-  
-  <style>
-  .table {
-    display: table;
-    width: 100%;
-    border-collapse: collapse;
-    background-color: #374151;
-    border-radius: 20px 20px;
-    border: none;
-  }
-  
-  .table-row {
-    display: table-row;
-  }
-  
-  .table-cell {
-    display: table-cell;
-    text-align: center;
-    padding: 8px;
-    color: #d1d5db;
-  }
-  
-  .red-text {
-    color: #e68585;
-  }
-  
-  .capitalize {
-    text-transform: capitalize;
-  }
-  
-  .font-bold {
-    font-weight: bold;
-  }
-  
-  .subfield {
-    color: #e68585;
-  }
-  
-  .subvalue {
-    color: #d1d5db;
-  }
-  
-  .bg-slate-900 {
-    background-color: #131820;
-  }
-  
-  .text-red-200 {
-    color: #f87171;
-  }
-  </style>
-  
-  <script>
-  export default {
-    props: {
-      bookingData: {
-        type: Object,
-        required: true
-      }
-    }
-  };
-  </script>
-  
+  <table class="table rounded-xl shadow-2xl">
+    <thead class="rounded-t-xl">
+      <tr class="bg-slate-900 font-bold text-red-200">
+        <th>City</th>
+        <th>Language</th>
+        <th>Movie</th>
+        <th>Payment</th>
+        <th>Seat Length</th>
+        <th>State</th>
+        <th>Theater ID</th>
+        <th>Timing</th>
+        <th>Day</th>
+        <th>Token</th>
+      </tr>
+    </thead>
+    <tbody class="rounded-b-xl">
+      <tr class="bg-slate-600 font-sans text-gray-100" v-for="booking in bookingData" :key="booking.token">
+        <td>{{ booking.city }}</td>
+        <td>{{ booking.language }}</td>
+        <td>{{ booking.movie }}</td>
+        <td>{{ booking.payment }}</td>
+        <td>{{ booking.seatLength }}</td>
+        <td>{{ booking.state }}</td>
+        <td>{{ booking.theater.id }}</td>
+        <td>{{ booking.theater.timing }}</td>
+        <td>{{ booking.theater.day }}</td>
+        <td>{{ booking.token }}</td>
+      </tr>
+    </tbody>
+  </table>
+</template>
+
+
+<script>
+export default {
+  props: {
+    bookingData: {
+      type: Array,
+      required: true,
+    },
+  },
+};
+</script>
+
+<style scoped>
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  border-radius: 16px;
+}
+
+th, td {
+  padding: 12px;
+  text-align: center;
+}
+
+th {
+  font-size: 16px;
+  font-weight: bold;
+}
+
+td {
+  font-size: 16px;
+}
+</style>style

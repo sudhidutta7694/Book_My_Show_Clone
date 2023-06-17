@@ -2,22 +2,22 @@
 <template>
     <div class="content bg-slate-800 min-h-screen flex flex-col gap-4 justify-center items-center">
       <div class="mt-12 filters flex justify-end items-center gap-4">
-        <label for="language" class="text-gray-200 font-semi-bold text-2xl self-center">Language:</label>
-        <select id="language" v-model="selectedLanguage" class="w-32 border border-black">
+        <label for="language" class="text-red-200 font-semi-bold text-2xl self-center">Language:</label>
+        <select id="language" v-model="selectedLanguage" class="w-32 border p-2 rounded-lg bg-slate-900 text-center text-xl font-mono text-red-200 border-red-200">
           <option value="">All</option>
           <option v-for="(language, index) in languages" :key="index" :value="language.code">{{ language.name }}</option>
         </select>
   
-        <label for="genre" class="text-gray-200 font-semi-bold text-2xl self-center">Genre:</label>
-        <select id="genre" v-model="selectedGenre" class="w-32 border border-black">
+        <label for="genre" class="text-red-200 font-semi-bold text-2xl self-center">Genre:</label>
+        <select id="genre" v-model="selectedGenre" class="w-32 border p-2 rounded-lg bg-slate-900 text-center text-xl font-mono text-red-200 border-red-200">
           <option value="">All</option>
           <option v-for="genre in genres" :key="genre.id" :value="genre.id">{{ genre.name }}</option>
         </select>
   
-        <label for="year" class="text-gray-200 font-semi-bold text-2xl self-center">Year:</label>
-        <input type="text" id="year" v-model="selectedYear" class="w-32 border border-black" />
+        <label for="year" class="text-red-200 font-semi-bold text-2xl self-center">Year:</label>
+        <input type="text" id="year" v-model="selectedYear" class="w-32 border p-2 rounded-lg bg-slate-900 text-center text-xl font-mono text-red-200 border-red-200" />
   
-        <button @click="applyFilters" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+        <button @click="applyFilters" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
           Apply Changes
         </button>
       </div>

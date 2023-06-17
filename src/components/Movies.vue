@@ -10,125 +10,137 @@
       <div class="relative">
         <router-link :to="{ name: 'overview', params: { id: movie.id } }"><img :src="getImageUrl(movie.poster_path)"
             :alt="movie.title" class="rounded-lg shadow-lg"></router-link>
-        <div class="favorite-icon" @click="favoriteMovie(movie.id)" :class="{ clicked: favorites.includes(movie.id) }">
-          <i class="fa"
-            :class="['fa-heart', { 'fas': favorites.includes(movie.id), 'far': !favorites.includes(movie.id) }]"></i>
-        </div>
       </div>
       <div class="mt-4 text-center">
-        <h3 class="text-gray-100 text-lg font-semibold">{{ movie.title }}</h3>
-        <p class="text-gray-300">IMDB Rating: {{ movie.vote_average }}</p>
+        <h3 class="text-red-200 text-xl font-serif font-semibold">{{ movie.title }}</h3>
+        <p class="text-gray-200 font-mono text-lg">IMDB Rating: {{ movie.vote_average }}</p>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import { useStore } from '@/store';
+import { ref, computed, onMounted } from 'vue';
+import { getFirestore, collection, setDoc, onSnapshot, deleteDoc, doc, getDoc } from 'firebase/firestore';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
-import { getFirestore, collection, doc, getDocs, setDoc, deleteDoc, FieldValue } from 'firebase/firestore';
+import { useStore } from '@/store';
 
 export default {
-  data() {
-    return {
-      movies: [],
-      loading: true,
-      favorites: [] // Array to store the favorite movie IDs
-    };
-  },
-  async mounted() {
+  setup() {
+    const favorites = ref([]);
+    const movies = ref([]);
+    const loading = ref(true);
+    const db = getFirestore(); // Initialize the Firestore database
 
-    const auth = getAuth();
-    const db = getFirestore();
-
-    // Check if a user is logged in
-    onAuthStateChanged(auth, user => {
-      if (user) {
-        // User is logged in, fetch their favorite movies
-        this.fetchFavoriteMovies(user.uid, db);
-      } else {
-        // User is not logged in, clear the favorites array
-        this.favorites = [];
-      }
-    });
-
-    // Fetch popular movies
-    try {
-      const response = await fetch(
-        `https://api.themoviedb.org/3/movie/popular?api_key=1dc8f67cb5ee2d801ef91ff145b4c3a9&page=1&total_pages=1000`
-      );
-      const data = await response.json();
-      this.movies = data.results;
-      this.loading = false;
-      console.log(data);
-    } catch (error) {
-      console.error('Error:', error);
-    }
-  },
-  methods: {
-    getImageUrl(posterPath) {
-      if (!posterPath) {
-        return 'https://via.placeholder.com/500x750.png?text=No+Poster+Available';
-      }
-      return `https://image.tmdb.org/t/p/w780${posterPath}`;
-    },
-    handleMovieClick(movieId) {
-      console.log('Clicked movie ID:', movieId);
-    },
-    favoriteMovie(movieId) {
+    async function favoriteMovie(movieId) {
       const { uid } = useStore(); // Get the Pinia store instance
       const user = uid;
       const db = getFirestore(); // Access the Firestore instance
 
       if (user) {
-        // User is logged in, add/remove movie from favorites in Firestore
-        const favoritesRef = doc(db, 'users', user);
-        const index = Array.isArray(this.favorites) ? this.favorites.indexOf(movieId) : -1;
-        if (index > -1) {
-          // Remove from favorites
-          this.favorites.splice(index, 1);
-          // Construct the update object to remove the movieId from favorites array
-          const updateObj = {
-            favorites: this.favorites
+        try {
+          const favoritesData = {
+            movieId: movieId
           };
 
-          // Update the favorites field in the user's document
-          setDoc(favoritesRef, updateObj, { merge: true });
-        } else {
-          // Add to favorites
-          this.favorites.push(movieId);
-          console.log(this.favorites)
-          // Construct the update object to add the movieId to favorites array
-          const updateObj = {
-            favorites: this.favorites
-          };
+          const favoritesCollectionRef = collection(db, 'users', user, 'favorites');
+          const favoriteDocRef = doc(favoritesCollectionRef, movieId.toString());
 
-          // Update the favorites field in the user's document
-          setDoc(favoritesRef, updateObj, { merge: true });
+          // Check if the movie is already favorited
+          const favoriteDocSnapshot = await getDoc(favoriteDocRef);
+          if (favoriteDocSnapshot.exists() && favoriteDocSnapshot.data().movieId === movieId) {
+            // Movie is already favorited, remove it from favorites
+            await deleteDoc(favoriteDocRef);
+            favorites.value = favorites.value.filter(id => id !== movieId);
+          } else {
+            // Movie is not favorited, add it to favorites
+            await setDoc(favoriteDocRef, favoritesData);
+            favorites.value.push(movieId);
+          }
+
+          // Update the favorites in the Pinia store
+          const store = useStore();
+          store.updateFavorites(favorites.value);
+        } catch (error) {
+          console.error('Error updating favorite movie:', error);
         }
-        // Update the favorites in the Pinia store
-        const store = useStore()
-        store.updateFavorites(this.favorites);
       } else {
         // User is not logged in, prompt them to log in
         alert('Please log in to add movies to your favorites.');
       }
     }
-    ,
 
-    fetchFavoriteMovies(userId, db) {
-      const favoritesRef = collection(doc(db, 'users', userId), 'favorites');
-      getDocs(favoritesRef)
-        .then(querySnapshot => {
-          this.favorites = querySnapshot.docs.map(doc => doc.data().movieId);
-        })
-        .catch(error => {
-          console.error('Error fetching favorites:', error);
-        });
+
+
+
+
+    // Fetch popular movies
+    async function fetchPopularMovies() {
+      try {
+        const response = await fetch(
+          `https://api.themoviedb.org/3/movie/popular?api_key=1dc8f67cb5ee2d801ef91ff145b4c3a9&page=1&total_pages=1000`
+        );
+        const data = await response.json();
+        movies.value = data.results;
+        loading.value = false;
+        console.log(data);
+      } catch (error) {
+        console.error('Error fetching popular movies:', error);
+      }
     }
+
+    onMounted(fetchPopularMovies);
+
+    const getImageUrl = (posterPath) => {
+      if (!posterPath) {
+        return 'https://via.placeholder.com/500x750.png?text=No+Image';
+      }
+      return `https://image.tmdb.org/t/p/w500${posterPath}`;
+    };
+
+    const handleMovieClick = (movie) => {
+      console.log('Clicked movie:', movie);
+    };
+
+    // Fetch favorite movies for the authenticated user
+    const fetchFavoriteMovies = (userId) => {
+      const favoritesCollectionRef = collection(db, `users/${userId}/favorites`);
+      onSnapshot(favoritesCollectionRef, (querySnapshot) => {
+        const favoritesData = [];
+        querySnapshot.forEach((doc) => {
+          if (doc.exists()) {
+            const favoriteData = doc.data();
+            favoritesData.push(favoriteData.movieId);
+          }
+        });
+        favorites.value = favoritesData; // Update the favorites ref with the retrieved data
+        console.log('Favorites retrieved successfully!\nFavorites:', favorites.value);
+      });
+    };
+
+    // Handle authentication state changes
+    onMounted(() => {
+      const auth = getAuth();
+      onAuthStateChanged(auth, (user) => {
+        if (user) {
+          const userId = user.uid;
+          fetchFavoriteMovies(userId);
+        }
+      });
+    });
+
+    return {
+      favorites,
+      movies,
+      loading,
+      favoriteMovie,
+      getImageUrl,
+      handleMovieClick
+    };
   }
 };
 </script>
+
 
 <style scoped>
 .content {
@@ -147,7 +159,7 @@ export default {
 .favorite-icon .fa {
   font-size: 20px;
   color: red;
-  transition: all 0.3s ease-in-out;
+  transition: all 0.3s ease-out;
 }
 
 .favorite-icon .fa.fas {

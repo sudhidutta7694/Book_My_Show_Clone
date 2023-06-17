@@ -11,13 +11,13 @@
                 <div class="ml-5 flex flex-col items-center justify-center gap-10">
                     <div class="flex justify-between mt-6 w-[40vw]">
                         <div class="flex flex-col w-[40vw] text-center">
-                            <p class="text-4xl font-bold text-gray-300">{{ getMovieTitle(movieId) }}</p>
-                            <span class="text-gray-400 text-md ">{{ getMovieDetails(movieId).votePercentage }}% | {{
+                            <p class="text-4xl font-bold font-serif text-red-300">{{ getMovieTitle(movieId) }}</p>
+                            <span class="text-slate-300 text-md font-mono">{{ getMovieDetails(movieId).votePercentage }}% | {{
                                 getMovieDetails(movieId).releaseDate }} | {{ getMovieDetails(movieId).genre }}</span>
                         </div>
                     </div>
 
-                    <p class="mt-5 text-gray-400 text-xl text-center w-[35vw]">
+                    <p class="mt-5 text-red-200 font-sans text-xl text-center w-[35vw]">
                         {{ getMovieOverview(movieId) }}
                     </p>
                     <router-link :to="{ name: 'theater', query: { movie: getMovieTitle(id), language: language, city: city, state: state  } }"
@@ -28,7 +28,7 @@
             </div>
         </div>
         <div class="mt-12 mb-11 px-5 py-4 w-[80vw] text-center">
-            <h1 class="font-bold text-gray-300 text-4xl">Cast</h1>
+            <h1 class="font-bold text-4xl font-serif text-red-300">Cast</h1>
         </div>
         <div
             class="border-b border-gray-500 p-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-7 gap-4">
@@ -40,7 +40,7 @@
             </div>
         </div>
         <div class="px-5 py-4 ">
-            <h1 class="mt-12 mb-11 text-4xl font-bold text-gray-300">Images</h1>
+            <h1 class="mt-12 mb-11 text-4xl font-bold font-serif text-red-300">Images</h1>
         </div>
         <div
             class="w-[80vw] border-b border-gray-500 p-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">

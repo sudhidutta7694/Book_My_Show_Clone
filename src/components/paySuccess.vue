@@ -46,7 +46,7 @@
 
 import { useStore } from '@/store';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
-import { getFirestore, collection, doc, getDocs, setDoc, deleteDoc, FieldValue } from 'firebase/firestore';
+import { getFirestore, collection, doc, getDocs, addDoc, deleteDoc, FieldValue } from 'firebase/firestore';
 
 export default {
     props: {
@@ -128,8 +128,8 @@ export default {
                 };
 
                 // Store the booking data in Firestore
-                const bookingRef = doc(db, 'users', user, 'booking', 'bookingData');
-                setDoc(bookingRef, bookingData)
+                const bookingCollectionRef = collection(db, 'users', user, 'booking');
+                addDoc(bookingCollectionRef, bookingData)
                     .then(() => {
                         console.log('Booking data saved successfully!');
                     })
