@@ -231,8 +231,8 @@
                                 }}</strong>
                             </li>
                             <li class="flex-between">
-                                <span>GST(18%)</span>
-                                <strong>{{ 0.18 * payment }}</strong>
+                                <span>GST(18%): </span>
+                                <strong>₹{{ 0.18 * payment }}</strong>
                             </li>
                         </ul>
                     </div>
@@ -242,7 +242,7 @@
                             <div class="total-label f-secondary-color">You have to Pay</div>
                             <div>
                                 <strong>{{ 1.18 * payment }}</strong>
-                                <small> <span class="f-secondary-color">Rupees</span></small>
+                                <small> <span class="f-secondary-color"> Rupees Only/-</span></small>
                             </div>
                         </div>
                         <i class="ai-coin size-lg"></i>

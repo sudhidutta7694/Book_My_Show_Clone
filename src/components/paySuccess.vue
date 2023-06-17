@@ -1,10 +1,20 @@
 <template>
-    <div class="mt-[-55vh] bg-slate-800 p-12">
+    <div class="mt-[-55vh] bg-slate-800 p-6 md:p-12">
+        <div >
+            <router-link to="/bookings" class="relative flex justify-center item-center">
+                <button id="bookingButton" @click="storeBookingData" :class="{ 'disabled-button': isButtonDisabled }"
+                    :disabled="isButtonDisabled"
+                    class="bg-red-600 absolute  z-10000 h-16 w-64 mt-[70vh] text-lg font-sans shadow-xl rounded-lg font-semibold text-white p-4 hover:bg-red-700"
+                    disabled>
+                    Continue to Bookings
+                </button>
+            </router-link>
+        </div>
         <div class="container h-screen">
-            <div class="m-96 printer-top"></div>
+            <div class="m-4 md:m-96 printer-top"></div>
 
             <div class="paper-container">
-                <div class="bg-slate-800 printer-bottom"></div>
+                <div class="printer-bottom"></div>
 
                 <div class="paper">
                     <div class="main-contents flex flex-col justify-center items-center">
@@ -13,7 +23,11 @@
                             Payment of ₹{{ payment }} Complete
                         </div>
                         <div class="success-description">
-                            Hurray! You have succesfully booked {{ seatLength }} seat<span v-if="seatLength !== 1">s</span> of {{movie}} (language: {{ language }}) in {{ theater.name }}, {{ city }}.<br> Be ready to enjoy the movie at {{ theater.timing }} on {{ theater.day }}
+                            Hurray! You have successfully booked {{ seatLength }} seat
+                            <span v-if="seatLength !== 1">s</span> of {{ movie }} (language:
+                            {{ language }}) in {{ theater.name }}, {{ city }}
+                            <br />Be ready to enjoy the movie at {{ theater.timing }} on
+                            {{ theater.day }}
                         </div>
                         <div class="order-details">
                             <div class="order-number-label">Token no.</div>
@@ -27,8 +41,13 @@
         </div>
     </div>
 </template>
-
+  
 <script>
+
+import { useStore } from '@/store';
+import { getAuth, onAuthStateChanged } from 'firebase/auth';
+import { getFirestore, collection, doc, getDocs, setDoc, deleteDoc, FieldValue } from 'firebase/firestore';
+
 export default {
     props: {
         token: {
@@ -36,7 +55,7 @@ export default {
             required: true,
         },
         cardNumber: {
-            type: Number,
+            type: String,
             required: true,
         },
         seatLength: {
@@ -72,9 +91,66 @@ export default {
             required: true,
         },
     },
-}
-</script>
+    data() {
+        return {
+            isButtonDisabled: true,
+            bookingData: {
+                token: '',
+                cardNumber: 0,
+                payment: 0,
+                seatLength: 0,
+                theater: {},
+                movie: '',
+                language: '',
+                city: '',
+                state: '',
+            },
+        };
+    },
+    methods: {
+        storeBookingData() {
+            const { uid } = useStore(); // Get the Pinia store instance
+            const user = uid;
+            const db = getFirestore(); // Access the Firestore instance
 
+            if (user) {
+                // Construct the booking data object
+                const bookingData = {
+                    token: this.token,
+                    cardNumber: this.cardNumber,
+                    payment: this.payment,
+                    seatLength: this.seatLength,
+                    theater: this.theater,
+                    movie: this.movie,
+                    language: this.language,
+                    city: this.city,
+                    state: this.state
+                };
+
+                // Store the booking data in Firestore
+                const bookingRef = doc(db, 'users', user, 'booking', 'bookingData');
+                setDoc(bookingRef, bookingData)
+                    .then(() => {
+                        console.log('Booking data saved successfully!');
+                    })
+                    .catch(error => {
+                        console.error('Error saving booking data:', error);
+                    });
+            } else {
+                // User is not logged in, prompt them to log in
+                alert('Please log in to store the booking data.');
+            }
+        }
+
+    },
+    mounted() {
+        setTimeout(() => {
+            this.isButtonDisabled = false;
+        }, 3000);
+    },
+};
+</script>
+  
 <style scoped>
 .container {
     width: fit-content;
@@ -82,18 +158,19 @@ export default {
 }
 
 .printer-top {
-    z-index: 1000;
-    border: 6px solid #666666;
-    height: 6px;
+    z-index: 1;
+    border: 12px solid #666666;
+    height: 12px;
     border-bottom: 0;
     border-radius: 6px 6px 0 0;
     background: #333333;
 }
 
 .printer-bottom {
+    width: 100%;
     z-index: 0;
-    border: 6px solid #666666;
-    height: 6px;
+    border: 12px solid #666666;
+    height: 12px;
     border-top: 0;
     border-radius: 0 0 6px 6px;
     background: #333333;
@@ -121,10 +198,11 @@ export default {
 }
 
 .jagged-edge {
-    position: relative;
+    position: absolute;
+    background: rgb(30, 41, 59);
     height: 20px;
     width: 100%;
-    margin-top: -1px;
+    bottom: 0;
 }
 
 .jagged-edge:after {
@@ -134,7 +212,8 @@ export default {
     left: 0;
     right: 0;
     height: 20px;
-    background: linear-gradient(45deg, transparent 33.333%, #ffffff 33.333%, #ffffff 66.667%, transparent 66.667%), linear-gradient(-45deg, transparent 33.333%, #ffffff 33.333%, #ffffff 66.667%, transparent 66.667%);
+    background: linear-gradient(45deg, transparent 33.333%, #ffffff 33.333%, #ffffff 66.667%, transparent 66.667%),
+        linear-gradient(-45deg, transparent 33.333%, #ffffff 33.333%, #ffffff 66.667%, transparent 66.667%);
     background-size: 16px 40px;
     background-position: 0 -20px;
 }
@@ -152,7 +231,7 @@ export default {
 }
 
 .success-title {
-    font-size: 22px;
+    font-size: 24px;
     text-align: center;
     color: #666;
     font-weight: bold;
@@ -160,9 +239,9 @@ export default {
 }
 
 .success-description {
-    font-size: 15px;
+    font-size: 16px;
     line-height: 21px;
-    color: #999;
+    color: #848383;
     text-align: center;
     margin-bottom: 24px;
 }
@@ -196,6 +275,12 @@ export default {
     color: #999;
 }
 
+.disabled-button {
+    color: black;
+    background-color: #999999;
+    cursor: not-allowed;
+}
+
 @keyframes print {
     0% {
         transform: translateY(-90%);
@@ -206,5 +291,4 @@ export default {
     }
 }
 </style>
-
-
+  

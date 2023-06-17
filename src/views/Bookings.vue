@@ -1,6 +1,10 @@
 <!-- eslint-disable vue/multi-word-component-names -->
 <template>
-  <div class="bg-slate-800 p-96 h-screen flex justify-center items-center">
+  <div class="bg-slate-800 p-96 h-screen flex gap-24  flex-col-reverse justify-center items-center">
+    <div>
+      <p class="text-xl mb-6 font-bold text-red-400">Recent Bookings:-</p>
+      <TableComponent class="bg-white" :bookingData="bookingData" />
+    </div>
     <div class="bg-slate-700 location-container p-6 w-96 rounded-xl">
       <h2 class="text-white font-semibold mb-6 text-center text-2xl">Location Information</h2>
 
@@ -30,18 +34,43 @@
 </template>
 
 <script>
+import TableComponent from '@/components/TableComponent.vue';
+import { db, auth } from '@/firebase.js';
+import { doc, onSnapshot } from 'firebase/firestore';
+import { onAuthStateChanged } from 'firebase/auth';
 import axios from 'axios';
 import languagesData from '../components/languages.json';
 
 export default {
+  components: {
+    TableComponent
+  },
   data() {
     return {
+      bookingData: null,
       location: null,
       loading: true,
       error: null,
       apiKey: 'f242c2d97d84a0f2c3f287db26198b93',
-      languages: []
+      languages: [],
     };
+  },
+  created() {
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        const userId = user.uid;
+        const bookingRef = doc(db, `users/${userId}/booking`, 'bookingData');
+        onSnapshot(bookingRef, (doc) => {
+          if (doc.exists()) {
+            this.bookingData = doc.data();
+            console.log("Booking data retrieved succesfully!")
+          } else {
+            this.bookingData = null;
+            alert("Unable to retrieve Booking data")
+          }
+        });
+      }
+    });
   },
   mounted() {
     this.fetchLocation();

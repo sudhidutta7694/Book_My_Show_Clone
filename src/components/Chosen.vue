@@ -14,12 +14,16 @@
             <div class="language-row" v-for="(languageMovies, language) in movies" :key="language">
               <h3 class="ml-4 text-2xl text-gray-200 font-semibold mb-2">{{ getLanguageName(language) }} Movies:</h3>
               <div class="content p-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-8">
-                <div class="flex flex-col justify-center items-center bg-slate-800 rounded-xl hover:opacity-70 transition-all ease-in-out duration-400"
+                <div
+                  class="flex flex-col justify-center items-center bg-slate-800 rounded-xl hover:opacity-70 transition-all ease-in-out duration-400"
                   v-for="movie in languageMovies" :key="movie.id" @click="showDetails(movie.id)">
-                  <router-link :to="{ name: 'moviebook', query: { id: movie.id, language: getLanguageName(language), city: city, state: state} }"><div class="movie-poster">
-                    <img :src="getMoviePosterURL(movie.poster_path)" :alt="movie.title"
-                      class="rounded-lg h-max hover:shadow-xl" />
-                  </div></router-link>
+                  <router-link
+                    :to="{ name: 'moviebook', query: { id: movie.id, language: getLanguageName(language), city: city, state: state } }">
+                    <div class="movie-poster">
+                      <img :src="getMoviePosterURL(movie.poster_path)" :alt="movie.title"
+                        class="rounded-lg h-max hover:shadow-xl" />
+                    </div>
+                  </router-link>
                   <div class="movie-details text-center text-white flex flex-col items-center justify-center">
                     <h4 class="text-xl font-semibold mb-1">{{ movie.title }}</h4>
                     <p>IMDb Rating: {{ movie.vote_average }}</p>
@@ -63,10 +67,37 @@ export default {
       error: null,
       apiKey: '1dc8f67cb5ee2d801ef91ff145b4c3a9',
       languageList: {
+        as: 'Assamese',
         bn: 'Bengali',
+        en: 'English',
+        gu: 'Gujarati',
         hi: 'Hindi',
-        en: 'English'
-        // Add more languages and their codes here
+        kn: 'Kannada',
+        ks: 'Kashmiri',
+        ml: 'Malayalam',
+        mr: 'Marathi',
+        ne: 'Nepali',
+        or: 'Odia',
+        pa: 'Punjabi',
+        sa: 'Sanskrit',
+        ta: 'Tamil',
+        te: 'Telugu',
+        ur: 'Urdu',
+        bo: 'Bodo',
+        kok: 'Konkani',
+        mai: 'Maithili',
+        mni: 'Manipuri',
+        sat: 'Santali',
+        snd: 'Sindhi',
+        kok: 'Konkani',
+        dog: 'Dogri',
+        kok: 'Kokborok',
+        brx: 'Bodo',
+        doi: 'Dogri',
+        gom: 'Konkani',
+        kha: 'Khasi',
+        kks: 'Kokborok',
+        kru: 'Kurukh'
       }
     };
   },

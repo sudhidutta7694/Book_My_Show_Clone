@@ -13,7 +13,7 @@
               class="p-4 text-xl font-serif font-semibold border border-spacing-x-3 border-red-300 bg-slate-900 rounded flex gap-4">
               <option value="" hidden>Please Select a Date</option>
               <option class="m-4 text-xl font-serif font-semibold border border-red-600 bg-slate-900 rounded-full"
-                v-for="day in filteredDays" :key="day.value.slice(0, -7)" :value="day.value.slice(0, -7)">{{ day.value }}
+                v-for="day in days" :key="day.value.slice(0, -7)" :value="day.value.slice(0, -7)">{{ day.value }}
               </option>
             </select>
           </div>
@@ -94,20 +94,21 @@ export default {
   },
   computed: {
     filteredDays() {
-      return this.days.filter(day => day.value !== 'Sunday');
+      return this.days.filter(day => day.value);
     },
     days() {
       const currentDate = new Date();
       const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
-      const currentDayIndex = currentDate.getDay();
-      const nextDayIndex = (currentDayIndex + 1) % 7;
-      const dayAfterNextIndex = (currentDayIndex + 2) % 7;
+      const DayIndex = (currentDate.getDay());
+      const currentDayIndex = (DayIndex + 1) % 7;
+      const nextDayIndex = (DayIndex + 2) % 7;
+      const dayAfterNextIndex = (DayIndex + 3) % 7;
 
       return [
-        { label: 'Today', value: days[currentDayIndex] + ' ' + this.getFormattedDate(currentDate, 0) },
-        { label: 'Tomorrow', value: days[nextDayIndex] + ' ' + this.getFormattedDate(currentDate, 1) },
-        { label: 'Day After Tomorrow', value: days[dayAfterNextIndex] + ' ' + this.getFormattedDate(currentDate, 2) }
+        { label: 'Today', value: days[currentDayIndex] + ' ' + this.getFormattedDate(currentDate, 1) },
+        { label: 'Tomorrow', value: days[nextDayIndex] + ' ' + this.getFormattedDate(currentDate, 2) },
+        { label: 'Day After Tomorrow', value: days[dayAfterNextIndex] + ' ' + this.getFormattedDate(currentDate, 3) }
       ];
     },
     filteredTheaters() {
