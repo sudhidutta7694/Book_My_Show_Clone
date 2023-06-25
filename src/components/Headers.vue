@@ -5,7 +5,7 @@
       <div class="flex justify-around items-center py-2 sm:py-4 md:py-6 lg:py-8">
         <div class="flex items-center justify-around">
           <router-link v-if="isMenuOpen" to="/home" class=" md:ml-[-100px] flex items-center mr-6">
-            <img class="h-8 sm:h-12 md:h-20" src="../public/favicon.ico" alt="Logo" />
+            <img class="h-8 sm:h-12 md:h-20" src="../../public/favicon.ico" alt="Logo" />
           </router-link>
           <div v-if="isMenuOpen" class="w-full block md:hidden bg-gray-900">
             <div class="flex justify-around w-full">
