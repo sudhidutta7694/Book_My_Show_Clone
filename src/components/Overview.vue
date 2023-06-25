@@ -2,8 +2,7 @@
 
 <template>
   <div class="bg-slate-800 flex flex-col justify-center items-center flex-center">
-    <div class="w-[60vw] relative"> {{ playTrailer(movieId) }}
-      <p class="absolute z-1000 text-white text-2xl">Trailer</p>
+    <div class="mt-[-50px] sm:mt-0 w-[80vw] sm:w-[60vw] relative"> {{ playTrailer(movieId) }}
       <div class="trailer-player rounded-2xl shadow-red-200 shadow-md hover:shadow-red-300 transition-colors hover:shadow-xl duration-300">
 
         <div class="player-wrapper rounded-2xl">
@@ -14,7 +13,7 @@
 
     <div class="mt-5 container mx-auto flex border-b border-gray-600 pb-4 mx-30 items-center justify-center">
       <div class="ml-5 flex flex-col items-center justify-center gap-10">
-        <div class="flex justify-between mt-6 w-[58vw]">
+        <div class="flex justify-between mt-6 w-[79vw] sm:w-[59vw]">
           <div class="flex flex-col">
             <p class="text-4xl font-bold font-serif text-red-300">{{ getMovieTitle(movieId) }}</p>
             <span class="text-slate-300 text-md font-mono">{{ getMovieDetails(movieId).votePercentage }}% | {{
@@ -25,7 +24,7 @@
           </div>
         </div>
 
-        <p class="mt-5 text-red-200 font-sans text-xl text-center w-[70vw]">
+        <p class="mt-5 text-red-200 font-sans text-xl text-center w-[80vw] sm:w-[70vw]">
           {{ getMovieOverview(movieId) }}
         </p>
         <div class="mt-5 flex gap-3">
@@ -313,10 +312,6 @@ export default {
 
 
 <style scoped>
-.content {
-  margin-top: 140px;
-}
-
 .trailer-player {
   margin-top: 160px;
   position: relative;

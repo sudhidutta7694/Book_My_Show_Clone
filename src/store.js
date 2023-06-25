@@ -5,9 +5,22 @@ export const useStore = defineStore('store', {
   state: () => ({
     username: '',
     uid: '',
+    userImage: '',
     favorites: [],
   }),
   actions: {
+    async setUsername(username, uid) {
+      this.username = username;
+      this.uid = uid;
+      // ... existing code
+    },
+    // ... existing code
+    setUserImage(image) {
+      this.userImage = image;
+    },
+    getUserImage() {
+      return this.userImage;
+    },
     async setUsername(username, uid) {
       this.username = username;
       this.uid = uid;

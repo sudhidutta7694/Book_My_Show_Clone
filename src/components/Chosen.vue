@@ -1,6 +1,6 @@
 <!-- eslint-disable vue/multi-word-component-names -->
 <template>
-  <div class="bg-slate-700">
+  <div class="bg-slate-800">
     <div class="mt-32 p-6 movies-container">
       <!-- <h2 class="text-3xl text-gray-100 font-bold mb-4">Movies</h2> -->
 
@@ -15,18 +15,17 @@
               <h3 class="ml-4 text-2xl text-gray-200 font-semibold mb-2">{{ getLanguageName(language) }} Movies:</h3>
               <div class="content p-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-8">
                 <div
-                  class="flex flex-col justify-center items-center bg-slate-800 rounded-xl hover:opacity-70 transition-all ease-in-out duration-400"
+                  class="flex flex-col justify-stretch gap-3 pb-1 items-center bg-slate-700 rounded-xl hover:opacity-70 transition-all ease-in duration-300"
                   v-for="movie in languageMovies" :key="movie.id" @click="showDetails(movie.id)">
                   <router-link
                     :to="{ name: 'moviebook', query: { id: movie.id, language: getLanguageName(language), city: city, state: state } }">
                     <div class="movie-poster">
-                      <img :src="getMoviePosterURL(movie.poster_path)" :alt="movie.title"
-                        class="rounded-lg h-max hover:shadow-xl" />
+                      <img :src="getMoviePosterURL(movie.poster_path)" :alt="movie.title" class="rounded-lg shadow-lg" />
                     </div>
                   </router-link>
-                  <div class="movie-details text-center text-white flex flex-col items-center justify-center">
-                    <h4 class="text-xl font-semibold mb-1">{{ movie.title }}</h4>
-                    <p>IMDb Rating: {{ movie.vote_average }}</p>
+                  <div class="text-center">
+                    <h3 class="text-red-200 text-xl font-serif font-semibold">{{ movie.title }}</h3>
+                    <p class="text-gray-200 font-mono text-lg">IMDB Rating: {{ movie.vote_average }}</p>
                   </div>
                 </div>
               </div>

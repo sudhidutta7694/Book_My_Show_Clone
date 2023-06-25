@@ -3,15 +3,15 @@
   <div v-if="loading" class="bg-gray-900 min-h-screen flex justify-center items-center">
     <img src="https://cdn.dribbble.com/users/121337/screenshots/916951/small-load.gif" alt="Loading ...">
   </div>
-  <div class="bg-slate-800 content mt-8 p-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-8">
+  <div class="bg-slate-800 p-2 pt-20 sm:pt-40 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
     <div
-      class="flex flex-col justify-center items-center bg-slate-700 rounded-xl hover:opacity-70 transition-all ease-in-out duration-400"
+      class="flex flex-col justify-stretch gap-3 pb-1 items-center bg-slate-700 rounded-xl hover:opacity-70 transition-all ease-in duration-300"
       v-for="movie in movies" :key="movie.id" @click="handleMovieClick(movie.id)">
       <div class="relative">
         <router-link :to="{ name: 'overview', params: { id: movie.id } }"><img :src="getImageUrl(movie.poster_path)"
             :alt="movie.title" class="rounded-lg shadow-lg"></router-link>
       </div>
-      <div class="mt-4 text-center">
+      <div class="text-center">
         <h3 class="text-red-200 text-xl font-serif font-semibold">{{ movie.title }}</h3>
         <p class="text-gray-200 font-mono text-lg">IMDB Rating: {{ movie.vote_average }}</p>
       </div>
@@ -143,9 +143,6 @@ export default {
 
 
 <style scoped>
-.content {
-  padding-top: 140px;
-}
 
 .favorite-icon {
   position: absolute;
