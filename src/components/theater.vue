@@ -1,6 +1,6 @@
 <!-- eslint-disable vue/multi-word-component-names -->
 <template>
-  <div class="bg-slate-700 text-gray-300 min-h-screen">
+  <div class="bg-slate-700 text-gray-300 min-h-screen font-serif">
     <div class="theater-list pl-12 py-40">
       <div class="flex justify-center items-center">
         <h1 class="text-4xl font-bold inline mb-16">Theaters Streaming <span class="font-extrabold mb-16">'{{ movie
@@ -13,13 +13,13 @@
               class="p-4 text-xl font-serif font-semibold border border-spacing-x-3 border-red-300 bg-slate-900 rounded flex gap-4">
               <option value="" hidden>Please Select a Date</option>
               <option class="m-4 text-xl font-serif font-semibold border border-red-600 bg-slate-900 rounded-full"
-                v-for="day in days" :key="day.value.slice(0, -7)" :value="day.value.slice(0, -7)">{{ day.value }}
+                v-for="day in days" :key="day.value.slice(0, -6)" :value="day.value.slice(0, -6)">{{ day.value }}
               </option>
             </select>
           </div>
           <ul v-if="selectedDay" class="fade-enter-active">
             <li v-for="(theater, index) in filteredTheaters" :key="theater.id" :style="getTheaterAnimation(index)"
-              class="mb-12 fade-enter">
+              class="mb-12 fade-enter hover:scale-105 transition-all duration-300 ease-in shadow-lg">
               <div
                 class="theater-item flex justify-between bg-slate-800 p-6 rounded-xl w-[30vw] transition-all ease-linear">
                 <div class="">
@@ -27,9 +27,8 @@
                   <p class="text-green-200">Timing: {{ theater.timing }}</p>
                 </div>
                 <routerLink :to="{ name: 'hall', query: { theater: JSON.stringify(theater), movie: movie, language: language, city: city, state: state } }"
-                  @click="addToUserTheaters(theater)"
-                  class="bg-red-700 hover:bg-red-800 text-gray-100 font-bold py-2 px-4 rounded">
-                  Book Seats
+                  @click="addToUserTheaters(theater)">
+                  <button class="bg-red-700 hover:bg-red-800 text-gray-100 font-bold py-2 px-3 text-center rounded">Book Seats</button>
                 </routerLink>
               </div>
             </li>
@@ -94,7 +93,8 @@ export default {
   },
   computed: {
     filteredDays() {
-      return this.days.filter(day => day.value);
+      console.log(this.days.filter(day => day.value !== ''))
+      return this.days.filter(day => day.value !== '');
     },
     days() {
       const currentDate = new Date();
@@ -112,11 +112,7 @@ export default {
       ];
     },
     filteredTheaters() {
-      if (this.selectedTiming && this.selectedDay) {
-        return this.theaters.filter(theater => theater.timing === this.selectedTiming && theater.day === this.selectedDay);
-      } else if (this.selectedTiming) {
-        return this.theaters.filter(theater => theater.timing === this.selectedTiming);
-      } else if (this.selectedDay) {
+      if (this.selectedDay!=='') {
         return this.theaters.filter(theater => theater.day === this.selectedDay);
       } else {
         return null
