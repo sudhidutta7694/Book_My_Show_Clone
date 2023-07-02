@@ -31,10 +31,10 @@
             <h1 class="font-bold text-4xl font-serif text-red-300">Cast</h1>
         </div>
         <div
-            class="border-b border-gray-500 p-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-7 gap-4">
+            class="w-[80vw] border-b font-serif border-gray-500 p-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4">
             <div v-for="(image, index) in castImages" :key="index" class="flex flex-col text-center">
                 <img :src="getImageUrl(image.image)" alt="Actor"
-                    class="rounded-full mb-4 shadow:lg hover:opacity-75 transition ease-in" />
+                    class="hover:scale-105 rounded-full mb-4 shadow:lg hover:opacity-75 transition ease-in" />
                 <p class="text-gray-300 font-semibold"> {{ image.name }}</p>
                 <p class="text-gray-300 font-bold">as {{ image.role }} </p>
             </div>
@@ -43,10 +43,10 @@
             <h1 class="mt-12 mb-11 text-4xl font-bold font-serif text-red-300">Images</h1>
         </div>
         <div
-            class="w-[80vw] border-b border-gray-500 p-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+            class="w-[80vw] border-b border-gray-500 p-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
             <div v-for="(image, index) in movieImages" :key="index">
                 <img :src="getImageUrl(image)" alt="Image"
-                    class="rounded-xl shadow:lg hover:opacity-75 transition ease-in" />
+                    class="rounded-xl shadow:lg hover:opacity-75 hover:scale-105 transition ease-in" />
             </div>
         </div>
     </div>
@@ -207,7 +207,7 @@ export default {
                             name: member.name,
                             role: member.character,
                             image: `https://image.tmdb.org/t/p/w200/${member.profile_path}`
-                        })).slice(0, 7);
+                        })).slice(0, 6);
                 })
                 .catch((error) => {
                     console.error('Error:', error);
@@ -223,7 +223,7 @@ export default {
                 .then((data) => {
                     const images = data.backdrops.map((image) => image.file_path);
                     // Store the images in the movieImages array
-                    this.movieImages = images.slice(0, 5);
+                    this.movieImages = images.slice(0, 6);
                 })
                 .catch((error) => {
                     console.error('Error:', error);

@@ -15,7 +15,7 @@
       </tr>
     </thead>
     <tbody class="rounded-b-xl">
-      <tr class="bg-slate-600 font-sans text-gray-100" v-for="booking in bookingData" :key="booking.token">
+      <tr class="bg-slate-600 font-sans text-gray-100" v-for="booking in (bookingData).slice(0,4)" :key="booking.token">
         <td>{{ booking.city }}</td>
         <td>{{ booking.language }}</td>
         <td>{{ booking.movie }}</td>

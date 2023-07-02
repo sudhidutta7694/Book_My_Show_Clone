@@ -38,7 +38,7 @@
       class="w-[80vw] border-b border-gray-500 p-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4">
       <div v-for="(image, index) in castImages" :key="index" class="flex flex-col text-center">
         <img :src="getImageUrl(image.image)" alt="Actor"
-          class="rounded-full mb-4 shadow:lg hover:opacity-75 transition ease-in" />
+          class="rounded-full mb-4 shadow:lg hover:opacity-75 hover:scale-105 transition-all ease-in" />
         <p class="text-gray-300 font-semibold"> {{ image.name }}</p>
         <p class="text-gray-300 font-bold">as {{ image.role }} </p>
       </div>
@@ -47,9 +47,9 @@
       <h1 class="mt-12 mb-11 text-4xl font-bold font-serif text-red-300">Images</h1>
     </div>
     <div
-      class="w-[80vw] border-b border-gray-500 p-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4">
+      class="w-[80vw] border-b border-gray-500 p-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
       <div v-for="(image, index) in movieImages" :key="index">
-        <img :src="getImageUrl(image)" alt="Image" class="rounded-xl shadow:lg hover:opacity-75 transition ease-in" />
+        <img :src="getImageUrl(image)" alt="Image" class="rounded-xl shadow:lg hover:opacity-75 hover:scale-105  transition ease-in" />
       </div>
     </div>
   </div>
@@ -189,7 +189,7 @@ export default {
   },
 
   methods: {
-    getMovieDetails(movieId) {
+    getMovieDetails() {
       const movie = this.movies;
       if (movie && movie.genres) { // Add a check for the existence of genres property
         const votePercentage = (movie.vote_average * 10).toFixed(2);
@@ -208,17 +208,17 @@ export default {
       };
     },
 
-    getMovieTitle(movieId) {
+    getMovieTitle() {
       const movie = this.movies;
       return movie ? movie.original_title : '';
     },
 
-    getMovieOverview(movieId) {
+    getMovieOverview() {
       const movie = this.movies;
       return movie ? movie.overview : '';
     },
 
-    getWriter(movieId) {
+    getWriter() {
       const movie = this.movies;
       if (movie && movie.credits && movie.credits.crew) {
         const writer = movie.credits.crew.find((member) => member.job === 'Writer');
@@ -227,7 +227,7 @@ export default {
       return '';
     },
 
-    getExecutiveProducer(movieId) {
+    getExecutiveProducer() {
       const movie = this.movies;
       if (movie && movie.credits && movie.credits.crew) {
         const executiveProducer = movie.credits.crew.find(

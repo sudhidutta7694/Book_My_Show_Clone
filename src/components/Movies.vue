@@ -5,7 +5,7 @@
   </div>
   <div class="bg-slate-800 p-2 pt-20 sm:pt-40 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
     <div
-      class="flex flex-col justify-stretch gap-3 pb-1 items-center bg-slate-700 rounded-xl hover:opacity-70 transition-all ease-in duration-300"
+      class="flex flex-col justify-stretch gap-3 pb-1 items-center bg-slate-700 rounded-xl hover:opacity-70 hover:scale-105 transition-all ease-in duration-300"
       v-for="movie in movies" :key="movie.id" @click="handleMovieClick(movie.id)">
       <div class="relative">
         <router-link :to="{ name: 'overview', params: { id: movie.id } }"><img :src="getImageUrl(movie.poster_path)"
@@ -20,7 +20,7 @@
 </template>
 
 <script>
-import { ref, computed, onMounted } from 'vue';
+import { ref, onMounted } from 'vue';
 import { getFirestore, collection, setDoc, onSnapshot, deleteDoc, doc, getDoc } from 'firebase/firestore';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import { useStore } from '@/store';

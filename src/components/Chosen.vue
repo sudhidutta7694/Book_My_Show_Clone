@@ -4,7 +4,9 @@
     <div class="mt-32 p-6 movies-container">
       <!-- <h2 class="text-3xl text-gray-100 font-bold mb-4">Movies</h2> -->
 
-      <div v-if="loading" class="text-gray-200 text-lg">Loading...</div>
+      <div v-if="loading" class="text-gray-200 min-h-screen flex justify-center item-center text-lg">
+        <img src="https://cdn.dribbble.com/users/121337/screenshots/916951/small-load.gif" alt="Loading ...">
+      </div>
 
       <div v-else>
         <div v-if="error" class="text-red-500 text-lg">{{ error }}</div>
@@ -66,37 +68,43 @@ export default {
       error: null,
       apiKey: '1dc8f67cb5ee2d801ef91ff145b4c3a9',
       languageList: {
-        as: 'Assamese',
-        bn: 'Bengali',
-        en: 'English',
-        gu: 'Gujarati',
-        hi: 'Hindi',
-        kn: 'Kannada',
-        ks: 'Kashmiri',
-        ml: 'Malayalam',
-        mr: 'Marathi',
-        ne: 'Nepali',
-        or: 'Odia',
-        pa: 'Punjabi',
-        sa: 'Sanskrit',
-        ta: 'Tamil',
-        te: 'Telugu',
-        ur: 'Urdu',
-        bo: 'Bodo',
-        kok: 'Konkani',
-        mai: 'Maithili',
-        mni: 'Manipuri',
-        sat: 'Santali',
-        snd: 'Sindhi',
-        kok: 'Konkani',
-        dog: 'Dogri',
-        kok: 'Kokborok',
-        brx: 'Bodo',
-        doi: 'Dogri',
-        gom: 'Konkani',
-        kha: 'Khasi',
-        kks: 'Kokborok',
-        kru: 'Kurukh'
+        en: "English",
+        te: "Telugu",
+        hi: "Hindi",
+        as: "Assamese",
+        bn: "Bengali",
+        mai: "Maithili",
+        bho: "Bhojpuri",
+        mag: "Magahi",
+        hne: "Chhattisgarhi",
+        ggo: "Gondi",
+        kok: "Konkani",
+        mr: "Marathi",
+        gu: "Gujarati",
+        bgc: "Haryanvi",
+        pah: "Pahari",
+        mjt: "Pahari",
+        xnr: "Kangri",
+        sat: "Santhali",
+        kn: "Kannada",
+        ml: "Malayalam",
+        bns: "Bundeli",
+        mni: "Meitei",
+        kha: "Khasi",
+        lus: "Mizo",
+        njo: "Ao",
+        knn: "Konyak",
+        njh: "Lotha",
+        or: "Odia",
+        pa: "Punjabi",
+        raj: "Rajasthani",
+        ne: "Nepali",
+        dzo: "Bhutia",
+        ta: "Tamil",
+        ur: "Urdu",
+        trp: "Kokborok",
+        gbm: "Garhwali",
+        kfy: "Kumaoni"
       }
     };
   },
