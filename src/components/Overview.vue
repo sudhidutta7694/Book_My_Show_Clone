@@ -3,7 +3,8 @@
 <template>
   <div class="bg-slate-800 flex flex-col justify-center items-center flex-center">
     <div class="mt-[-50px] sm:mt-0 w-[80vw] sm:w-[60vw] relative"> {{ playTrailer(movieId) }}
-      <div class="trailer-player rounded-2xl shadow-red-200 shadow-md hover:shadow-red-300 transition-colors hover:shadow-xl duration-300">
+      <div
+        class="trailer-player rounded-2xl shadow-red-200 shadow-md hover:shadow-red-300 transition-colors hover:shadow-xl duration-300">
 
         <div class="player-wrapper rounded-2xl">
           <iframe :src="videoUrl" frameborder="0" ref="videoPlayer"></iframe>
@@ -20,7 +21,8 @@
               getMovieDetails(movieId).releaseDate }} | {{ getMovieDetails(movieId).genre }}</span>
           </div>
           <div class="favorite-icon" @click="favoriteMovie(movieId)" :class="{ clicked: favorites.includes(movieId) }">
-            <i class="fa" :class="['fa-heart', { 'fas': favorites.includes(movieId), 'far': !favorites.includes(movieId) }]"></i>
+            <i class="fa"
+              :class="['fa-heart', { 'fas': favorites.includes(movieId), 'far': !favorites.includes(movieId) }]"></i>
           </div>
         </div>
 
@@ -46,10 +48,10 @@
     <div class="px-5 py-4 ">
       <h1 class="mt-12 mb-11 text-4xl font-bold font-serif text-red-300">Images</h1>
     </div>
-    <div
-      class="w-[80vw] border-b border-gray-500 p-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+    <div class="w-[80vw] border-b border-gray-500 p-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
       <div v-for="(image, index) in movieImages" :key="index">
-        <img :src="getImageUrl(image)" alt="Image" class="rounded-xl shadow:lg hover:opacity-75 hover:scale-105  transition ease-in" />
+        <img :src="getImageUrl(image)" alt="Image"
+          class="rounded-xl shadow:lg hover:opacity-75 hover:scale-105  transition ease-in" />
       </div>
     </div>
   </div>
@@ -57,7 +59,8 @@
 
 
 <script>
-import { ref, onMounted } from 'vue';
+
+import { ref, onMounted} from 'vue';
 import {
   getFirestore,
   collection,
@@ -72,10 +75,10 @@ import { useStore } from '@/store';
 
 export default {
   props: ['id'],
+  
   setup() {
     const favorites = ref([]);
     const db = getFirestore(); // Initialize the Firestore database
-
 
     async function favoriteMovie(movieId) {
       const { uid } = useStore(); // Get the Pinia store instance
@@ -88,7 +91,9 @@ export default {
           };
 
           const favoritesCollectionRef = collection(db, 'users', user, 'favorites');
+          console.log(favoritesCollectionRef);
           const favoriteDocRef = doc(favoritesCollectionRef, movieId.toString());
+          console.log(favoriteDocRef);
 
           // Check if the movie is already favorited
           const favoriteDocSnapshot = await getDoc(favoriteDocRef);

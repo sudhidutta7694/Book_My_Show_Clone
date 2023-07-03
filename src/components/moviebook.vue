@@ -144,10 +144,10 @@ export default {
                 });
         },
 
-        getMoviePoster(movieId) {
+        getMoviePoster() {
             return `https://image.tmdb.org/t/p/w780/${this.movies.poster_path}`;
         },
-        getMovieDetails(movieId) {
+        getMovieDetails() {
             const movie = this.movies;
             if (movie && movie.genres) { // Add a check for the existence of genres property
                 const votePercentage = (movie.vote_average * 10).toFixed(2);
@@ -165,15 +165,15 @@ export default {
                 genre: ''
             };
         },
-        getMovieTitle(movieId) {
+        getMovieTitle() {
             const movie = this.movies;
             return movie ? movie.original_title : '';
         },
-        getMovieOverview(movieId) {
+        getMovieOverview() {
             const movie = this.movies;
             return movie ? movie.overview : '';
         },
-        getWriter(movieId) {
+        getWriter() {
             const movie = this.movies;
             if (movie && movie.credits && movie.credits.crew) {
                 const writer = movie.credits.crew.find(
@@ -184,7 +184,7 @@ export default {
             return '';
         },
 
-        getExecutiveProducer(movieId) {
+        getExecutiveProducer() {
             const movie = this.movies;
             if (movie && movie.credits && movie.credits.crew) {
                 const executiveProducer = movie.credits.crew.find(

@@ -21,6 +21,10 @@
                 @click="isMenuOpen = false">
                 Bookings
               </router-link>
+              <router-link to="/favorites" class="text-red-300 hover:text-white px-2 py-1 rounded-md text-sm font-serif"
+                @click="isMenuOpen = false">
+                Favorites
+              </router-link>
             </div>
           </div>
 
@@ -39,6 +43,11 @@
               class="text-red-100 hover:text-red-200 px-2 py-2 rounded-md text-md md:text-lg font-sans transition-colors duration-300"
               active-class="text-white bg-gray-800">
               Bookings
+            </router-link>
+            <router-link to="/favorites"
+              class="text-red-100 hover:text-red-200 px-2 py-2 rounded-md text-md md:text-lg font-sans transition-colors duration-300"
+              active-class="text-white bg-gray-800">
+              Favorites
             </router-link>
           </div>
         </div>

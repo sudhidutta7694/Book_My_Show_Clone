@@ -32,6 +32,11 @@ const router = createRouter({
       component: Bookings
     },
     {
+      path: '/favorites',
+      name: 'favorites',
+      component: () => import('../components/Favorites.vue')
+    },
+    {
       path: '/chosen',
       name: 'chosen',
       component: Chosen,
