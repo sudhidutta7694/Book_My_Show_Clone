@@ -1,6 +1,6 @@
 <!-- eslint-disable vue/multi-word-component-names -->
 <template>
-  <nav class="bg-gray-900 rounded-b-2xl">
+  <nav class="bg-gray-950 rounded-b-2xl">
     <div class="container mx-auto px-2 sm:px-4 md:px-6 lg:px-8">
       <div class="flex justify-around items-center py-2 sm:py-4 md:py-6 lg:py-8">
         <div class="flex items-center justify-around">

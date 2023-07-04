@@ -1,10 +1,10 @@
 <!-- eslint-disable vue/multi-word-component-names -->
 <template>
-  <div class="bg-slate-800">
+  <div class="bg-slate-900">
     <div class="mt-32 p-6 movies-container">
       <!-- <h2 class="text-3xl text-gray-100 font-bold mb-4">Movies</h2> -->
 
-      <div v-if="loading" class="text-gray-200 min-h-screen flex justify-center item-center text-lg">
+      <div v-if="loading" class="bg-slate-900 min-h-screen flex justify-center items-center">
         <img src="https://cdn.dribbble.com/users/121337/screenshots/916951/small-load.gif" alt="Loading ...">
       </div>
 
@@ -150,7 +150,7 @@ export default {
       if (posterPath) {
         return `https://image.tmdb.org/t/p/w780${posterPath}`;
       } else {
-        return 'https://via.placeholder.com/w780?text=No+Poster';
+        return 'https://cdn.download.it/ms/static/images/poster-placeholder.png';
       }
     },
     showDetails(movieId) {

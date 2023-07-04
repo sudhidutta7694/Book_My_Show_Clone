@@ -12,15 +12,17 @@
                     <div class="flex justify-between mt-6 w-[40vw]">
                         <div class="flex flex-col w-[40vw] text-center">
                             <p class="text-4xl font-bold font-serif text-red-300">{{ getMovieTitle(movieId) }}</p>
-                            <span class="text-slate-300 text-md font-mono">{{ getMovieDetails(movieId).votePercentage }}% | {{
-                                getMovieDetails(movieId).releaseDate }} | {{ getMovieDetails(movieId).genre }}</span>
+                            <span class="text-slate-300 text-md font-mono">{{ getMovieDetails(movieId).votePercentage }}% |
+                                {{
+                                    getMovieDetails(movieId).releaseDate }} | {{ getMovieDetails(movieId).genre }}</span>
                         </div>
                     </div>
 
                     <p class="mt-5 text-red-200 font-sans text-xl text-center w-[35vw]">
                         {{ getMovieOverview(movieId) }}
                     </p>
-                    <router-link :to="{ name: 'theater', query: { movie: getMovieTitle(id), language: language, city: city, state: state  } }"
+                    <router-link
+                        :to="{ name: 'theater', query: { movie: getMovieTitle(id), language: language, city: city, state: state } }"
                         class="h-[6vh] font-bold rounded hover:bg-yellow-600 active:bg-yellow-700 bg-yellow-500 px-5 py-4 flex justify-center items-center text-black">
                         <button class="inline-block ">Book Tickets</button>
                     </router-link>
@@ -42,8 +44,7 @@
         <div class="px-5 py-4 ">
             <h1 class="mt-12 mb-11 text-4xl font-bold font-serif text-red-300">Images</h1>
         </div>
-        <div
-            class="w-[80vw] border-b border-gray-500 p-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+        <div class="w-[80vw] border-b border-gray-500 p-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
             <div v-for="(image, index) in movieImages" :key="index">
                 <img :src="getImageUrl(image)" alt="Image"
                     class="rounded-xl shadow:lg hover:opacity-75 hover:scale-105 transition ease-in" />
@@ -145,7 +146,11 @@ export default {
         },
 
         getMoviePoster() {
-            return `https://image.tmdb.org/t/p/w780/${this.movies.poster_path}`;
+            if (this.movies.poster_path) {
+                return `https://image.tmdb.org/t/p/w780/${this.movies.poster_path}`;
+            } else {
+                return 'https://cdn.download.it/ms/static/images/poster-placeholder.png';
+            }
         },
         getMovieDetails() {
             const movie = this.movies;
@@ -233,7 +238,9 @@ export default {
             if (imagePath) {
                 return `https://image.tmdb.org/t/p/w780${imagePath}`;
             }
-            return 'https://via.placeholder.com/500x750.png?text=No+Image+Available';
+            else {
+                return 'https://cdn.download.it/ms/static/images/poster-placeholder.png';
+            }
         },
     },
 

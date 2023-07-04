@@ -4,10 +4,10 @@
   <div class="bg-slate-800 flex flex-col justify-center items-center flex-center">
     <div class="mt-[-50px] sm:mt-0 w-[80vw] sm:w-[60vw] relative"> {{ playTrailer(movieId) }}
       <div
-        class="trailer-player rounded-2xl shadow-red-200 shadow-md hover:shadow-red-300 transition-colors hover:shadow-xl duration-300">
+        class="trailer-player w-[80vw] sm:w-[60vw] rounded-2xl shadow-red-200 shadow-md hover:shadow-red-300 transition-colors hover:shadow-xl duration-300">
 
-        <div class="player-wrapper rounded-2xl">
-          <iframe :src="videoUrl" frameborder="0" ref="videoPlayer"></iframe>
+        <div class="player-wrapper rounded-2xl w-[80vw] sm:w-[60vw]">
+          <iframe class="w-[80vw] sm:w-[60vw]" :src="videoUrl" frameborder="0" ref="videoPlayer"></iframe>
         </div>
       </div>
     </div>
@@ -60,7 +60,7 @@
 
 <script>
 
-import { ref, onMounted} from 'vue';
+import { ref, onMounted } from 'vue';
 import {
   getFirestore,
   collection,
@@ -118,7 +118,6 @@ export default {
         alert('Please log in to add movies to your favorites.');
       }
     }
-
     // Fetch favorite movies for the authenticated user
     const fetchFavoriteMovies = (userId) => {
       const favoritesCollectionRef = collection(db, `users/${userId}/favorites`);
@@ -304,10 +303,12 @@ export default {
               }
             };
           } else {
+            
             console.log('No trailer available for this movie.');
           }
         })
         .catch((error) => {
+          this.videoUrl = 'https://cdn.dribbble.com/users/7894/screenshots/1371777/film-dark.gif';
           console.error('Error:', error);
         });
     },
