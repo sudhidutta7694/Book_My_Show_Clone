@@ -130,6 +130,7 @@ export default {
           }
         });
         favorites.value = favoritesData; // Update the favorites ref with the retrieved data
+        localStorage.setItem('favorites', favorites.value.toString());
         console.log('Favorites retrieved successfully!\nFavorites:', favorites.value);
       });
     };

@@ -166,6 +166,7 @@ export default {
       onAuthStateChanged(auth, (user) => {
         if (user) {
           const { uid } = user;
+          localStorage.setItem("userImage", userImage.value);
           getFirestoreUsername(uid, store.setUserImage);
         }
       });
@@ -174,7 +175,7 @@ export default {
     const userImage = computed(() => {
       return store.getUserImage();
     });
-    console.log(userImage);
+    console.log(userImage.value);
 
     onBeforeUnmount(() => {
       window.removeEventListener('resize', handleResize);
@@ -216,7 +217,7 @@ export default {
       try {
         await auth.signOut();
         // store.clearUsername(storedUsername.value)
-        localStorage.removeItem('username');
+        localStorage.clear();
         router.push('/login');
       } catch (error) {
         console.error(error);

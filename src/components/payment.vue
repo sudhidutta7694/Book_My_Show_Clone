@@ -68,13 +68,13 @@
 
 
                                     <input v-model="cardNumber" class="bg-red-50 border rounded-lg border-black"
-                                        type="number" min="1" max="9999" placeholder="0000">-
-                                    <input class="bg-red-50 border rounded-lg border-black" type="number"
-                                        placeholder="0000">-
-                                    <input class="bg-red-50 border rounded-lg border-black" type="number"
-                                        placeholder="0000">-
+                                        type="number" min="1" max="9999" placeholder="0000" required>-
                                     <input class="bg-red-50 border rounded-lg border-black" type="number" placeholder="0000"
-                                        data-bound="carddigits_mock" data-def="0000">
+                                        required>-
+                                    <input class="bg-red-50 border rounded-lg border-black" type="number" placeholder="0000"
+                                        required>-
+                                    <input class="bg-red-50 border rounded-lg border-black" type="number" placeholder="0000"
+                                        data-bound="carddigits_mock" data-def="0000" required>
                                 </div>
                                 <i class="ai-circle-check-fill size-lg f-main-color"></i>
                             </div>
@@ -138,7 +138,10 @@
 
                     </div>
                     <div class="flex-center">
-                        <router-link :to="{
+                        <button type="submit" @click="handlePayNowClick && payNow"
+                            class="w-[25vw] bg-red-600 hover:bg-red-700 text-slate-50 p-2 text-lg rounded-lg font-semibold pointer">Pay
+                            Now</button>
+                        <!-- <router-link @click="payNow" :to="{
                             name: 'paySuccess', query: {
                                 token: token,
                                 cardNumber: cardNumber,
@@ -152,10 +155,8 @@
                                 state: state
                             }
                         }">
-                            <button type="submit"
-                                class="w-[25vw] bg-red-600 hover:bg-red-700 text-slate-50 p-2 text-lg rounded-lg font-semibold pointer">Pay
-                                Now</button>
-                        </router-link>
+
+                        </router-link> -->
                     </div>
                 </div>
 
@@ -168,7 +169,7 @@
 
                             <div>
                                 <div id="name_mock" class="size-md pb-sm uppercase ellipsis text-center">
-                                    <strong>mr. Cardholder</strong>
+                                    <strong>Cardholder Name</strong>
                                 </div>
                                 <div class="size-md pb-md text-center">
                                     <strong>
@@ -248,6 +249,7 @@
                         <i class="ai-coin size-lg"></i>
                     </div>
                 </div>
+
             </form>
         </div>
     </div>
@@ -257,7 +259,7 @@
 
 
 <script>
-// import {router} from VueRouter
+
 export default {
     props: {
         payment: {
@@ -305,6 +307,9 @@ export default {
         this.startTimerCountdown();
     },
     methods: {
+        handlePayNowClick() {
+
+        },
         copyInputValuesToCardMockup() {
             const bounds = document.querySelectorAll('[data-bound]');
 
@@ -326,7 +331,7 @@ export default {
         },
         startTimerCountdown() {
             const timer = document.querySelector('[data-id=timer]');
-            let timeLeft = 5 * 60; // Set the initial time to 5 minutes
+            let timeLeft = (60 * 5); // Set the initial time to 5 minutes
 
             const tick = () => {
                 if (timeLeft > 0) {
@@ -352,9 +357,11 @@ export default {
         },
 
         closePaymentGateway() {
-            // router.push("/bookings")
+            this.$router.push('/bookings');
         },
+
         payNow() {
+
             // Handle payment submission using the form data
             console.log('Form Data:', {
                 cardNumber: this.cardNumber,
@@ -362,6 +369,24 @@ export default {
                 expiryYear: this.expiryYear,
                 cardholderName: this.cardholderName
             });
+
+            const { token, cardNumber, payment, seatLength, seats, theater, movie, language, city, state } = this;
+            const query = {
+                token,
+                cardNumber,
+                payment: 1.18 * payment,
+                seatLength,
+                seats,
+                theater: JSON.stringify(theater),
+                movie,
+                language,
+                city,
+                state
+            };
+
+            this.$router.push({ name: 'paySuccess', query });
+
+            // Additional payment logic here
         },
         generateToken() {
             const {

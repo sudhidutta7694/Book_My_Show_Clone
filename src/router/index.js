@@ -1,17 +1,25 @@
-import { createRouter, createWebHistory } from 'vue-router'
-import Home from '../views/Movies.vue'
-import Movies from '../components/All.vue'
-import Chosen from '../components/Chosen.vue'
-import Bookings from '../views/Bookings.vue'
-import Login from '../views/LoginView.vue'
-import Register from '../views/RegisterView.vue'
-import Overview from '../components/Overview.vue'
-import terms from '../components/terms.vue'
-import MovieBook from '../components/moviebook.vue'
-import theatres from '../components/theater.vue'
-import hall from "../components/Hall.vue"
-import payment from "../components/payment.vue"
-import paySuccess from "../components/paySuccess.vue"
+import { createRouter, createWebHistory } from 'vue-router';
+import { getAuth } from 'firebase/auth';
+import Home from '../views/Movies.vue';
+import Movies from '../components/All.vue';
+import Chosen from '../components/Chosen.vue';
+import Bookings from '../views/Bookings.vue';
+import Login from '../views/LoginView.vue';
+import Register from '../views/RegisterView.vue';
+import Overview from '../components/Overview.vue';
+import terms from '../components/terms.vue';
+import MovieBook from '../components/moviebook.vue';
+import theatres from '../components/theater.vue';
+import hall from '../components/Hall.vue';
+import payment from '../components/payment.vue';
+import paySuccess from '../components/paySuccess.vue';
+
+const isAuthenticated = () => {
+  const auth = getAuth();
+  const user = auth.currentUser;
+  return user !== null;
+};
+
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -19,22 +27,26 @@ const router = createRouter({
     {
       path: '/home',
       name: 'home',
-      component: Home
+      component: Home,
+      meta: { requiresAuth: true },
     },
     {
       path: '/movies',
       name: 'movies',
-      component: Movies
+      component: Movies,
+      meta: { requiresAuth: true },
     },
     {
       path: '/bookings',
       name: 'bookings',
-      component: Bookings
+      component: Bookings,
+      meta: { requiresAuth: true },
     },
     {
       path: '/favorites',
       name: 'favorites',
-      component: () => import('../components/Favorites.vue')
+      component: () => import('../components/Favorites.vue'),
+      meta: { requiresAuth: true },
     },
     {
       path: '/chosen',
@@ -43,23 +55,28 @@ const router = createRouter({
       props: (route) => ({
         languages: route.query.languages.split(','),
         city: route.query.city,
-        state: route.query.state})
+        state: route.query.state,
+      }),
+      meta: { requiresAuth: true },
     },
     {
       path: '/login',
       name: 'login',
-      component: Login
+      component: Login,
+      meta: { requiresAuth: false },
     },
     {
       path: '/',
       name: 'register',
-      component: Register
+      component: Register,
+      meta: { requiresAuth: false },
     },
     {
       path: '/overview/:id',
       name: 'overview',
       component: Overview,
-      props: true
+      props: true,
+      meta: { requiresAuth: true },
     },
     {
       path: '/movie',
@@ -69,49 +86,55 @@ const router = createRouter({
         id: route.query.id,
         language: route.query.language,
         city: route.query.city,
-        state: route.query.state})
+        state: route.query.state,
+      }),
+      meta: { requiresAuth: true },
     },
     {
       path: '/theater',
       name: 'theater',
       component: theatres,
-      props: (route) => ({ 
+      props: (route) => ({
         movie: route.query.movie,
         language: route.query.language,
         city: route.query.city,
-        state: route.query.state})
+        state: route.query.state,
+      }),
+      meta: { requiresAuth: true },
     },
     {
       path: '/hall',
       name: 'hall',
       component: hall,
-      props: route => ({
+      props: (route) => ({
         theater: route.query.theater ? JSON.parse(route.query.theater) : null,
         movie: route.query.movie,
         language: route.query.language,
         city: route.query.city,
-        state: route.query.state
-      })
-    },    
+        state: route.query.state,
+      }),
+      meta: { requiresAuth: true },
+    },
     {
       path: '/payment',
       name: 'payment',
       component: payment,
-      props: route => ({
+      props: (route) => ({
         payment: parseInt(route.query.payment),
         seats: route.query.selectedSeats ? route.query.selectedSeats.split(',') : [],
         theater: route.query.theater ? JSON.parse(route.query.theater) : null,
         movie: route.query.movie,
         language: route.query.language,
         city: route.query.city,
-        state: route.query.state
-      })
+        state: route.query.state,
+      }),
+      meta: { requiresAuth: true },
     },
     {
       path: '/paySuccess',
       name: 'paySuccess',
       component: paySuccess,
-      props: route => ({
+      props: (route) => ({
         token: route.query.token,
         cardNumber: route.query.cardNumber,
         payment: parseInt(route.query.payment),
@@ -121,15 +144,27 @@ const router = createRouter({
         movie: route.query.movie,
         language: route.query.language,
         city: route.query.city,
-        state: route.query.state
-      })
+        state: route.query.state,
+      }),
+      meta: { requiresAuth: true },
     },
     {
       path: '/terms',
       name: 'terms',
-      component: terms
-    }
-  ]
-})
+      component: terms,
+      meta: { requiresAuth: true },
+    },
+  ],
+});
 
-export default router
+router.beforeEach((to, from, next) => {
+  const requiresAuth = to.matched.some((record) => record.meta.requiresAuth);
+
+  if (requiresAuth && !isAuthenticated()) {
+    next('/login');
+  } else {
+    next();
+  }
+});
+
+export default router;

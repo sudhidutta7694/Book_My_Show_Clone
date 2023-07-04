@@ -9,14 +9,11 @@ export const useStore = defineStore('store', {
     favorites: [],
   }),
   actions: {
-    async setUsername(username, uid) {
-      this.username = username;
-      this.uid = uid;
-      // ... existing code
-    },
     // ... existing code
     setUserImage(image) {
       this.userImage = image;
+      localStorage.setItem("userImage", this.userImage);
+
     },
     getUserImage() {
       return this.userImage;
@@ -76,6 +73,7 @@ export const useStore = defineStore('store', {
       const db = getFirestore();
       const userDoc = doc(db, 'users', this.uid);
       setDoc(userDoc, { favorites }, { merge: true });
+      localStorage.setItem('favorites', JSON.stringify(this.favorites));
     },
   },
   // Initialize the session when the store is created
