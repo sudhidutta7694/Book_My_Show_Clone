@@ -1,5 +1,26 @@
 <!-- eslint-disable vue/multi-word-component-names -->
 <template>
+    <teleport to='#movieStats'>
+        <div class="stats fixed top-[40vh] right-[10vw] z-1000">
+            <div class="bg-slate-700 w-20 py-3 h-fit rounded-xl flex flex-col gap-4 justify-center items-center p-2">
+                <div class="bg-yellow-500 rounded-lg w-16 h-16 flex flex-col items-center justify-center">
+                    <p class="font-mono text-black font-bold">GOLD</p>
+                    <p class="font-mono text-indigo-800 font-bold">₹200</p>
+                </div>
+                <div class="bg-green-500 rounded-lg w-16 h-16 flex flex-col items-center justify-center">
+                    <p class="font-mono text-black font-bold">PANNA</p>
+                    <p class="font-mono text-indigo-800 font-bold">₹150</p>
+                </div>
+                <div class="bg-red-500 rounded-lg w-16 h-16 flex flex-col items-center justify-center">
+                    <p class="font-mono text-black font-bold">RUBY</p>
+                    <p class="font-mono text-indigo-800 font-bold">₹250</p>
+                </div>
+                <div class="bg-gray-500 rounded-lg w-16 h-16 flex items-center justify-center">
+                    <p class="font-mono text-white font-bold">N/A</p>
+                </div>
+            </div>
+        </div>
+    </teleport>
     <div class="h-screen bg-slate-800 flex gap-20 flex-col">
         <div class="mt-40 relative">
             <div class="flex items-center justify-center gap-6">

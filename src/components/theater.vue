@@ -113,7 +113,8 @@ export default {
     },
     filteredTheaters() {
       if (this.selectedDay!=='') {
-        return this.theaters.filter(theater => theater.day === this.selectedDay);
+        console.log(this.selectedDay)
+        return this.theaters.filter(theater => theater.day==this.selectedDay.trim());
       } else {
         return null
       }
