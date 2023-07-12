@@ -67,13 +67,13 @@
                                     </svg>
 
 
-                                    <input v-model="cardNumber" class="bg-red-50 border rounded-lg border-black"
+                                    <input v-model="cardNumber1" class="bg-red-50 border rounded-lg border-black"
                                         type="number" min="1" max="9999" placeholder="0000" required>-
-                                    <input class="bg-red-50 border rounded-lg border-black" type="number" placeholder="0000"
+                                    <input v-model="cardNumber2" class="bg-red-50 border rounded-lg border-black" type="number" placeholder="0000"
                                         required>-
-                                    <input class="bg-red-50 border rounded-lg border-black" type="number" placeholder="0000"
+                                    <input v-model="cardNumber3" class="bg-red-50 border rounded-lg border-black" type="number" placeholder="0000"
                                         required>-
-                                    <input class="bg-red-50 border rounded-lg border-black" type="number" placeholder="0000"
+                                    <input v-model="cardNumber4" class="bg-red-50 border rounded-lg border-black" type="number" placeholder="0000"
                                         data-bound="carddigits_mock" data-def="0000" required>
                                 </div>
                                 <i class="ai-circle-check-fill size-lg f-main-color"></i>
@@ -259,9 +259,13 @@
 
 
 <script>
-
+// import { inject } from 'vue';
 export default {
     props: {
+        date: {
+            type: String,
+            required: true,
+        },
         payment: {
             type: Number,
             required: true,
@@ -293,7 +297,10 @@ export default {
     },
     data() {
         return {
-            cardNumber: '',
+            cardNumber1: '',
+            cardNumber2: '',
+            cardNumber3: '',
+            cardNumber4: '',
             expiryMonth: '',
             expiryYear: '',
             showPassword: false,
@@ -305,6 +312,14 @@ export default {
         this.copyInputValuesToCardMockup();
         this.toggleCvcDisplayMode();
         this.startTimerCountdown();
+    },
+    watch: {
+        seats: {
+            immediate: true,
+            handler(newSeats) {
+                console.log(newSeats);
+            },
+        },
     },
     methods: {
         handlePayNowClick() {
@@ -370,11 +385,12 @@ export default {
                 cardholderName: this.cardholderName
             });
 
-            const { token, cardNumber, payment, seatLength, seats, theater, movie, language, city, state } = this;
+            const { token, cardNumber1, cardNumber2, cardNumber3, cardNumber4 , payment, date, seatLength, seats, theater, movie, language, city, state } = this;
             const query = {
                 token,
-                cardNumber,
+                cardNumber: (cardNumber1 + cardNumber2 + cardNumber3 + cardNumber4),
                 payment: 1.18 * payment,
+                date,
                 seatLength,
                 seats,
                 theater: JSON.stringify(theater),

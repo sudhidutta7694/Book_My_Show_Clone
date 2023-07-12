@@ -23,12 +23,21 @@
               <div
                 class="theater-item flex justify-between bg-slate-800 p-6 rounded-xl w-[30vw] transition-all ease-linear">
                 <div class="">
-                  <h3 class="text-xl font-semibold">{{ theater.name }}</h3>
+                  <h3 class="text-xl font-semibold">{{ theater.name }} {{ findSelectedDate() }}</h3>
                   <p class="text-green-200">Timing: {{ theater.timing }}</p>
                 </div>
-                <routerLink :to="{ name: 'hall', query: { theater: JSON.stringify(theater), movie: movie, language: language, city: city, state: state } }"
-                  @click="addToUserTheaters(theater)">
-                  <button class="bg-red-700 hover:bg-red-800 text-gray-100 font-bold py-2 px-3 text-center rounded">Book Seats</button>
+                <routerLink :to="{
+                  name: 'hall', query: {
+                    date: findSelectedDate(),
+                    theater: JSON.stringify(theater),
+                    movie: movie,
+                    language: language,
+                    city: city,
+                    state: state
+                  }
+                }" @click="addToUserTheaters(theater)">
+                  <button class="bg-red-700 hover:bg-red-800 text-gray-100 font-bold py-2 px-3 text-center rounded">Book
+                    Seats</button>
                 </routerLink>
               </div>
             </li>
@@ -88,8 +97,11 @@ export default {
       selectedTiming: '',
       selectedDay: '',
       selectedTheaters: [],
-      userTheaters: []
+      userTheaters: [],
     };
+  },
+  onBeforeUnmount() {
+    console.log(this.userTheaters)
   },
   computed: {
     filteredDays() {
@@ -112,9 +124,9 @@ export default {
       ];
     },
     filteredTheaters() {
-      if (this.selectedDay!=='') {
+      if (this.selectedDay !== '') {
         console.log(this.selectedDay)
-        return this.theaters.filter(theater => theater.day==this.selectedDay.trim());
+        return this.theaters.filter(theater => theater.day == this.selectedDay.trim());
       } else {
         return null
       }
@@ -125,7 +137,16 @@ export default {
       this.selectedTiming = '';
     }
   },
+  updated() {
+    console.log(this.userTheaters)
+  },
   methods: {
+    findSelectedDate() {
+      if (this.selectedDay) {
+        let selected = this.days.filter(day => day.value.split(' ')[0]==this.selectedDay.trim())
+        return (selected[0].value.split(' ').slice(1).join(' '));
+      }
+    },
     getTheaterAnimation(index) {
       const delay = index * 1000; // Delay each theater by 100 milliseconds
       return `transition-delay: ${delay}ms`;

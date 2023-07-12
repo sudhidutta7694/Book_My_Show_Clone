@@ -4,8 +4,7 @@
             <router-link to="/bookings" class="relative flex justify-center item-center">
                 <button id="bookingButton" @click="storeBookingData" :class="{ 'disabled-button': isButtonDisabled }"
                     :disabled="isButtonDisabled"
-                    class="bg-red-600 absolute  z-10000 h-16 w-64 mt-[70vh] text-lg font-sans shadow-xl rounded-lg font-semibold text-white p-4 hover:bg-red-700"
-                    disabled>
+                    class="bg-red-600 absolute  z-10000 h-16 w-64 mt-[70vh] text-lg font-sans shadow-xl rounded-lg font-semibold text-white p-4 hover:bg-red-700">
                     Continue to Bookings
                 </button>
             </router-link>
@@ -45,11 +44,14 @@
 <script>
 
 import { useStore } from '@/store';
-import { getAuth, onAuthStateChanged } from 'firebase/auth';
-import { getFirestore, collection, doc, getDocs, addDoc, deleteDoc, FieldValue } from 'firebase/firestore';
+import { getFirestore, collection, addDoc } from 'firebase/firestore';
 
 export default {
     props: {
+        date: {
+            type: String,
+            required: true,
+        },
         token: {
             type: String,
             required: true,
@@ -119,12 +121,14 @@ export default {
                     token: this.token,
                     cardNumber: this.cardNumber,
                     payment: this.payment,
+                    date: this.date,
                     seatLength: this.seatLength,
                     theater: this.theater,
                     movie: this.movie,
                     language: this.language,
                     city: this.city,
-                    state: this.state
+                    state: this.state,
+                    seats: JSON.parse(localStorage.getItem('selectedSeats'))
                 };
 
                 // Store the booking data in Firestore

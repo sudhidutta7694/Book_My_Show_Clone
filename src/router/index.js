@@ -107,6 +107,7 @@ const router = createRouter({
       name: 'hall',
       component: hall,
       props: (route) => ({
+        date: route.query.date,
         theater: route.query.theater ? JSON.parse(route.query.theater) : null,
         movie: route.query.movie,
         language: route.query.language,
@@ -121,7 +122,8 @@ const router = createRouter({
       component: payment,
       props: (route) => ({
         payment: parseInt(route.query.payment),
-        seats: route.query.selectedSeats ? route.query.selectedSeats.split(',') : [],
+        seats: route.query.seats ? route.query.seats.split(',') : [],
+        date: route.query.date,
         theater: route.query.theater ? JSON.parse(route.query.theater) : null,
         movie: route.query.movie,
         language: route.query.language,
@@ -138,6 +140,7 @@ const router = createRouter({
         token: route.query.token,
         cardNumber: route.query.cardNumber,
         payment: parseInt(route.query.payment),
+        date: route.query.date,
         seatLength: parseInt(route.query.seatLength),
         seats: route.query.seats ? route.query.seats : [],
         theater: JSON.parse(route.query.theater),
@@ -145,6 +148,7 @@ const router = createRouter({
         language: route.query.language,
         city: route.query.city,
         state: route.query.state,
+        seas: route.query.seats,
       }),
       meta: { requiresAuth: true },
     },
