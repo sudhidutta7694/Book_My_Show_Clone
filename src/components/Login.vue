@@ -13,20 +13,20 @@
                 <span class="far fa-envelope text-gray-200"></span>
               </div>
               <div class="flex-1">
-                <input type="text"  v-model="email" placeholder="Enter your E-mail"
+                <input type="text" v-model="email" placeholder="Enter your E-mail"
                   class="p-4 h-10 bg-slate-700 text-gray-200 py-1 pr-3 w-full" />
               </div>
             </div>
 
-            <div  v-if="!showForgotPasswordSection" class="border-2 border-solid rounded flex items-center mb-4">
+            <div v-if="!showForgotPasswordSection" class="border-2 border-solid rounded flex items-center mb-4">
               <div class="w-10 h-10 flex justify-center items-center flex-shrink-0">
                 <span class="fas fa-asterisk text-gray-200"></span>
               </div>
               <div class="flex-1">
-                <input v-model="password"  placeholder="Enter your Password" :type="showPassword ? 'text' : 'password'"
+                <input v-model="password" placeholder="Enter your Password" :type="showPassword ? 'text' : 'password'"
                   class="p-4 h-10 bg-slate-700 text-gray-200 py-1 pr-3 w-full" />
               </div>
-              <button type="button"  class="eye-button" @click="showPassword = !showPassword">
+              <button type="button" class="eye-button" @click="showPassword = !showPassword">
                 <i :class="showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
               </button>
             </div>
@@ -84,36 +84,47 @@
 <script>
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
-import { collection, query, where, getDocs } from 'firebase/firestore';
-import { db } from '@/firebase'; // Assuming you have already set up Firebase in your project
+import { collection, query, where, getDocs, setDoc, getDoc, doc, getFirestore } from 'firebase/firestore';
+import { db, app } from '@/firebase'; // Assuming you have already set up Firebase in your project
 import { GoogleAuthProvider, signInWithPopup, getAuth, sendPasswordResetEmail } from 'firebase/auth';
+import Swal from 'sweetalert2';
 import { useStore } from '@/store';
 
 export default {
   data() {
     return {
-    showPassword: false,
+      showPassword: false,
     };
   },
   setup() {
     const email = ref('');
     const password = ref('');
     const router = useRouter();
-    const store = useStore();
+    // const store = useStore();
     const showForgotPasswordSection = ref(false);
     const forgotEmail = ref('');
+    const auth = getAuth(app)
 
     const toggleForgotPasswordSection = () => {
       showForgotPasswordSection.value = !showForgotPasswordSection.value;
     };
-
     const handleForgotPassword = async () => {
       try {
-        const auth = getAuth();
-        await sendPasswordResetEmail(auth, forgotEmail.value);
+        const auth = getAuth(app);
+        const email = forgotEmail.value;
+
+        // Send the password reset email
+        await sendPasswordResetEmail(auth, email);
 
         // Password reset email sent successfully
-        alert('Password reset email sent. Please check your inbox.');
+        const resetLink = 'https://mail.google.com'; // Replace with your actual password reset link
+
+        // Display SweetAlert with a clickable link
+        Swal.fire({
+          title: 'Password Reset Email Sent',
+          html: `Password reset email sent. Please check your inbox. Click <a href="${resetLink}" target="_blank" style="color: blue; text-decoration: underline;">here</a> to reset your password.`,
+          icon: 'success',
+        });
 
         // Clear the input field
         forgotEmail.value = '';
@@ -122,22 +133,30 @@ export default {
         showForgotPasswordSection.value = false;
       } catch (error) {
         console.error('Error sending password reset email:', error);
-        alert('Failed to send password reset email. Please try again.');
+        // alert('Failed to send password reset email. Please try again.');
+        Swal.fire({
+          title: 'Failed to send password reset email.',
+          html: 'Please crosscheck the email',
+          icon: 'error',
+        })
+
+        forgotEmail.value = '';
       }
     };
 
+
     // On component mount, check if the username is stored in local storage
     onMounted(() => {
-      const storedUsername = localStorage.getItem('username');
-      if (storedUsername) {
-        store.setUsername(storedUsername);
-      }
+      // const storedUsername = localStorage.getItem('username');
+      // if (storedUsername) {
+      //   store.setUsername(storedUsername);
+      // }
     });
 
     const handleLogin = async () => {
       try {
         // Check if the user credentials exist in Firestore
-        const usersCollection = collection(db, 'users');
+        const usersCollection = collection(db, 'Users');
         const q = query(usersCollection, where('email', '==', email.value));
         const querySnapshot = await getDocs(q);
 
@@ -161,10 +180,10 @@ export default {
           alert("The Email ID cannot be empty!");
         } else {
           // User credentials matched, route to movies page
-          store.setUsername(foundUser.username, foundUser.uid);
+          // store.setUsername(foundUser.username, foundUser.uid);
 
           // Store the username in local storage
-          localStorage.setItem('username', foundUser.username);
+          localStorage.setItem('user', JSON.stringify(foundUser));
 
           router.push('/home');
         }
@@ -176,35 +195,40 @@ export default {
 
 
     const handleSigninWithGoogle = async () => {
+      const provider = new GoogleAuthProvider();
       try {
-        const auth = getAuth();
-        const provider = new GoogleAuthProvider();
-
         const result = await signInWithPopup(auth, provider);
+        const credential = GoogleAuthProvider.credentialFromResult(result);
+        const token = credential.accessToken;
+        localStorage.setItem("access_token", JSON.stringify(token));
+        const user = result.user;
+        localStorage.setItem("user", JSON.stringify(user));
+        localStorage.setItem("userImage", JSON.parse(localStorage.getItem("user")).photoURL);
+        // Redirect or perform other actions
+        router.push("/home");
 
-        // Get the user data from the Google sign-in result
-        const { displayName, email, uid } = result.user;
+        const firestore = getFirestore();
+        const usersCollectionRef = collection(firestore, "Users");
+        const userDocRef = doc(usersCollectionRef, user.uid);
 
-        // Check if the user already exists in Firestore
-        const usersCollection = collection(db, 'users');
-        const q = query(usersCollection, where('email', '==', email));
-        const querySnapshot = await getDocs(q);
-
-        if (querySnapshot.size > 0) {
-          // User already exists, update the store and route to movies page
-          store.setUsername(displayName, uid);
-
-          // Store the username in local storage
-          localStorage.setItem('username', displayName);
-
-          router.push('/home');
-        } else {
-          // User doesn't exist, show error message
-          alert('No user registered with this Google account. Please try again.');
+        const userDocSnap = await getDoc(userDocRef);
+        if (!userDocSnap.exists()) {
+          // Create the user document in Firestore if it doesn't exist
+          await setDoc(userDocRef, {
+            name: user.displayName,
+            email: user.email,
+            // Add more fields as needed
+          });
         }
       } catch (error) {
-        console.error('Error signing in with Google:', error);
-        alert('Failed to sign in with Google. Please try again.');
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        console.log(errorCode, ": ", errorMessage);
+        const email = error.customData.email;
+        console.log("Email: ", email);
+        const credential = GoogleAuthProvider.credentialFromError(error);
+        console.log("AuthCredential: ", credential);
+        // Handle error
       }
     };
 

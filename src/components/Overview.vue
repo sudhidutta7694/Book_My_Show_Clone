@@ -70,6 +70,7 @@ import {
   doc,
   getDoc,
 } from 'firebase/firestore';
+import { app } from '@/firebase';
 import { onAuthStateChanged, getAuth } from 'firebase/auth';
 import { useStore } from '@/store';
 
@@ -81,8 +82,8 @@ export default {
     const db = getFirestore(); // Initialize the Firestore database
 
     async function favoriteMovie(movieId) {
-      const { uid } = useStore(); // Get the Pinia store instance
-      const user = uid;
+      // const { uid } = useStore(); // Get the Pinia store instance
+      const user = JSON.parse(localStorage.getItem('user')).uid;
 
       if (user) {
         try {
@@ -90,7 +91,7 @@ export default {
             movieId: movieId
           };
 
-          const favoritesCollectionRef = collection(db, 'users', user, 'favorites');
+          const favoritesCollectionRef = collection(db, 'Users', user, 'Favorites');
           console.log(favoritesCollectionRef);
           const favoriteDocRef = doc(favoritesCollectionRef, movieId.toString());
           console.log(favoriteDocRef);
@@ -120,7 +121,7 @@ export default {
     }
     // Fetch favorite movies for the authenticated user
     const fetchFavoriteMovies = (userId) => {
-      const favoritesCollectionRef = collection(db, `users/${userId}/favorites`);
+      const favoritesCollectionRef = collection(db, `Users/${userId}/Favorites`);
       onSnapshot(favoritesCollectionRef, (querySnapshot) => {
         const favoritesData = [];
         querySnapshot.forEach((doc) => {

@@ -3,7 +3,7 @@ import { ref, onMounted } from 'vue';
 import { RouterView } from 'vue-router'
 import Headers from './components/Headers.vue';
 import { getAuth } from 'firebase/auth';
-import { getFirestore, doc, getDoc, collection, getDocs } from 'firebase/firestore';
+import { getFirestore, doc, collection, getDocs } from 'firebase/firestore';
 
 const isLoading = ref(true);
 
@@ -19,13 +19,13 @@ onMounted(async () => {
       // User is signed in or logged in, fetch data from Firestore
       const db = getFirestore();
       const userRef = doc(db, 'users', user.uid);
-      const userSnapshot = await getDoc(userRef);
-      const userData = userSnapshot.data();
+      // const userSnapshot = await getDoc(userRef);
+      // const userData = userSnapshot.data();
       
       // Store user data in localStorage as separate key-value pairs
-      for (const [key, value] of Object.entries(userData)) {
-        localStorage.setItem(key, value);
-      }
+      // for (const [key, value] of Object.entries(userData)) {
+      //   localStorage.setItem(key, value);
+      // }
       
       // Fetch favorites and bookings documents
       const favoritesRef = collection(userRef, 'favorites');

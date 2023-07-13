@@ -2,7 +2,7 @@
 <template>
   <nav class="bg-gray-950 rounded-b-2xl">
     <div class="container mx-auto px-2 sm:px-4 md:px-6 lg:px-8">
-      <div class="flex justify-around items-center py-2 sm:py-4 md:py-6 lg:py-8">
+      <div class="flex justify-around items-center py-6">
         <div class="flex items-center justify-around">
           <router-link v-if="isMenuOpen" to="/home" class=" md:ml-[-100px] flex items-center mr-6">
             <img class="h-8 sm:h-12 md:h-20" src="../../public/favicon.ico" alt="Logo" />
@@ -52,15 +52,16 @@
           </div>
         </div>
         <div>
-          <form v-if="windowWidth >= 1400" class="relative mr-6" @submit.prevent="routeTo">
+          <form class="relative mr-6" @submit.prevent="routeTo">
             <input type="text" placeholder="Search here" v-model="searchQuery" @input="searchMovies"
               class="border w-32 md:w-64 border-red-300 text-sm md:text-lg bg-slate-700 text-red-200 hover:bg-slate-800 rounded-full py-2 px-2 md:py-2 md:px-4 focus:outline-none focus:ring-2 focus:ring-red-400 focus:border-transparent transition-colors duration-300" />
             <button type="submit"
               class="absolute right-0 top-0 bottom-0 px-4 py-2 text-red-400 hover:text-red-600 transition-colors duration-300">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+              <!-- <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
                 stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17l-5-5m0 0l5-5m-5 5h12" />
-              </svg>
+              </svg> -->
+              <i class="fas fa-search" />
             </button>
           </form>
 
@@ -84,38 +85,46 @@
         <div v-if="isMenuOpen" class="flex flex-col">
           <div @click="isLogout = !isLogout"
             :class="{ 'rounded-xl': !isLogout, 'rounded-t-xl': isLogout && windowWidth <= 1400 }"
-            class="flex shadow-xl justify-center items-center cursor-pointer p-1 sm:p-2 md:p-3 gap1 sm:gap-2 md:gap-3 opacity-90 bg-slate-700 font-bold text-sm sm:text-md lg:text-lg xl:text-xl text-red-200 hover:opacity-100 lg:scale-110">
-            <div class="rounded-full w-6 sm:w-8 md:w-10  bg-slate-600 hover:shadow-lg flex items-center justify-center hover:scale-110 transition-all duration-300">
-              <img v-if="userImage.length > 0" :src="userImage" alt="" class="w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 rounded-full" />
+            class="flex shadow-xl justify-center items-center cursor-pointer p-1 sm:p-2 md:p-3 gap1 sm:gap-2 md:gap-3font-bold text-red-200 lg:scale-110">
+            <div
+              class="rounded-full w-6 sm:w-8 md:w-16 md:h-16 hover:shadow-lg flex items-center justify-center transition-all duration-300">
+              <img v-if="photoURL.length > 0" :src="photoURL" alt=""
+                class="w-8 h-8 relative sm:w-9 sm:h-9 md:w-16 md:h-16 border-2 border-red-300 rounded-full hover:scale-105 ease-in"
+                @click="toggleAppearance = !toggleAppearance" />
               <i v-else class="w-6 sm:w-8 md:w-10 rounded-full far fa-user-circle"></i>
-            </div>
-            <div class="font-serif text-sm sm:text-md md:text-lg font-bold">{{ windowWidth <= 780 ? "" : store.username }}
-                    </div>
-                  </div>
-                  <router-link to="/login">
-                <div v-if="isLogout && windowWidth <= 1400"
-                  class=" bg-slate-700 py-1 text-center text-red-400 rounded-b-xl px-3 font-serif hover:opacity-100 hover:text-red-300 text-sm sm:text-md md:text-lg ">
-                  Logout
-                </div>
+              <div v-if="toggleAppearance"
+                class="mt-2 absolute top-20 bg-slate-900 p-3 rounded-xl flex flex-col opacity-90 border border-red-500 transition-transform duration-200 w-60 items-center justify-center">
+                <p class="text-sm sm:text-md md:text-lg text-center font-mono mb-2">{{ storedUsername }}</p>
+                <hr class="border-1 w-full border-gray-300" />
+                <router-link to="/home" 
+                  class="rounded-md pt-3 text-sm sm:text-md md:text-lg font-mono transition-colors text-red-200 hover:text-red-300 duration-300">
+                  <i class="fas fa-user" />
+                  Profile
                 </router-link>
+                <!-- <hr class="border-1 w-full border-gray-300"/> -->
+                <router-link to="/login" @click="logout"
+                  class="text-center rounded-md pt-1 text-sm sm:text-md md:text-lg font-mono transition-colors text-red-200 hover:text-red-300 duration-300">
+                  Logout
+                  <i class="fas fa-sign-out" />
+                </router-link>
+              </div>
             </div>
-            <router-link to="/login" v-if="windowWidth >= 1400" @click="logout"
-              class="bg-gray-800  px-1 sm:px-2 md:px-3 py-1 sm:py-2 rounded-md text-sm sm:text-md md:text-lg font-mono transition-colors text-red-200 hover:text-red-300 duration-300 ml-4">
-              Logout
-            </router-link>
           </div>
         </div>
+
+      </div>
+    </div>
 
   </nav>
 </template>
 
 <script>
-import { ref, computed, onMounted, onBeforeUnmount } from 'vue';
+import { ref, computed, onBeforeUnmount, onMounted } from 'vue';
 import axios from 'axios';
 import { useRouter } from 'vue-router';
 import { useStore } from '../store';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
-import { getFirestore, doc, getDoc } from 'firebase/firestore';
+import { app } from "@/firebase"
 
 const API_KEY = '1dc8f67cb5ee2d801ef91ff145b4c3a9';
 
@@ -132,51 +141,26 @@ export default {
     const router = useRouter();
     const isMenuOpen = ref('false')
     const store = useStore();
+    const auth = getAuth(app);
+    const toggleAppearance = ref('false');
     const storedUsername = ref('');
-    const auth = getAuth();
-    const db = getFirestore();
+    const gender = Math.random() < 0.5 ? "men" : "women";
+    const randomIndex = Math.floor(Math.random() * 100) + 1;
+    const photoURL = ref(``);
 
-    const getFirestoreUsername = async (uid, setUserImage) => {
-      try {
-        const userDoc = doc(db, 'users', uid);
-        const userSnapshot = await getDoc(userDoc);
-        if (userSnapshot.exists()) {
-          const userData = userSnapshot.data();
-          storedUsername.value = userData.username;
-          store.setUsername(userData.username, uid);
-
-          // Get the user's photoURL from the Google account
-          const user = auth.currentUser;
-          if (user) {
-            const photoURL = user.photoURL;
-            if (photoURL) {
-              setUserImage(photoURL);
-            }
-          }
-        }
-      } catch (error) {
-        console.error(error);
+    onAuthStateChanged(auth, (user) => {
+      if (user && user.photoURL) {
+        photoURL.value = user.photoURL;
+      } else {
+        // Set a placeholder image URL for the dummy face
+        photoURL.value = `https://randomuser.me/api/portraits/${gender}/${randomIndex}.jpg`;
       }
-    };
-   
-
+    });
     onMounted(() => {
-      window.addEventListener('resize', handleResize);
-      // Listen for changes in the user's authentication state
-      onAuthStateChanged(auth, (user) => {
-        if (user) {
-          const { uid } = user;
-          localStorage.setItem("userImage", userImage.value);
-          getFirestoreUsername(uid, store.setUserImage);
-        }
-      });
-    });
-
-    const userImage = computed(() => {
-      return store.getUserImage();
-    });
-    console.log(userImage.value);
-
+      if (JSON.parse(localStorage.getItem('user'))) {
+        storedUsername.value = JSON.parse(localStorage.getItem('user')).displayName;
+      } console.log(storedUsername.value)
+    })
     onBeforeUnmount(() => {
       window.removeEventListener('resize', handleResize);
     });
@@ -254,13 +238,14 @@ export default {
       searchQuery,
       searchResults,
       searchMovies,
+      toggleAppearance,
       getMoviePosterURL,
       isMenuOpen,
       searchResultsWithPoster,
       logMovieId,
       router,
       store,
-      userImage,
+      photoURL,
       storedUsername,
       logout,
       isLogout,

@@ -1,6 +1,10 @@
-import { initializeApp } from 'firebase/app';
-import { getFirestore } from 'firebase/firestore';
-import { getAuth } from 'firebase/auth';
+import { initializeApp } from "firebase/app";
+import { getAnalytics } from "firebase/analytics";
+import { getFirestore } from "firebase/firestore";
+import { getAuth } from "firebase/auth";
+import firebase from 'firebase/compat/app';
+// import * as firebaseui from 'firebaseui';
+// import 'firebaseui/dist/firebaseui.css';
 
 // Initialize Firebase app
 const firebaseConfig = {
@@ -13,14 +17,13 @@ const firebaseConfig = {
     measurementId: "G-SZNETQVS2J"
 };
 
-// Initialize your Firebase app
-const firebaseApp = initializeApp(firebaseConfig);
+const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
+const db = getFirestore(app);
+const auth = getAuth(app);
 
-// Get Firestore instance
-const db = getFirestore(firebaseApp);
+// const ui = new firebaseui.auth.AuthUI(auth);
 
-// Get Auth instance
-const auth = getAuth(firebaseApp);
-
-export { db, auth };
+export { app, analytics, db, auth };
+export default firebase;
 

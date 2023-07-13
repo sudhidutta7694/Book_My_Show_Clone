@@ -33,6 +33,7 @@
   
 <script>
 import { ref, onMounted, watch } from 'vue';
+import { app } from '@/firebase';
 import { getFirestore, collection, onSnapshot } from 'firebase/firestore';
 import { onAuthStateChanged, getAuth } from 'firebase/auth';
 
@@ -47,7 +48,7 @@ export default {
 
         // Fetch favorite movies for the authenticated user
         const fetchFavoriteMovies = (userId) => {
-            const favoritesCollectionRef = collection(db, `users/${userId}/favorites`);
+            const favoritesCollectionRef = collection(db, `Users/${userId}/Favorites`);
             onSnapshot(favoritesCollectionRef, (querySnapshot) => {
                 const favoritesData = [];
                 querySnapshot.forEach((doc) => {

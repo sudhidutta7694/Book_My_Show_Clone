@@ -70,7 +70,7 @@
             <div class="text-center mt-6">
               <button
                 class="bg-red-700 hover:bg-red-800 text-gray-200 text-xl py-2 px-4 md:px-6 rounded transition-colors duration-300"
-                @click="handleSignupWithGoogle">
+                @click="googleSignUp">
                 Sign Up with Google <span class="fab fa-google ml-2"></span>
               </button>
             </div>
@@ -88,12 +88,13 @@
 
 <script setup>
 import { ref } from 'vue';
+import { app } from '@/firebase';
 import { useRouter } from 'vue-router';
-import { collection, addDoc, getDocs, query, where } from 'firebase/firestore';
+import { collection, addDoc, getDocs, query, where, doc, setDoc, getFirestore, getDoc } from 'firebase/firestore';
 import { db } from '@/firebase';
-import { GoogleAuthProvider, signInWithPopup, getAuth} from 'firebase/auth';
+import { GoogleAuthProvider, signInWithPopup, getAuth } from 'firebase/auth';
 // import { storeToRefs } from 'pinia';
-import { useStore } from '@/store';
+// import { useStore } from '@/store';
 
 
 const username = ref('');
@@ -102,28 +103,33 @@ const password = ref('');
 const confirmPassword = ref('');
 const router = useRouter();
 const isUserAlreadyRegistered = ref(false);
-const store = useStore();
+const auth = getAuth(app)
+// const store = useStore();
 
 const handleSubmit = async () => {
   if (username.value !== '' && email.value !== '' && password.value !== '' && confirmPassword.value !== '' && password.value === confirmPassword.value) {
     try {
       const newUser = {
-        username: username.value,
+        displayName: username.value,
         email: email.value,
         password: password.value,
       };
 
-      const querySnapshot = await getDocs(query(collection(db, 'users'), where('email', '==', email.value)));
+      const querySnapshot = await getDocs(query(collection(db, 'Users'), where('email', '==', email.value)));
 
       if (!querySnapshot.empty) {
         isUserAlreadyRegistered.value = true;
         return;
       }
 
-      const docRef = await addDoc(collection(db, 'users'), newUser);
+      const docRef = await addDoc(collection(db, 'Users'), newUser);
+      localStorage.setItem('user', JSON.stringify(newUser))
       console.log('User data stored successfully. Document ID:', docRef.id);
-
-      router.push('/login');
+      localStorage.setItem("access_token", docRef.id)
+      const gender = Math.random() < 0.5 ? "men" : "women";
+      const randomIndex = Math.floor(Math.random() * 100) + 1;
+      localStorage.setItem('userImage', `https://randomuser.me/api/portraits/${gender}/${randomIndex}.jpg`)
+      router.push('/home');
     } catch (error) {
       console.error('Error storing user data:', error);
     }
@@ -134,30 +140,45 @@ const handleSubmit = async () => {
   }
 };
 
-const handleSignupWithGoogle = async () => {
+
+const googleSignUp = async () => {
+  const provider = new GoogleAuthProvider();
   try {
-    const auth = getAuth();
-    const provider = new GoogleAuthProvider();
-
     const result = await signInWithPopup(auth, provider);
+    const credential = GoogleAuthProvider.credentialFromResult(result);
+    const token = credential.accessToken;
+    localStorage.setItem("access_token", JSON.stringify(token));
+    const user = result.user;
+    localStorage.setItem("user", JSON.stringify(user));
+    localStorage.setItem("userImage", JSON.parse(localStorage.getItem("user")).photoURL);
+    // Redirect or perform other actions
+    router.push("/home");
 
-    const { displayName, email } = result.user;
+    const firestore = getFirestore();
+    const usersCollectionRef = collection(firestore, "Users");
+    const userDocRef = doc(usersCollectionRef, user.uid);
 
-    const newUser = {
-      username: displayName,
-      email: email,
-      password: '',
-    };
-
-    const docRef = await addDoc(collection(db, 'users'), newUser);
-    store.setUsername(displayName, email)
-    console.log('User data stored successfully. Document ID:', docRef.id);
-
-    router.push('/home');
+    const userDocSnap = await getDoc(userDocRef);
+    if (!userDocSnap.exists()) {
+      // Create the user document in Firestore if it doesn't exist
+      await setDoc(userDocRef, {
+        name: user.displayName,
+        email: user.email,
+        // Add more fields as needed
+      });
+    }
   } catch (error) {
-    console.error('Error signing up with Google:', error);
+    const errorCode = error.code;
+    const errorMessage = error.message;
+    console.log(errorCode, ": ", errorMessage);
+    const email = error.customData.email;
+    console.log("Email: ", email);
+    const credential = GoogleAuthProvider.credentialFromError(error);
+    console.log("AuthCredential: ", credential);
+    // Handle error
   }
 };
+
 
 
 </script>
@@ -186,4 +207,5 @@ const handleSignupWithGoogle = async () => {
 
 .slide-in-out-leave-to {
   transform: translateX(100%);
-}</style>
+}
+</style>
