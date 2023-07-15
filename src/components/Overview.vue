@@ -76,7 +76,7 @@ import { useStore } from '@/store';
 
 export default {
   props: ['id'],
-  
+
   setup() {
     const favorites = ref([]);
     const db = getFirestore(); // Initialize the Firestore database
@@ -139,11 +139,11 @@ export default {
     // Handle authentication state changes
     onMounted(() => {
       const auth = getAuth();
-      onAuthStateChanged(auth, (user) => {
-        if (user) {
-          const userId = user.uid;
-          fetchFavoriteMovies(userId);
-        }
+      onAuthStateChanged(auth, () => {
+
+        const userId = JSON.parse(localStorage.getItem('user')).uid;
+        fetchFavoriteMovies(userId);
+
       });
     });
 
@@ -305,7 +305,7 @@ export default {
               }
             };
           } else {
-            
+
             console.log('No trailer available for this movie.');
           }
         })

@@ -416,10 +416,10 @@ export default {
             const movieInitial = movie.charAt(0);
 
             // Get the initials of the theater
-            const theaterInitials = theater.name
+            const theaterInitials = theater.name ? theater.name
                 .split(' ')
                 .map(word => word.charAt(0))
-                .join('');
+                .join(''): "";
 
             // Generate a random number
             const randomNumber = Math.floor(Math.random() * 100000000);

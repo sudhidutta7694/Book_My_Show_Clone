@@ -1,6 +1,6 @@
 <template>
     <div class="mt-[-55vh] bg-slate-800 p-6 md:p-12">
-        <div >
+        <div>
             <router-link to="/bookings" class="relative flex justify-center item-center">
                 <button id="bookingButton" @click="storeBookingData" :class="{ 'disabled-button': isButtonDisabled }"
                     :disabled="isButtonDisabled"
@@ -43,8 +43,9 @@
   
 <script>
 
-import { useStore } from '@/store';
-import { getFirestore, collection, addDoc } from 'firebase/firestore';
+import swal from 'sweetalert2';
+import { signInWithEmailAndPassword } from 'firebase/auth';
+import { getFirestore, doc, setDoc } from 'firebase/firestore';
 
 export default {
     props: {
@@ -110,12 +111,12 @@ export default {
         };
     },
     methods: {
-        storeBookingData() {
-            const { uid } = useStore(); // Get the Pinia store instance
-            const user = uid;
+        async storeBookingData() {
+            const user = JSON.parse(localStorage.getItem('user')).uid;
             const db = getFirestore(); // Access the Firestore instance
 
             if (user) {
+                console.log(this.theater.type)
                 // Construct the booking data object
                 const bookingData = {
                     token: this.token,
@@ -123,7 +124,7 @@ export default {
                     payment: this.payment,
                     date: this.date,
                     seatLength: this.seatLength,
-                    theater: this.theater,
+                    theater: this.theater.type===undefined ? JSON.parse(this.theater): this.theater,
                     movie: this.movie,
                     language: this.language,
                     city: this.city,
@@ -131,18 +132,26 @@ export default {
                     seats: JSON.parse(localStorage.getItem('selectedSeats'))
                 };
 
-                // Store the booking data in Firestore
-                const bookingCollectionRef = collection(db, 'users', user, 'booking');
-                addDoc(bookingCollectionRef, bookingData)
-                    .then(() => {
-                        console.log('Booking data saved successfully!');
-                    })
-                    .catch(error => {
-                        console.error('Error saving booking data:', error);
+                try {
+                    // Create a userBookingData document with the same ID as the user ID under the Bookings collection
+                    const userBookingDataRef = doc(db, 'Bookings', user);
+                    await setDoc(userBookingDataRef, bookingData);
+
+                    console.log('Booking data saved successfully!');
+                } catch (error) {
+                    swal.fire({
+                        title: 'Error saving booking data',
+                        html: `<p>${error}</p>`,
+                        icon: 'error',
                     });
+                }
             } else {
                 // User is not logged in, prompt them to log in
-                alert('Please log in to store the booking data.');
+                swal.fire({
+                    title: 'User is not logged in',
+                    html: 'Please log in to store the booking data.',
+                    icon: 'warning'
+                });
             }
         }
 

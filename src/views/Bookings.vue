@@ -28,10 +28,9 @@
           class="text-lg text-green-200 hover:text-green-400 font-bold ">
           Go to Movies
         </router-link>
-        <p v-else 
-          class="text-lg text-gray-200 hover:text-gray-400 font-bold cursor-not-allowed">
+        <p v-else class="text-lg text-gray-200 hover:text-gray-400 font-bold cursor-not-allowed">
           Go to Movies
-      </p>
+        </p>
       </div>
 
     </div>
@@ -100,22 +99,20 @@ export default {
   created() {
     const db = getFirestore(); // Access the Firestore instance
 
-    onAuthStateChanged(auth, (user) => {
-      if (user) {
-        const userId = user.uid;
-        const bookingCollectionRef = collection(db, `users/${userId}/booking`);
-        onSnapshot(bookingCollectionRef, (querySnapshot) => {
-          const bookings = [];
-          querySnapshot.forEach((doc) => {
-            if (doc.exists()) {
-              const bookingData = doc.data();
-              bookings.push(bookingData);
-            }
-          });
-          this.bookingData = bookings; // Assign the retrieved booking data to the data property
-          console.log('Booking data:', this.bookingData);
+    onAuthStateChanged(auth, () => {
+      const userId = JSON.parse(localStorage.getItem('user')).uid;
+      const bookingCollectionRef = collection(db, `Bookings`);
+      onSnapshot(bookingCollectionRef, (querySnapshot) => {
+        const bookings = [];
+        querySnapshot.forEach((doc) => {
+          if (doc.exists() && doc.id == userId) {
+            const bookingData = doc.data();
+            bookings.push(bookingData);
+          }
         });
-      }
+        this.bookingData = bookings; // Assign the retrieved booking data to the data property
+        console.log('Booking data:', this.bookingData);
+      });
     });
   },
   mounted() {

@@ -11,7 +11,9 @@
         <th>Theater ID</th>
         <th>Timing</th>
         <th>Day</th>
+        <th>Date</th>
         <th>Token</th>
+        <!-- <th>Booking Status</th> -->
       </tr>
     </thead>
     <tbody class="rounded-b-xl">
@@ -25,7 +27,9 @@
         <td>{{ booking.theater.id }}</td>
         <td>{{ booking.theater.timing }}</td>
         <td>{{ booking.theater.day }}</td>
+        <td>{{ booking.date }}</td>
         <td>{{ booking.token }}</td>
+        <!-- <td>{{ (booking.date==Date.toLocaleString('en-US', { month: 'short', day: 'numeric' }))? Active : Expired }}</td> -->
       </tr>
     </tbody>
   </table>

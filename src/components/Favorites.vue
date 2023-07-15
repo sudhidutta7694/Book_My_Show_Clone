@@ -141,11 +141,9 @@ export default {
         // Handle authentication state changes
         onMounted(() => {
             const auth = getAuth();
-            onAuthStateChanged(auth, (user) => {
-                if (user) {
-                    const userId = user.uid;
+            onAuthStateChanged(auth, () => {
+                    const userId = JSON.parse(localStorage.getItem('user')).uid;
                     fetchFavoriteMovies(userId);
-                }
             });
         });
 

@@ -15,8 +15,8 @@
                     <p class="font-mono text-white font-bold">PANNA</p>
                     <p class="font-mono text-indigo-800 font-bold">₹250</p>
                 </div>
-                <div class="bg-gray-500 rounded-lg w-16 h-16 flex items-center justify-center">
-                    <p class="font-mono text-white font-bold">N/A</p>
+                <div class="booked rounded-lg w-16 h-16 flex items-center justify-center">
+                    <p class="font-mono text-indigo-900 font-bold">N/A</p>
                 </div>
                 <div class="selected rounded-lg w-16 h-16 flex items-center justify-center">
                     <p class="font-serif text-sm text-gray-200 font-bold">Selected</p>
@@ -78,19 +78,7 @@
         </div>
 
         <div class="mt-[50vh] ml-[40vw] flex flex-col justify-center">
-            <router-link :to="{
-                name: 'payment',
-                query: {
-                    payment: payment,
-                    seats: selectedSeats.length ? selectedSeats.join(',') : '',
-                    date: date,
-                    theater: JSON.stringify(theater),
-                    movie: movie,
-                    language: language,
-                    city: city,
-                    state: state,
-                },
-            }">
+            <router-link :to="paymentRoute">
                 <button
                     class="px-4 py-2 w-[20vw] font-semibold font-mono bg-gray-500 rounded-full disabled:opacity-50 disabled:pointer-events-none"
                     :class="{ 'bg-green-500': selectedSeats.length >= numSeats }" @click="saveSelectedSeats"
@@ -103,181 +91,291 @@
 </template>
   
 
-<script>
-// import { provide } from 'vue';
-export default {
-    props: {
-        date: {
-            type: String,
-            required: true,
-        },
-        theater: {
-            type: String,
-            required: true,
-        },
-        movie: {
-            type: String,
-            required: true,
-        },
-        language: {
-            type: String,
-            required: true,
-        },
-        city: {
-            type: String,
-            required: true,
-        },
-        state: {
-            type: String,
-            required: true,
-        },
+<script setup>
+import { app } from '@/firebase';
+import { onAuthStateChanged, getAuth } from 'firebase/auth';
+import { getDocs, collection, getFirestore } from 'firebase/firestore';
+import { onMounted, watch, ref, computed } from 'vue';
+import { useRoute } from 'vue-router';
+
+
+const props = defineProps({
+    date: {
+        type: String,
+        required: true,
     },
-    data() {
-        return {
-            selectedOption: '1',
-            selectedSeats: [],
-            numSeats: 1,
-            seatOptions: [
-                { value: '1', label: '1 Seat' },
-                { value: '2', label: '2 Seats' },
-                { value: '3', label: '3 Seats' },
-                { value: '4', label: '4 Seats' },
-                { value: '5', label: '5 Seats' },
-                { value: '6', label: '6 Seats' },
-            ],
-            numberOfRows: 7,
-            seatsPerRow: 7,
-            prices: {
-                gold: 200,
-                panna: 250,
-                ruby: 150,
-            },
-            payment: 0,
-        };
+    theater: {
+        type: Object,
+        required: true,
     },
-    watch: {
-        selectedOption(newOption) {
-            this.numSeats = parseInt(newOption);
-        },
-        selectedSeats: {
-            handler() {
-                this.calculatePayment();
-            },
-            deep: true,
-        },
+    movie: {
+        type: String,
+        required: true,
     },
-    methods: {
-        saveSelectedSeats() {
-            localStorage.setItem('selectedSeats', JSON.stringify(this.selectedSeats));
-        },
-        calculatePayment() {
-            this.payment = this.selectedSeats.reduce((total, seat) => {
-                const seatClass = this.getSeatClassFromSeatId(seat);
-                const seatPrice = this.getSeatPrice(seatClass);
-                return total + seatPrice;
-            }, 0);
-        },
-        getSeatPrice(seatClass) {
-            const seatType = seatClass.split('-')[1];
-            return this.prices[seatType];
-        },
-        getSeatClassFromSeatId(seatId) {
-            const [side, row, seat] = seatId.split('-');
-            return this.getSeatClass(side, row, seat);
-        },
-        updateSelectedSeats() {
-            this.selectedSeats = [];
-
-            const numSeats = parseInt(this.selectedOption);
-
-            for (let row = 1; row <= this.numberOfRows; row++) {
-                for (let seat = 1; seat <= this.seatsPerRow; seat++) {
-                    const seatId = this.getSeatId('left', row, seat);
-                    if (this.selectedSeats.length < numSeats && this.isSelectedSeat(seatId)) {
-                        this.selectedSeats.push(seatId);
-                    }
-                }
-            }
-
-            console.log(this.selectedSeats);
-        },
-        isSelectedSeat(seatId) {
-            return this.selectedSeats.includes(seatId);
-        },
-        toggleSeat(seatId) {
-            const numSeats = parseInt(this.selectedOption);
-
-            if (this.isSelectedSeat(seatId)) {
-                this.selectedSeats = this.selectedSeats.filter((seat) => seat !== seatId);
-            } else {
-                if (this.selectedSeats.length < numSeats) {
-                    this.selectedSeats.push(seatId);
-                }
-            }
-
-            // Apply the style to the selected seat
-            const seatElement = document.querySelector(`.seat[data-seat-id="${seatId}"]`);
-            console.log(seatElement);
-            if (seatElement) {
-                const isSelected = this.isSelectedSeat(seatId);
-                seatElement.classList.toggle('selected', isSelected);
-                // seatElement.style.backgroundColor = isSelected ? 'rgba(0, 0, 0, 0.5)' : 'rgba(0, 0, 0, 0)';
-
-            }
-
-            console.log(this.selectedSeats);
-        },
-        getSeatId(side, row, seat) {
-            return `${side}-${row}-${seat}`;
-        },
-        isSeatDisabled(seatId) {
-            const numSeats = parseInt(this.selectedOption);
-            return this.selectedSeats.length >= numSeats && !this.isSelectedSeat(seatId);
-        },
-        getSeatClass(side, row, seat) {
-            const seatId = this.getSeatId(side, row, seat);
-
-            if (
-                seatId === 'left-1-1' ||
-                seatId === 'left-2-1' ||
-                seatId === 'left-3-1' ||
-                seatId === 'left-4-1' ||
-                seatId === 'left-5-1' ||
-                seatId === 'left-6-1' ||
-                seatId === 'left-7-1' ||
-                seatId === 'right-1-1' ||
-                seatId === 'right-2-1' ||
-                seatId === 'right-3-1' ||
-                seatId === 'right-4-1' ||
-                seatId === 'right-5-1' ||
-                seatId === 'right-6-1' ||
-                seatId === 'right-7-1'
-            ) {
-                return 'seat-gold';
-            } else if (
-                seatId === 'left-1-7' ||
-                seatId === 'left-2-7' ||
-                seatId === 'left-3-7' ||
-                seatId === 'left-4-7' ||
-                seatId === 'left-5-7' ||
-                seatId === 'left-6-7' ||
-                seatId === 'left-7-7' ||
-                seatId === 'right-1-7' ||
-                seatId === 'right-2-7' ||
-                seatId === 'right-3-7' ||
-                seatId === 'right-4-7' ||
-                seatId === 'right-5-7' ||
-                seatId === 'right-6-7' ||
-                seatId === 'right-7-7'
-            ) {
-                return 'seat-panna';
-            } else {
-                return 'seat-ruby';
-            }
-        },
+    language: {
+        type: String,
+        required: true,
     },
+    city: {
+        type: String,
+        required: true,
+    },
+    state: {
+        type: String,
+        required: true,
+    },
+});
+const bookedSeats = ref([])
+const selectedOption = ref('1');
+const selectedSeats = ref([]);
+const numSeats = ref(1);
+const seatOptions = [
+    { value: '1', label: '1 Seat' },
+    { value: '2', label: '2 Seats' },
+    { value: '3', label: '3 Seats' },
+    { value: '4', label: '4 Seats' },
+    { value: '5', label: '5 Seats' },
+    { value: '6', label: '6 Seats' },
+];
+const numberOfRows = 7;
+const seatsPerRow = 7;
+const prices = {
+    gold: 200,
+    panna: 250,
+    ruby: 150,
 };
+const payment = ref(0);
+const bookingData = ref(null);
+
+const paymentRoute = computed(() => {
+    return {
+        name: 'payment',
+        query: {
+            payment: payment.value,
+            seats: selectedSeats.value.length ? selectedSeats.value.join(',') : '',
+            date: props.date,
+            theater: JSON.stringify(props.theater),
+            movie: props.movie,
+            language: props.language,
+            city: props.city,
+            state: props.state,
+        },
+    };
+});
+
+// const router = useRouter();
+const route = useRoute();
+
+onMounted(() => {
+    loadBookedSeats();
+});
+
+watch(bookingData, () => {
+    applySeatStyles();
+});
+
+function loadBookedSeats() {
+    const seats = document.querySelectorAll('.seat');
+
+    seats.forEach((seat) => {
+        const seatId = seat.getAttribute('data-seat-id');
+        if (bookingData.value?.seats.includes(seatId)) {
+            seat.classList.add('booked');
+            seat.disabled = true;
+        }
+    });
+}
+
+function applySeatStyles() {
+    console.log("ApplySeatStyles")
+    console.log(route.query)
+    if (!route.query) {
+        return;
+    }
+
+    if (!bookingData.value) {
+        return;
+    }
+
+    bookingData.value.forEach((booking) => {
+        const { theater, movie, language, city, state, date, seats } = booking;
+
+        const isMatch =
+            theater.id === JSON.parse(route.query.theater).id &&
+            theater.name === JSON.parse(route.query.theater).name &&
+            theater.timing === JSON.parse(route.query.theater).timing &&
+            theater.day === JSON.parse(route.query.theater).day &&
+            movie === route.query.movie &&
+            language === route.query.language &&
+            city === route.query.city &&
+            state === route.query.state &&
+            date === route.query.date;
+
+        console.log(isMatch);
+        if (isMatch) {
+            seats.forEach((seat) => {
+                bookedSeats.value.push(seat);
+            });
+            console.log(bookedSeats.value);
+        }
+    });
+
+}
+
+const auth = getAuth(app); // Get the Auth instance
+const db = getFirestore(); // Get the Firestore instance
+
+onAuthStateChanged(auth, async () => {
+    //     if (!user) {
+    // const userId = user.uid;
+    // const bookingsCollectionRef = collection(db, 'Bookings');
+    const querySnapshot = await getDocs(collection(db, "Bookings"));
+    const allBookingData = [];
+    querySnapshot.forEach((doc) => {
+        // doc.data() is never undefined for query doc snapshots
+        const bookingDataValue = doc.data();
+        allBookingData.push(bookingDataValue);
+        console.log(doc.id, " => ", doc.data());
+    });
+    if (allBookingData.length > 0) {
+        bookingData.value = allBookingData; // Assign the retrieved booking data to the data property
+        console.log('Booking data:', bookingData.value);
+    } else {
+        // No booking data exists
+        bookingData.value = null; // Handle the case where no booking data exists
+    }
+});
+
+watch(selectedOption, (newOption) => {
+    numSeats.value = parseInt(newOption);
+});
+
+watch(selectedSeats, () => {
+    calculatePayment();
+}, { deep: true });
+
+function saveSelectedSeats() {
+    localStorage.setItem('selectedSeats', JSON.stringify(selectedSeats.value));
+}
+
+function calculatePayment() {
+    payment.value = selectedSeats.value.reduce((total, seat) => {
+        const seatClass = getSeatClassFromSeatId(seat);
+        const seatPrice = getSeatPrice(seatClass);
+        return total + seatPrice;
+    }, 0);
+}
+
+function getSeatPrice(seatClass) {
+    const seatType = seatClass.split('-')[1];
+    return prices[seatType];
+}
+
+function getSeatClassFromSeatId(seatId) {
+    const [side, row, seat] = seatId.split('-');
+    return getSeatClass(side, row, seat);
+}
+
+function updateSelectedSeats() {
+    selectedSeats.value = [];
+
+    const numSeatsValue = parseInt(selectedOption.value);
+
+    for (let row = 1; row <= numberOfRows; row++) {
+        for (let seat = 1; seat <= seatsPerRow; seat++) {
+            const seatId = getSeatId('left', row, seat);
+            if (selectedSeats.value.length < numSeatsValue && isSelectedSeat(seatId)) {
+                selectedSeats.value.push(seatId);
+            }
+        }
+    }
+
+    console.log(selectedSeats.value);
+}
+
+function isSelectedSeat(seatId) {
+    return selectedSeats.value.includes(seatId);
+}
+
+function toggleSeat(seatId) {
+    const numSeatsValue = parseInt(selectedOption.value);
+
+    if (isSelectedSeat(seatId)) {
+        selectedSeats.value = selectedSeats.value.filter((seat) => seat !== seatId);
+    } else {
+        if (selectedSeats.value.length < numSeatsValue) {
+            selectedSeats.value.push(seatId);
+        }
+    }
+
+    // Apply the style to the selected seat
+    const seatElement = document.querySelector(`.seat[data-seat-id="${seatId}"]`);
+    if (seatElement) {
+        const isSelected = isSelectedSeat(seatId);
+        seatElement.classList.toggle('selected', isSelected);
+    }
+
+    console.log(selectedSeats.value);
+}
+
+function getSeatId(side, row, seat) {
+    return `${side}-${row}-${seat}`;
+}
+
+function isSeatDisabled(seatId) {
+    const numSeatsValue = parseInt(selectedOption.value);
+    return selectedSeats.value.length >= numSeatsValue && !isSelectedSeat(seatId);
+}
+
+function getSeatClass(side, row, seat) {
+    const seatId = getSeatId(side, row, seat);
+    if (bookedSeats.value.some(seat => seat === seatId)) {
+        console.log(bookedSeats.value[1]);
+        return 'booked';
+    }
+    if (
+        seatId === 'left-1-1' ||
+        seatId === 'left-2-1' ||
+        seatId === 'left-3-1' ||
+        seatId === 'left-4-1' ||
+        seatId === 'left-5-1' ||
+        seatId === 'left-6-1' ||
+        seatId === 'left-7-1' ||
+        seatId === 'right-1-1' ||
+        seatId === 'right-2-1' ||
+        seatId === 'right-3-1' ||
+        seatId === 'right-4-1' ||
+        seatId === 'right-5-1' ||
+        seatId === 'right-6-1' ||
+        seatId === 'right-7-1'
+    ) {
+        return 'seat-gold';
+    } else if (
+        seatId === 'left-1-7' ||
+        seatId === 'left-2-7' ||
+        seatId === 'left-3-7' ||
+        seatId === 'left-4-7' ||
+        seatId === 'left-5-7' ||
+        seatId === 'left-6-7' ||
+        seatId === 'left-7-7' ||
+        seatId === 'right-1-7' ||
+        seatId === 'right-2-7' ||
+        seatId === 'right-3-7' ||
+        seatId === 'right-4-7' ||
+        seatId === 'right-5-7' ||
+        seatId === 'right-6-7' ||
+        seatId === 'right-7-7'
+    ) {
+        return 'seat-panna';
+    } else {
+        return 'seat-ruby';
+    }
+
+
+}
 </script>
+
+
   
 <style scoped>
 .theatre {
@@ -305,6 +403,12 @@ export default {
 
 .selected {
     background-color: green;
+}
+
+.booked {
+    background: linear-gradient(to top, #727272, #7c7c7c, #8a8a8a, #a8a8a8, #b0b0b0, #cecece);
+    cursor: not-allowed;
+    pointer-events: none;
 }
 
 .seat:hover:before {

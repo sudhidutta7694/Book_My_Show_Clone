@@ -142,7 +142,7 @@ export default {
     const isMenuOpen = ref('false')
     const store = useStore();
     const auth = getAuth(app);
-    const toggleAppearance = ref('false');
+    const toggleAppearance = ref(false);
     const storedUsername = ref('');
     const gender = Math.random() < 0.5 ? "men" : "women";
     const randomIndex = Math.floor(Math.random() * 100) + 1;
@@ -157,6 +157,7 @@ export default {
       }
     });
     onMounted(() => {
+      toggleAppearance.value = false;
       if (JSON.parse(localStorage.getItem('user'))) {
         storedUsername.value = JSON.parse(localStorage.getItem('user')).displayName;
       } console.log(storedUsername.value)

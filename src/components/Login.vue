@@ -88,7 +88,7 @@ import { collection, query, where, getDocs, setDoc, getDoc, doc, getFirestore } 
 import { db, app } from '@/firebase'; // Assuming you have already set up Firebase in your project
 import { GoogleAuthProvider, signInWithPopup, getAuth, sendPasswordResetEmail } from 'firebase/auth';
 import Swal from 'sweetalert2';
-import { useStore } from '@/store';
+// import { useStore } from '@/store';
 
 export default {
   data() {
@@ -147,10 +147,9 @@ export default {
 
     // On component mount, check if the username is stored in local storage
     onMounted(() => {
-      // const storedUsername = localStorage.getItem('username');
-      // if (storedUsername) {
-      //   store.setUsername(storedUsername);
-      // }
+      if (localStorage.getItem('user')) {
+        router.push('/home');
+      }
     });
 
     const handleLogin = async () => {
@@ -161,11 +160,13 @@ export default {
         const querySnapshot = await getDocs(q);
 
         let foundUser = null;
+        // let access_token = null
 
         querySnapshot.forEach((doc) => {
           const user = doc.data();
           if (user.password === password.value) {
             foundUser = user;
+            user['uid'] = doc.id;
           }
         });
 
@@ -184,6 +185,7 @@ export default {
 
           // Store the username in local storage
           localStorage.setItem('user', JSON.stringify(foundUser));
+          // localStorage.setItem('access_token', access_token);
 
           router.push('/home');
         }

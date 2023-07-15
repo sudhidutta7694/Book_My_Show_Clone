@@ -87,7 +87,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import { app } from '@/firebase';
 import { useRouter } from 'vue-router';
 import { collection, addDoc, getDocs, query, where, doc, setDoc, getFirestore, getDoc } from 'firebase/firestore';
@@ -105,6 +105,11 @@ const router = useRouter();
 const isUserAlreadyRegistered = ref(false);
 const auth = getAuth(app)
 // const store = useStore();
+onMounted(()=> {
+  if (localStorage.getItem('user')) {
+    router.push('/home');
+  }
+});
 
 const handleSubmit = async () => {
   if (username.value !== '' && email.value !== '' && password.value !== '' && confirmPassword.value !== '' && password.value === confirmPassword.value) {
