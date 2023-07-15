@@ -11,7 +11,8 @@
       >
         <div class="relative">
           <router-link :to="{ name: 'overview', params: { id: movie.id } }">
-            <img :src="getImageUrl(movie.poster_path)" :alt="movie.title" class="rounded-lg shadow-lg">
+            <img v-if="isImageLoaded" :src="getImageUrl(movie.poster_path)" :alt="movie.title" class="rounded-lg shadow-lg" @load="onImageLoad">
+            <img v-else :src="getPlaceholder(movie.title)" :alt="movie.title" class="rounded-lg shadow-lg"/>
           </router-link>
         </div>
         <div class="text-center">
@@ -28,6 +29,7 @@ import { ref, onMounted } from 'vue';
 
 export default {
   setup() {
+    const isImageLoaded = ref(true);
     const movies = ref([]);
     const loading = ref(true);
     const page = ref(1); // Track the current page number
@@ -78,11 +80,22 @@ export default {
       return `https://image.tmdb.org/t/p/w500${posterPath}`;
     };
 
+    const onImageLoad = () => {
+      isImageLoaded.value = true;
+    };
+
+    const getPlaceholder = (val) => {
+        return `https://via.placeholder.com/500x750.png?text=${val}`;
+    };
+
     const handleMovieClick = (movie) => {
       console.log('Clicked movie:', movie);
     };
 
     return {
+      isImageLoaded,
+      onImageLoad,
+      getPlaceholder,
       movies,
       loading,
       getImageUrl,

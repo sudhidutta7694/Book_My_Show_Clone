@@ -19,7 +19,7 @@
               </div>
               <div class="flex-1">
                 <input type="text" v-model="username" placeholder="Username" pattern="^[A-Za-z0-9]{3,}$"
-                  class="h-10 bg-slate-700 text-gray-200 py-1 pr-3 w-full" required>
+                  class="pl-3 h-10 bg-slate-700 text-gray-200 py-1 pr-3 w-full" required>
               </div>
             </div>
 
@@ -30,7 +30,7 @@
               </div>
               <div class="flex-1">
                 <input type="text" v-model="email" placeholder="E-mail" pattern="[^\s@]+@[^\s@]+\.[^\s@]+"
-                  class="h-10 bg-slate-700 text-gray-200 py-1 pr-3 w-full" required>
+                  class="pl-3 h-10 bg-slate-700 text-gray-200 py-1 pr-3 w-full" required>
               </div>
             </div>
 
@@ -39,21 +39,27 @@
                 <span class="fas fa-asterisk text-gray-200"></span>
               </div>
               <div class="flex-1">
-                <input type="password" v-model="password" placeholder="Password"
+                <input :type="showPassword ? 'text' : 'password'" v-model="password" placeholder="Password"
                   pattern="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$"
-                  class="h-10 bg-slate-700 text-gray-200 py-1 pr-3 w-full" required>
+                  class="pl-3 h-10 bg-slate-700 text-gray-200 py-1 pr-3 w-full" required>
               </div>
+              <button type="button" class="eye-button" @click="showPassword = !showPassword">
+                <i :class="showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
+              </button>
             </div>
 
             <div class="border-2 border-solid rounded flex items-center mb-4">
               <div class="w-10 h-10 flex justify-center items-center flex-shrink-0">
-                <span class="fas fa-asterisk text-gray-200"></span>
+                <span class="pl-3 fas fa-asterisk text-gray-200"></span>
               </div>
               <div class="flex-1">
-                <input type="password" placeholder="Confirm Password" v-model="confirmPassword"
-                  pattern="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$"
-                  class="h-10 bg-slate-700 text-gray-200 py-1 pr-3 w-full" required>
+                <input :type="showPassword ? 'text' : 'password'" placeholder="Confirm Password" v-model="confirmPassword"
+                  pattern="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$" 
+                  class="pl-3 h-10 bg-slate-700 text-gray-200 py-1 pr-3 w-full" required>
               </div>
+              <button type="button" class="eye-button" @click="showPassword = !showPassword">
+                <i :class="showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
+              </button>
             </div>
 
             <p class="text-sm text-center text-gray-200 mt-6">By signing up, you agree to our <RouterLink to="/terms"
@@ -87,6 +93,7 @@
 </template>
 
 <script setup>
+import swal from 'sweetalert2'
 import { ref, onMounted } from 'vue';
 import { app } from '@/firebase';
 import { useRouter } from 'vue-router';
@@ -96,7 +103,7 @@ import { GoogleAuthProvider, signInWithPopup, getAuth } from 'firebase/auth';
 // import { storeToRefs } from 'pinia';
 // import { useStore } from '@/store';
 
-
+const showPassword = ref(false);
 const username = ref('');
 const email = ref('');
 const password = ref('');
@@ -139,7 +146,11 @@ const handleSubmit = async () => {
       console.error('Error storing user data:', error);
     }
   } else if (password.value !== confirmPassword.value) {
-    alert("Password and confirm Password must be the same");
+    swal.fire({
+      title: "Confirm Password",
+      html: "Password and confirm Password must be the same",
+      icon: "info"
+    })
   } else if (username.value === '') {
     alert("Username must be provided");
   }
@@ -212,5 +223,14 @@ const googleSignUp = async () => {
 
 .slide-in-out-leave-to {
   transform: translateX(100%);
+}
+
+.eye-button {
+  width: 40px;
+}
+
+.eye-button i {
+  font-size: 1rem;
+  color: #999;
 }
 </style>

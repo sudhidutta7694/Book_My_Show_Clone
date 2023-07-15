@@ -53,8 +53,8 @@
         </div>
         <div>
           <form class="relative mr-6" @submit.prevent="routeTo">
-            <input type="text" placeholder="Search here" v-model="searchQuery" @input="searchMovies"
-              class="border w-32 md:w-64 border-red-300 text-sm md:text-lg bg-slate-700 text-red-200 hover:bg-slate-800 rounded-full py-2 px-2 md:py-2 md:px-4 focus:outline-none focus:ring-2 focus:ring-red-400 focus:border-transparent transition-colors duration-300" />
+            <input type="text" placeholder="Search here" v-model="searchQuery" @input="searchMovies" @click="routeToHome"
+              class="border w-32 md:w-64 lg:w-96 border-red-300 text-sm md:text-lg bg-slate-700 text-red-200 hover:bg-slate-800 rounded-full py-2 px-2 md:py-2 md:px-4 focus:outline-none focus:ring-2 focus:ring-red-400 focus:border-transparent transition-colors duration-300" />
             <button type="submit"
               class="absolute right-0 top-0 bottom-0 px-4 py-2 text-red-400 hover:text-red-600 transition-colors duration-300">
               <!-- <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
@@ -65,17 +65,17 @@
             </button>
           </form>
 
-          <div v-if="searchResultsWithPoster.length > 0"
-            class="cursor-pointer absolute mt-2 ml-[-20px] rounded-2xl bg-slate-700 overflow-y-auto max-h-96">
+          <div v-if="searchQuery.length > 0" 
+            class="cursor-pointer absolute mt-2 ml-[-10px] rounded-2xl bg-slate-700 overflow-y-auto max-h-96">
             <ul>
               <li v-for="movie in searchResultsWithPoster" :key="movie.id"
-                class="flex opacity-90 hover:bg-slate-800 gap-3 hover:opacity-100 items-center p-2 pb-3 w-64"
+                class="flex opacity-90 hover:bg-slate-800 gap-3 hover:opacity-100 items-center p-2 pb-3 w-32 md:w-64 lg:w-96"
                 @click="logMovieId(movie.id)">
                 <router-link :to="{ name: 'overview', params: { id: movie.id } }">
-                  <div class="flex justify-center items-center gap-3">
+                  <div class="flex justify-center items-center gap-3" @click="clear">
                     <img class="rounded-xl border border-red-300 hover:border-red-400 w-10"
                       :src="getMoviePosterURL(movie.poster_path)" />
-                    <span class="text-red-100 font-serif hover:text-red-200">{{ movie.title }}</span>
+                    <span class="text-red-100 font-serif font-semibold text-lg hover:text-red-200">{{ movie.title }}</span>
                   </div>
                 </router-link>
               </li>
@@ -96,11 +96,16 @@
                 class="mt-2 absolute top-20 bg-slate-900 p-3 rounded-xl flex flex-col opacity-90 border border-red-500 transition-transform duration-200 w-60 items-center justify-center">
                 <p class="text-sm sm:text-md md:text-lg text-center font-mono mb-2">{{ storedUsername }}</p>
                 <hr class="border-1 w-full border-gray-300" />
-                <router-link to="/home" 
+                <!-- <div @click="showProfile = !showProfile"
                   class="rounded-md pt-3 text-sm sm:text-md md:text-lg font-mono transition-colors text-red-200 hover:text-red-300 duration-300">
                   <i class="fas fa-user" />
                   Profile
-                </router-link>
+                </div> -->
+                <!-- <teleport to="#profile">
+                  <div v-if="showProfile" class="fixed z-10 top-40 right-20 bg-slate-700 w-[80vw] h-[80vh] rounded-xl opacity-90">
+
+                  </div>
+                </teleport> -->
                 <!-- <hr class="border-1 w-full border-gray-300"/> -->
                 <router-link to="/login" @click="logout"
                   class="text-center rounded-md pt-1 text-sm sm:text-md md:text-lg font-mono transition-colors text-red-200 hover:text-red-300 duration-300">
@@ -135,10 +140,11 @@ export default {
     const handleResize = () => {
       windowWidth.value = window.innerWidth;
     };
-    const isLogout = ref('false');
+    const isLogout = ref(false);
     const searchQuery = ref('');
     const searchResults = ref([]);
     const router = useRouter();
+    const showProfile = ref(false);
     const isMenuOpen = ref('false')
     const store = useStore();
     const auth = getAuth(app);
@@ -157,14 +163,19 @@ export default {
       }
     });
     onMounted(() => {
-      toggleAppearance.value = false;
       if (JSON.parse(localStorage.getItem('user'))) {
         storedUsername.value = JSON.parse(localStorage.getItem('user')).displayName;
-      } console.log(storedUsername.value)
+      } 
+      toggleAppearance.value = false;
+      console.log(storedUsername.value)
     })
     onBeforeUnmount(() => {
       window.removeEventListener('resize', handleResize);
     });
+
+    const clear = () => {
+      searchQuery.value = '';
+    }
 
     const searchMovies = async () => {
       if (searchQuery.value.trim() === '') {
@@ -180,6 +191,12 @@ export default {
       } catch (error) {
         console.error(error);
       }
+    };
+
+    const routeToHome = () => {
+      // const router = useRouter();
+      searchQuery.value = "";
+      router.push('/home');
     };
 
     const getMoviePosterURL = (posterPath) => {
@@ -235,6 +252,9 @@ export default {
     };
 
     return {
+      clear,
+      showProfile,
+      routeToHome,
       windowWidth,
       searchQuery,
       searchResults,

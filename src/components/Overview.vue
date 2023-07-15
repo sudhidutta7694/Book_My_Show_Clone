@@ -70,7 +70,7 @@ import {
   doc,
   getDoc,
 } from 'firebase/firestore';
-import { app } from '@/firebase';
+// import { app } from '@/firebase';
 import { onAuthStateChanged, getAuth } from 'firebase/auth';
 import { useStore } from '@/store';
 

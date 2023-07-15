@@ -1,5 +1,4 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import { getAuth } from 'firebase/auth';
 import Home from '../views/Movies.vue';
 import Movies from '../components/All.vue';
 import Chosen from '../components/Chosen.vue';
@@ -15,8 +14,7 @@ import payment from '../components/payment.vue';
 import paySuccess from '../components/paySuccess.vue';
 
 const isAuthenticated = () => {
-  const auth = getAuth();
-  const user = auth.currentUser;
+  const user = localStorage.getItem('user')
   return user !== null;
 };
 
@@ -28,25 +26,25 @@ const router = createRouter({
       path: '/home',
       name: 'home',
       component: Home,
-      // meta: { requiresAuth: true },
+      meta: { requiresAuth: true },
     },
     {
       path: '/movies',
       name: 'movies',
       component: Movies,
-      // meta: { requiresAuth: true },
+      meta: { requiresAuth: true },
     },
     {
       path: '/bookings',
       name: 'bookings',
       component: Bookings,
-      // meta: { requiresAuth: true },
+      meta: { requiresAuth: true },
     },
     {
       path: '/favorites',
       name: 'favorites',
       component: () => import('../components/Favorites.vue'),
-      // meta: { requiresAuth: true },
+      meta: { requiresAuth: true },
     },
     {
       path: '/chosen',
@@ -57,26 +55,26 @@ const router = createRouter({
         city: route.query.city,
         state: route.query.state,
       }),
-      // meta: { requiresAuth: true },
+      meta: { requiresAuth: true },
     },
     {
       path: '/login',
       name: 'login',
       component: Login,
-      // meta: { requiresAuth: false },
+      meta: { requiresAuth: false },
     },
     {
       path: '/',
       name: 'register',
       component: Register,
-      // meta: { requiresAuth: false },
+      meta: { requiresAuth: false },
     },
     {
       path: '/overview/:id',
       name: 'overview',
       component: Overview,
       props: true,
-      // meta: { requiresAuth: true },
+      meta: { requiresAuth: true },
     },
     {
       path: '/movie',
@@ -88,7 +86,7 @@ const router = createRouter({
         city: route.query.city,
         state: route.query.state,
       }),
-      // meta: { requiresAuth: true },
+      meta: { requiresAuth: true },
     },
     {
       path: '/theater',
@@ -100,7 +98,7 @@ const router = createRouter({
         city: route.query.city,
         state: route.query.state,
       }),
-      // meta: { requiresAuth: true },
+      meta: { requiresAuth: true },
     },
     {
       path: '/hall',
@@ -114,7 +112,7 @@ const router = createRouter({
         city: route.query.city,
         state: route.query.state,
       }),
-      // meta: { requiresAuth: true },
+      meta: { requiresAuth: true },
     },
     {
       path: '/payment',
@@ -130,7 +128,7 @@ const router = createRouter({
         city: route.query.city,
         state: route.query.state,
       }),
-      // meta: { requiresAuth: true },
+      meta: { requiresAuth: true },
     },
     {
       path: '/paySuccess',
@@ -150,7 +148,7 @@ const router = createRouter({
         state: route.query.state,
         seas: route.query.seats,
       }),
-      // meta: { requiresAuth: true },
+      meta: { requiresAuth: true },
     },
     {
       path: '/terms',
