@@ -229,7 +229,8 @@ onAuthStateChanged(auth, async () => {
     //     if (!user) {
     // const userId = user.uid;
     // const bookingsCollectionRef = collection(db, 'Bookings');
-    const querySnapshot = await getDocs(collection(db, "Bookings"));
+    const userId = JSON.parse(localStorage.getItem("user")).uid
+    const querySnapshot = await getDocs(collection(db, `Bookings/${userId}/userBookingData`));
     const allBookingData = [];
     querySnapshot.forEach((doc) => {
         // doc.data() is never undefined for query doc snapshots

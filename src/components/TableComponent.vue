@@ -1,7 +1,7 @@
 <template>
   <table class="table rounded-xl shadow-2xl">
     <thead class="rounded-t-xl">
-      <tr class="bg-slate-900 font-bold text-red-200">
+      <tr class="bg-slate-900 font-bold text-gray-100">
         <th>City</th>
         <th>Language</th>
         <th>Movie</th>
@@ -13,11 +13,12 @@
         <th>Day</th>
         <th>Date</th>
         <th>Token</th>
-        <!-- <th>Booking Status</th> -->
+        <th>Booking Status</th>
       </tr>
     </thead>
     <tbody class="rounded-b-xl">
-      <tr class="bg-slate-600 font-sans text-gray-100" v-for="booking in (bookingData).slice(0,4)" :key="booking.token">
+      <tr class="bg-slate-600 font-sans" v-for="booking in sortedBookings" :key="booking.token"
+        :class="(((new Date(booking.date).getUTCMonth()) <= (new Date().getUTCMonth())) && ((new Date(booking.date).getDate()) <= (new Date().getDate())) && ((new Date(booking.date + ' ' + booking.theater.timing).getHours()) <= new Date().getHours())) ? 'text-red-200' : 'text-green-200'">
         <td>{{ booking.city }}</td>
         <td>{{ booking.language }}</td>
         <td>{{ booking.movie }}</td>
@@ -29,7 +30,10 @@
         <td>{{ booking.theater.day }}</td>
         <td>{{ booking.date }}</td>
         <td>{{ booking.token }}</td>
-        <!-- <td>{{ (booking.date==Date.toLocaleString('en-US', { month: 'short', day: 'numeric' }))? Active : Expired }}</td> -->
+        <td class="font-mono font-bold">
+          {{ (((new Date(booking.date).getUTCMonth()) <= (new Date().getUTCMonth())) && ((new
+            Date(booking.date).getDate()) <= (new Date().getDate())) && ((new Date(booking.date + ' ' +
+              booking.theater.timing).getHours()) <= new Date().getHours())) ? 'Expired' : 'Active' }} </td>
       </tr>
     </tbody>
   </table>
@@ -44,6 +48,11 @@ export default {
       required: true,
     },
   },
+  computed: {
+  sortedBookings() {
+    return this.bookingData.slice(0,5).sort((a, b) => new Date(b.date) - new Date(a.date));
+  }
+}
 };
 </script>
 
@@ -54,7 +63,8 @@ export default {
   border-radius: 16px;
 }
 
-th, td {
+th,
+td {
   padding: 12px;
   text-align: center;
 }

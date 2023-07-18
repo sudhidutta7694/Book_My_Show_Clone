@@ -13,8 +13,8 @@
                 <span class="far fa-envelope text-gray-200"></span>
               </div>
               <div class="flex-1">
-                <input type="text" v-model="email" placeholder="Enter your E-mail"
-                  class="p-4 h-10 bg-slate-700 text-gray-200 py-1 pr-3 w-full" />
+                <input type="text" v-model="email" placeholder="Enter your E-mail" pattern="[^\s@]+@[^\s@]+\.[^\s@]+"
+                  class="p-4 h-10 bg-slate-700 text-gray-200 py-1 pr-3 w-full" required />
               </div>
             </div>
 
@@ -24,7 +24,8 @@
               </div>
               <div class="flex-1">
                 <input v-model="password" placeholder="Enter your Password" :type="showPassword ? 'text' : 'password'"
-                  class="p-4 h-10 bg-slate-700 text-gray-200 py-1 pr-3 w-full" />
+                  class="p-4 h-10 bg-slate-700 text-gray-200 py-1 pr-3 w-full"
+                  pattern="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$" required />
               </div>
               <button type="button" class="eye-button" @click="showPassword = !showPassword">
                 <i :class="showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
@@ -173,9 +174,17 @@ export default {
         if (!foundUser) {
           // User credentials not found or password is incorrect
           if (querySnapshot.size > 0) {
-            alert('Incorrect password. Please try again.');
+            Swal.fire({
+              title: 'Incorrect Password',
+              html: 'Please crosscheck the password',
+              icon: 'error',
+            })
           } else {
-            alert('No user registered with this email. Please try again.');
+            Swal.fire({
+              title: 'No User registered with this Email',
+              html: 'Please crosscheck the Email',
+              icon: 'error',
+            })
           }
         } else if (!foundUser.email || foundUser.email.length === 0) {
           alert("The Email ID cannot be empty!");

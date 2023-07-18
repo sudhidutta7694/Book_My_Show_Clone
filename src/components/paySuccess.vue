@@ -44,8 +44,9 @@
 <script>
 
 import swal from 'sweetalert2';
-import { signInWithEmailAndPassword } from 'firebase/auth';
-import { getFirestore, doc, setDoc } from 'firebase/firestore';
+// import { db } from '@/firebase'
+// import { signInWithEmailAndPassword } from 'firebase/auth';
+import { getFirestore, collection, doc, setDoc, getDoc } from 'firebase/firestore';
 
 export default {
     props: {
@@ -116,7 +117,7 @@ export default {
             const db = getFirestore(); // Access the Firestore instance
 
             if (user) {
-                console.log(this.theater.type)
+                console.log(this.theater.type);
                 // Construct the booking data object
                 const bookingData = {
                     token: this.token,
@@ -124,7 +125,7 @@ export default {
                     payment: this.payment,
                     date: this.date,
                     seatLength: this.seatLength,
-                    theater: this.theater.type===undefined ? JSON.parse(this.theater): this.theater,
+                    theater: this.theater.type === undefined ? JSON.parse(this.theater) : this.theater,
                     movie: this.movie,
                     language: this.language,
                     city: this.city,
@@ -133,9 +134,19 @@ export default {
                 };
 
                 try {
-                    // Create a userBookingData document with the same ID as the user ID under the Bookings collection
-                    const userBookingDataRef = doc(db, 'Bookings', user);
-                    await setDoc(userBookingDataRef, bookingData);
+                    // Create a userBookingData document within a collection named after the user's ID
+                    const userBookingCollectionRef = collection(db, `Bookings/${user}/userBookingData`);
+                    const userBookingDocRef = doc(userBookingCollectionRef);
+
+                    const userBookingDocSnapshot = await getDoc(userBookingDocRef);
+                    if (userBookingDocSnapshot.exists()) {
+                        // Document already exists
+                        // ...
+                    } else {
+                        // Document doesn't exist, create it
+                        await setDoc(userBookingDocRef, bookingData);
+                        // ...
+                    }
 
                     console.log('Booking data saved successfully!');
                 } catch (error) {
@@ -153,6 +164,8 @@ export default {
                     icon: 'warning'
                 });
             }
+
+
         }
 
     },

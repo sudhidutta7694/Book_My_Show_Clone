@@ -101,11 +101,11 @@ export default {
 
     onAuthStateChanged(auth, () => {
       const userId = JSON.parse(localStorage.getItem('user')).uid;
-      const bookingCollectionRef = collection(db, `Bookings`);
+      const bookingCollectionRef = collection(db, `Bookings/${userId}/userBookingData`);
       onSnapshot(bookingCollectionRef, (querySnapshot) => {
         const bookings = [];
         querySnapshot.forEach((doc) => {
-          if (doc.exists() && doc.id == userId) {
+          if (doc.exists()) {
             const bookingData = doc.data();
             bookings.push(bookingData);
           }

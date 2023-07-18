@@ -33,7 +33,7 @@
   
 <script>
 import { ref, onMounted, watch } from 'vue';
-import { app } from '@/firebase';
+// import { app } from '@/firebase';
 import { getFirestore, collection, onSnapshot } from 'firebase/firestore';
 import { onAuthStateChanged, getAuth } from 'firebase/auth';
 
