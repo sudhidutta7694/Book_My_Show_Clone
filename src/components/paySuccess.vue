@@ -58,20 +58,8 @@ export default {
             type: String,
             required: true,
         },
-        cardNumber: {
-            type: String,
-            required: true,
-        },
         seatLength: {
             type: Number,
-            required: true,
-        },
-        payment: {
-            type: Number,
-            required: true,
-        },
-        seats: {
-            type: Array,
             required: true,
         },
         theater: {
@@ -114,6 +102,7 @@ export default {
     methods: {
         async storeBookingData() {
             const user = JSON.parse(localStorage.getItem('user')).uid;
+            // const payment = JSON.parse(localStorage.getItem('payment'));
             const db = getFirestore(); // Access the Firestore instance
 
             if (user) {
@@ -121,8 +110,8 @@ export default {
                 // Construct the booking data object
                 const bookingData = {
                     token: this.token,
-                    cardNumber: this.cardNumber,
-                    payment: this.payment,
+                    cardNumber: JSON.parse(localStorage.getItem('cardNumber')),
+                    payment: 1.18 * JSON.parse(localStorage.getItem('payment')),
                     date: this.date,
                     seatLength: this.seatLength,
                     theater: this.theater.type === undefined ? JSON.parse(this.theater) : this.theater,

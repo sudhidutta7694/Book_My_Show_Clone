@@ -17,7 +17,7 @@
                             </span>
                         </div>
                         <div class="text-white font-mono timer" data-id="timer">
-                            <span class="bg-red-700">0</span><span class="bg-red-700">5</span>
+                            <span class="bg-red-700">0</span><span class="bg-red-700">0</span>
                             <em>:</em>
                             <span class="bg-red-700">0</span><span class="bg-red-700">0</span>
                         </div>
@@ -68,13 +68,14 @@
 
 
                                     <input v-model="cardNumber1" class="bg-red-50 border rounded-lg border-black"
-                                        type="number" min="1" max="9999" placeholder="0000" required>-
-                                    <input v-model="cardNumber2" class="bg-red-50 border rounded-lg border-black" type="number" placeholder="0000"
-                                        required>-
-                                    <input v-model="cardNumber3" class="bg-red-50 border rounded-lg border-black" type="number" placeholder="0000"
-                                        required>-
-                                    <input v-model="cardNumber4" class="bg-red-50 border rounded-lg border-black" type="number" placeholder="0000"
-                                        data-bound="carddigits_mock" data-def="0000" required>
+                                        type="number" min="1000" max="9999" placeholder="0000" required>-
+                                    <input v-model="cardNumber2" class="bg-red-50 border rounded-lg border-black"
+                                        type="number" min="1000" max="9999" placeholder="0000" required>-
+                                    <input v-model="cardNumber3" class="bg-red-50 border rounded-lg border-black"
+                                        type="number" min="1000" max="9999" placeholder="0000" required>-
+                                    <input v-model="cardNumber4" class="bg-red-50 border rounded-lg border-black"
+                                        type="number" min="1000" max="9999" placeholder="0000" data-bound="carddigits_mock"
+                                        data-def="0000" required>
                                 </div>
                                 <i class="ai-circle-check-fill size-lg f-main-color"></i>
                             </div>
@@ -259,19 +260,12 @@
 
 
 <script>
-// import { inject } from 'vue';
+import Swal from 'sweetalert2'
+// import { useRouter } from 'vue-router';
 export default {
     props: {
         date: {
             type: String,
-            required: true,
-        },
-        payment: {
-            type: Number,
-            required: true,
-        },
-        seats: {
-            type: Array,
             required: true,
         },
         theater: {
@@ -303,24 +297,29 @@ export default {
             cardNumber4: '',
             expiryMonth: '',
             expiryYear: '',
+            payment: JSON.parse(localStorage.getItem('payment')),
             showPassword: false,
             cardholderName: '',
-            token: ''
+            token: '',
+            timerExpired: false,
         };
+    },
+    onUnmounted() {
+        localStorage.setItem("cardNumber", JSON.stringify(this.cardNumber1 + this.cardNumber2 + this.cardNumber3 + this.cardNumber4));
     },
     mounted() {
         this.copyInputValuesToCardMockup();
         this.toggleCvcDisplayMode();
         this.startTimerCountdown();
     },
-    watch: {
-        seats: {
-            immediate: true,
-            handler(newSeats) {
-                console.log(newSeats);
-            },
-        },
-    },
+    // watch: {
+    //     seats: {
+    //         immediate: true,
+    //         handler(newSeats) {
+    //             console.log(newSeats);
+    //         },
+    //     },
+    // },
     methods: {
         handlePayNowClick() {
 
@@ -346,7 +345,8 @@ export default {
         },
         startTimerCountdown() {
             const timer = document.querySelector('[data-id=timer]');
-            let timeLeft = (60 * 5); // Set the initial time to 5 minutes
+            let timeLeft = (1 * 5); // Set the initial time to 5 minutes
+            this.timerExpired = false; // Variable to keep track of whether the timer has expired
 
             const tick = () => {
                 if (timeLeft > 0) {
@@ -354,13 +354,15 @@ export default {
                     const date = new Date('2000-01-01 00:00:00');
                     date.setSeconds(timeLeft);
                     const str = date.toISOString();
-                    timer.children[0].innerText = str[14];
+                    // timer.children[0].innerText = str[14];
                     timer.children[1].innerText = str[15];
                     timer.children[3].innerText = str[17];
                     timer.children[4].innerText = str[18];
                 } else {
+                    this.timerExpired = true;
                     // 5 minutes have passed, close the payment gateway or perform any necessary actions
                     this.closePaymentGateway();
+
                 }
             };
 
@@ -368,11 +370,20 @@ export default {
                 tick();
             }, 1000);
 
-            tick();
         },
 
         closePaymentGateway() {
+
+            // if (this.timerExpired) {
+            //     return;
+            // }
+            // const router = useRouter();
             this.$router.push('/bookings');
+            // Swal.fire({
+            //     title: "Payment Gateway Closed",
+            //     html: "<p>Please try again after reloading</p>",
+            //     icon: "info"
+            // })
         },
 
         payNow() {
@@ -385,14 +396,12 @@ export default {
                 cardholderName: this.cardholderName
             });
 
-            const { token, cardNumber1, cardNumber2, cardNumber3, cardNumber4 , payment, date, seatLength, seats, theater, movie, language, city, state } = this;
+            const { token, date, seatLength, theater, movie, language, city, state } = this;
             const query = {
                 token,
-                cardNumber: (cardNumber1 + cardNumber2 + cardNumber3 + cardNumber4),
-                payment: 1.18 * payment,
+                // cardNumber: (cardNumber1 + cardNumber2 + cardNumber3 + cardNumber4),
                 date,
                 seatLength,
-                seats,
                 theater: JSON.stringify(theater),
                 movie,
                 language,
@@ -406,20 +415,19 @@ export default {
         },
         generateToken() {
             const {
-                payment,
-                seats,
                 theater,
                 movie,
             } = this.$props;
 
             // Get the first letter of the movie
             const movieInitial = movie.charAt(0);
-
+            const payment = JSON.parse(localStorage.getItem('payment'));
+            const seats = JSON.parse(localStorage.getItem('selectedSeats'));
             // Get the initials of the theater
             const theaterInitials = theater.name ? theater.name
                 .split(' ')
                 .map(word => word.charAt(0))
-                .join(''): "";
+                .join('') : "";
 
             // Generate a random number
             const randomNumber = Math.floor(Math.random() * 100000000);
@@ -441,11 +449,12 @@ export default {
     computed: {
         seatLength() {
             // Access the seat query parameter from $route.query
-            const seatParam = this.$route.query.seats;
+            const seatParam = JSON.parse(localStorage.getItem("selectedSeats"));
 
             if (seatParam) {
                 // Split the seatParam string into an array using comma as the delimiter
-                const seats = seatParam.split(',');
+                console.log(seatParam)
+                const seats = seatParam;
                 // Return the length of the seats array
                 return seats.length;
             }

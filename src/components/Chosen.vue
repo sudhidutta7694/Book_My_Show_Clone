@@ -118,8 +118,8 @@ export default {
 
         for (const language of this.languages) {
           const currentDate = new Date();
-          const twoMonthsAgo = new Date(currentDate.getFullYear(), currentDate.getMonth() - 2, currentDate.getDate());
-          const formattedDate = twoMonthsAgo.toISOString().split('T')[0];
+          const curent = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate());
+          const formattedDate = curent.toISOString().split('T')[0];
 
           const response = await axios.get('https://api.themoviedb.org/3/discover/movie', {
             params: {

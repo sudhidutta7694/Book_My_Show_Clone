@@ -14,10 +14,9 @@ import payment from '../components/payment.vue';
 import paySuccess from '../components/paySuccess.vue';
 
 const isAuthenticated = () => {
-  const user = localStorage.getItem('user')
+  const user = localStorage.getItem('user');
   return user !== null;
 };
-
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -26,25 +25,25 @@ const router = createRouter({
       path: '/home',
       name: 'home',
       component: Home,
-      meta: { requiresAuth: true },
+      meta: { requiresAuth: true, fromUI: true },
     },
     {
       path: '/movies',
       name: 'movies',
       component: Movies,
-      meta: { requiresAuth: true },
+      meta: { requiresAuth: true, fromUI: true },
     },
     {
       path: '/bookings',
       name: 'bookings',
       component: Bookings,
-      meta: { requiresAuth: true },
+      meta: { requiresAuth: true, fromUI: true },
     },
     {
       path: '/favorites',
       name: 'favorites',
       component: () => import('../components/Favorites.vue'),
-      meta: { requiresAuth: true },
+      meta: { requiresAuth: true, fromUI: true },
     },
     {
       path: '/chosen',
@@ -55,7 +54,7 @@ const router = createRouter({
         city: route.query.city,
         state: route.query.state,
       }),
-      meta: { requiresAuth: true },
+      meta: { requiresAuth: true, fromUI: true },
     },
     {
       path: '/login',
@@ -74,7 +73,7 @@ const router = createRouter({
       name: 'overview',
       component: Overview,
       props: true,
-      meta: { requiresAuth: true },
+      meta: { requiresAuth: true, fromUI: true },
     },
     {
       path: '/movie',
@@ -86,7 +85,7 @@ const router = createRouter({
         city: route.query.city,
         state: route.query.state,
       }),
-      meta: { requiresAuth: true },
+      meta: { requiresAuth: true, fromUI: true },
     },
     {
       path: '/theater',
@@ -98,7 +97,7 @@ const router = createRouter({
         city: route.query.city,
         state: route.query.state,
       }),
-      meta: { requiresAuth: true },
+      meta: { requiresAuth: true, fromUI: true },
     },
     {
       path: '/hall',
@@ -112,23 +111,22 @@ const router = createRouter({
         city: route.query.city,
         state: route.query.state,
       }),
-      meta: { requiresAuth: true },
+      meta: { requiresAuth: true, fromUI: true },
     },
     {
       path: '/payment',
       name: 'payment',
       component: payment,
       props: (route) => ({
-        payment: parseInt(route.query.payment),
-        seats: route.query.seats ? route.query.seats.split(',') : [],
         date: route.query.date,
         theater: route.query.theater ? JSON.parse(route.query.theater) : null,
+        // seatLength: parseInt(route.query.seatLength),
         movie: route.query.movie,
         language: route.query.language,
         city: route.query.city,
         state: route.query.state,
       }),
-      meta: { requiresAuth: true },
+      meta: { requiresAuth: true, fromUI: true },
     },
     {
       path: '/paySuccess',
@@ -136,25 +134,24 @@ const router = createRouter({
       component: paySuccess,
       props: (route) => ({
         token: route.query.token,
-        cardNumber: route.query.cardNumber,
-        payment: parseInt(route.query.payment),
+        // cardNumber: route.query.cardNumber,
+        // payment: parseInt(route.query.payment),
         date: route.query.date,
         seatLength: parseInt(route.query.seatLength),
-        seats: route.query.seats ? route.query.seats : [],
+        // seats: route.query.seats ? route.query.seats : [],
         theater: JSON.parse(route.query.theater),
         movie: route.query.movie,
         language: route.query.language,
         city: route.query.city,
         state: route.query.state,
-        seas: route.query.seats,
       }),
-      meta: { requiresAuth: true },
+      meta: { requiresAuth: true, fromUI: true },
     },
     {
       path: '/terms',
       name: 'terms',
       component: terms,
-      meta: { requiresAuth: true },
+      meta: { requiresAuth: true, fromUI: true },
     },
   ],
 });

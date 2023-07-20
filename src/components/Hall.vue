@@ -95,7 +95,7 @@
 import { app } from '@/firebase';
 import { onAuthStateChanged, getAuth } from 'firebase/auth';
 import { getDocs, collection, getFirestore } from 'firebase/firestore';
-import { onMounted, watch, ref, computed } from 'vue';
+import { onMounted, watch, ref, computed, onUnmounted } from 'vue';
 import { useRoute } from 'vue-router';
 
 
@@ -136,6 +136,10 @@ const seatOptions = [
     { value: '4', label: '4 Seats' },
     { value: '5', label: '5 Seats' },
     { value: '6', label: '6 Seats' },
+    { value: '7', label: '7 Seats' },
+    { value: '8', label: '8 Seats' },
+    { value: '9', label: '9 Seats' },
+    { value: '10', label: '10 Seats' },
 ];
 const numberOfRows = 7;
 const seatsPerRow = 7;
@@ -147,14 +151,17 @@ const prices = {
 const payment = ref(0);
 const bookingData = ref(null);
 
+onUnmounted(() => {
+    localStorage.setItem("payment", JSON.stringify(payment.value));
+})
+
 const paymentRoute = computed(() => {
     return {
         name: 'payment',
         query: {
-            payment: payment.value,
-            seats: selectedSeats.value.length ? selectedSeats.value.join(',') : '',
             date: props.date,
             theater: JSON.stringify(props.theater),
+            seats: props.seats,
             movie: props.movie,
             language: props.language,
             city: props.city,
