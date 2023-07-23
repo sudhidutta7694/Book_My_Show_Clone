@@ -5,6 +5,7 @@ import '../src/assets/main.css';
 import { createPinia } from 'pinia';
 import { initializeApp } from 'firebase/app';
 import { getFirestore } from 'firebase/firestore';
+// import { StripePlugin } from '@vue-stripe/vue-stripe';
 
 const firebaseConfig = {
   // Add your Firebase project configuration here
@@ -17,12 +18,21 @@ const firebaseConfig = {
   measurementId: "G-SZNETQVS2J"
 };
 
+// import dotenv from 'dotenv';
+// dotenv.config();
+
 const createMyApp = async () => {
   const app = createApp(App);
   const pinia = createPinia();
   
   const firebaseApp = await initializeApp(firebaseConfig);
   const db = getFirestore(firebaseApp);
+
+  // const stripeOptions = {
+  //   pk: import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY, // Use import.meta.env to access environment variables
+  // };
+
+  // app.use(StripePlugin, stripeOptions);
 
   app.use(router).use(pinia);
   app.config.productionTip = false;

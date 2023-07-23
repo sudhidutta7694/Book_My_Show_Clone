@@ -30,19 +30,20 @@
             </div>
         </div>
         <div class="mt-12 mb-11 px-5 py-4 w-[80vw] text-center">
-            <h1 class="font-bold text-4xl font-serif text-red-300">Cast</h1>
+            <h1 v-if="castImages.length > 0" class="font-bold text-4xl font-serif text-red-300">Cast</h1>
         </div>
         <div
             class="w-[80vw] border-b font-serif border-gray-500 p-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4">
             <div v-for="(image, index) in castImages" :key="index" class="flex flex-col text-center">
                 <img :src="getImageUrl(image.image)" alt="Actor"
                     class="hover:scale-105 rounded-full mb-4 shadow:lg hover:opacity-75 transition ease-in" />
-                <p class="text-gray-300 font-semibold"> {{ image.name }}</p>
-                <p class="text-gray-300 font-bold">as {{ image.role }} </p>
+                <p v-if="image && image.name" class="text-gray-300 font-semibold"> {{ image.name }}</p>
+                <p v-else class="text-gray-300 font-semibold">Unknown</p>
+                <p v-if="image && image.role" class="text-gray-300 font-bold">as {{ image.role }}</p>
             </div>
         </div>
         <div class="px-5 py-4 ">
-            <h1 class="mt-12 mb-11 text-4xl font-bold font-serif text-red-300">Images</h1>
+            <h1 v-if="movieImages.length > 0" class="mt-12 mb-11 text-4xl font-bold font-serif text-red-300">Images</h1>
         </div>
         <div class="w-[80vw] border-b border-gray-500 p-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
             <div v-for="(image, index) in movieImages" :key="index">

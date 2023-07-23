@@ -4,30 +4,9 @@
     <div class="container mx-auto px-2 sm:px-4 md:px-6 lg:px-8">
       <div class="flex justify-around items-center py-6">
         <div class="flex items-center justify-around">
-          <router-link v-if="isMenuOpen" to="/home" class=" md:ml-[-100px] flex items-center mr-6">
+          <router-link to="/home" class=" md:ml-[-100px] flex items-center mr-6">
             <img class="h-8 sm:h-12 md:h-20" src="../../public/favicon.ico" alt="Logo" />
           </router-link>
-          <div v-if="isMenuOpen" class="w-full block md:hidden bg-gray-900">
-            <div class="flex justify-around w-full">
-              <router-link to="/home" class="text-red-300 hover:text-white px-2 py-1 rounded-md text-sm font-serif"
-                @click="isMenuOpen = false">
-                Home
-              </router-link>
-              <router-link to="/movies" class="text-red-300 hover:text-white px-2 py-1 rounded-md text-sm font-serif"
-                @click="isMenuOpen = false">
-                Movies
-              </router-link>
-              <router-link to="/bookings" class="text-red-300 hover:text-white px-2 py-1 rounded-md text-sm font-serif"
-                @click="isMenuOpen = false">
-                Bookings
-              </router-link>
-              <router-link to="/favorites" class="text-red-300 hover:text-white px-2 py-1 rounded-md text-sm font-serif"
-                @click="isMenuOpen = false">
-                Favorites
-              </router-link>
-            </div>
-          </div>
-
           <div class="hidden md:block">
             <router-link to="/home"
               class="text-red-100 hover:text-red-200 px-3 py-2 rounded-md text-md md:text-lg font-sans transition-colors duration-300"

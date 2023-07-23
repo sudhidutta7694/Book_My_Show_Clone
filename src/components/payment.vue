@@ -260,7 +260,8 @@
 
 
 <script>
-import Swal from 'sweetalert2'
+// import Cookies from 'js-cookie'
+// import Swal from 'sweetalert2'
 // import { useRouter } from 'vue-router';
 export default {
     props: {
@@ -297,12 +298,19 @@ export default {
             cardNumber4: '',
             expiryMonth: '',
             expiryYear: '',
-            payment: JSON.parse(localStorage.getItem('payment')),
+            payment: null,
             showPassword: false,
             cardholderName: '',
             token: '',
             timerExpired: false,
         };
+    },
+    beforeMount() {
+        // Introduce a one-second delay before fetching payment from localStorage
+        setTimeout(() => {
+            this.payment = JSON.parse(localStorage.getItem('payment'));
+            // Now the payment value is updated from localStorage after a one-second delay
+        }, 100);
     },
     onUnmounted() {
         localStorage.setItem("cardNumber", JSON.stringify(this.cardNumber1 + this.cardNumber2 + this.cardNumber3 + this.cardNumber4));
@@ -320,6 +328,7 @@ export default {
     //         },
     //     },
     // },
+
     methods: {
         handlePayNowClick() {
 
@@ -345,7 +354,7 @@ export default {
         },
         startTimerCountdown() {
             const timer = document.querySelector('[data-id=timer]');
-            let timeLeft = (1 * 5); // Set the initial time to 5 minutes
+            let timeLeft = (60 * 5); // Set the initial time to 5 minutes
             this.timerExpired = false; // Variable to keep track of whether the timer has expired
 
             const tick = () => {
@@ -461,8 +470,19 @@ export default {
 
             // Return 0 if the seat query parameter is not present
             return 0;
-        }
-    }
+        },
+        localStoragePayment: {
+            get() {
+                return JSON.parse(localStorage.getItem('payment')) || 0;
+            },
+        },
+    },
+    watch: {
+        // Watch the computed property and update the payment value when it changes
+        localStoragePayment(newValue) {
+            this.payment = newValue;
+        },
+    },
 };
 </script>
 

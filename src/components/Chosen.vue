@@ -14,9 +14,9 @@
         <div v-else-if="Object.keys(movies).length > 0">
           <div class=" flex flex-col gap-12">
             <div class="language-row" v-for="(languageMovies, language) in movies" :key="language">
-              <h3 class="ml-4 text-2xl text-gray-200 font-semibold mb-2">{{ getLanguageName(language) }} Movies:</h3>
-              <div class="content p-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-8">
-                <div
+              <h3 v-if="languageMovies.length > 0" class="ml-4 text-2xl text-gray-200 font-semibold mb-2">{{ getLanguageName(language) }} Movies:</h3>
+              <div v-if="languageMovies.length > 0" class="content p-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-8">
+                <div 
                   class="flex flex-col justify-stretch gap-3 pb-1 items-center bg-slate-700 rounded-xl hover:opacity-70 transition-all ease-in duration-300"
                   v-for="movie in languageMovies" :key="movie.id" @click="showDetails(movie.id)">
                   <router-link

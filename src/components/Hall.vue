@@ -95,6 +95,7 @@
 import { app } from '@/firebase';
 import { onAuthStateChanged, getAuth } from 'firebase/auth';
 import { getDocs, collection, getFirestore } from 'firebase/firestore';
+import Cookies from 'js-cookie';
 import { onMounted, watch, ref, computed, onUnmounted } from 'vue';
 import { useRoute } from 'vue-router';
 
@@ -153,6 +154,7 @@ const bookingData = ref(null);
 
 onUnmounted(() => {
     localStorage.setItem("payment", JSON.stringify(payment.value));
+    Cookies.set('payment', payment);
 })
 
 const paymentRoute = computed(() => {
