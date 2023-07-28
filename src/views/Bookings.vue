@@ -1,9 +1,10 @@
 <!-- eslint-disable vue/multi-word-component-names -->
 <template>
-  <div class="bg-slate-800 pt-32 h-screen flex gap-24  flex-col-reverse justify-center items-center">
+  <div class="bg-slate-800 pt-32 h-screen flex gap-24 flex-col-reverse justify-center items-center">
     <div>
-      <p class="text-xl mb-6 font-bold text-red-400">Recent Bookings:-</p>
-      <TableComponent class="rounded-xl" :bookingData="bookingData" />
+      <p class="text-2xl mb-6 font-bold text-red-400">Recent Bookings:-</p>
+      <TableComponent v-if="bookingData.length > 0" class="rounded-xl" :bookingData="bookingData" />
+      <h1 v-else class="text-xl font-serif text-slate-200 font-semibold">No bookings as of right now</h1>
     </div>
     <div v-if="!choose"
       class="bg-slate-700 location-container p-6 w-96 rounded-xl flex justify-center font-serif hover:shadow-xl  transition-all ease-in duration-200 flex-col text-white">

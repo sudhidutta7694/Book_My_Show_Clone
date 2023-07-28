@@ -78,14 +78,20 @@
         </div>
 
         <div class="mt-[50vh] ml-[40vw] flex flex-col justify-center">
-            <router-link :to="paymentRoute">
+            <!-- <router-link :to="paymentRoute">
                 <button
                     class="px-4 py-2 w-[20vw] font-semibold font-mono bg-gray-500 rounded-full disabled:opacity-50 disabled:pointer-events-none"
                     :class="{ 'bg-green-500': selectedSeats.length >= numSeats }" @click="saveSelectedSeats"
                     :disabled="selectedSeats.length < numSeats">
                     {{ selectedSeats.length >= numSeats ? `Proceed to Pay - ₹${payment}` : 'Select Seats' }}
                 </button>
-            </router-link>
+            </router-link> -->
+            <button
+                class="px-4 py-2 w-[20vw] font-semibold font-mono bg-gray-500 rounded-full disabled:opacity-50 disabled:pointer-events-none"
+                :class="{ 'bg-green-500': selectedSeats.length >= numSeats }" @click="handlePayment"
+                :disabled="selectedSeats.length < numSeats">
+                {{ selectedSeats.length >= numSeats ? `Proceed to Pay - ₹${payment}` : 'Select Seats' }}
+            </button>
         </div>
     </div>
 </template>
@@ -126,6 +132,7 @@ const props = defineProps({
         required: true,
     },
 });
+
 const bookedSeats = ref([])
 const selectedOption = ref('1');
 const selectedSeats = ref([]);
@@ -157,20 +164,56 @@ onUnmounted(() => {
     Cookies.set('payment', payment);
 })
 
-const paymentRoute = computed(() => {
-    return {
-        name: 'payment',
-        query: {
-            date: props.date,
-            theater: JSON.stringify(props.theater),
-            seats: props.seats,
-            movie: props.movie,
-            language: props.language,
-            city: props.city,
-            state: props.state,
+const totalSeats = computed(() => {
+    return selectedSeats.value.length;
+})
+
+const handlePayment = () => {
+    fetch('/create-checkout-session', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
         },
-    };
-});
+        body: JSON.stringify({
+            items: [
+                {
+                    id: 1,
+                    movieName: props.movie,
+                    numTickets: totalSeats.value,
+                    imageUrl: localStorage.getItem('posterUrl'),
+                    totalPayment: payment.value
+                },
+                // { id: 2, quantity: totalSeats.value, image: 'https://img.freepik.com/free-vector/realistic-horizontal-cinema-movie-time-poster-with-3d-glasses-snacks-tickets-clapper-reel-blue-background-with-bokeh-vector-illustration_1284-77013.jpg?w=200' },
+            ],
+
+        })
+    }).then(res => {
+        if (res.ok) return res.json();
+        return res.json().then(json => Promise.reject(json));
+    }).then(({ url }) => {
+        // window.open(url, '_blank');
+        // console.log(selectedSeats.value)
+        const stripedUrl = url.replace('https://book-my-show-clone-sable.vercel.app', '');
+
+        // Navigate to the modified Stripe Checkout URL
+        localStorage.setItem('date', JSON.stringify(props.date));
+        localStorage.setItem('theater', props.theater);
+        localStorage.setItem('movie', JSON.stringify(props.movie));
+        localStorage.setItem('language', JSON.stringify(props.language));
+        localStorage.setItem('city', JSON.stringify(props.city));
+        localStorage.setItem('state', JSON.stringify(props.state));
+        localStorage.setItem('totalSeats', JSON.stringify(totalSeats.value));
+        localStorage.setItem('selectedSeats', JSON.stringify(selectedSeats.value));
+        localStorage.setItem('payment', JSON.stringify(payment.value));
+        setTimeout(() => {
+            window.location.href = stripedUrl;
+        }, 1000);
+
+    }).catch(err => {
+        console.log(payment.value)
+        console.error(err.error);
+    });
+}
 
 // const router = useRouter();
 const route = useRoute();
@@ -234,27 +277,61 @@ function applySeatStyles() {
 const auth = getAuth(app); // Get the Auth instance
 const db = getFirestore(); // Get the Firestore instance
 
-onAuthStateChanged(auth, async () => {
-    //     if (!user) {
-    // const userId = user.uid;
-    // const bookingsCollectionRef = collection(db, 'Bookings');
-    const userId = JSON.parse(localStorage.getItem("user")).uid
-    const querySnapshot = await getDocs(collection(db, `Bookings/${userId}/userBookingData`));
-    const allBookingData = [];
-    querySnapshot.forEach((doc) => {
-        // doc.data() is never undefined for query doc snapshots
-        const bookingDataValue = doc.data();
-        allBookingData.push(bookingDataValue);
-        console.log(doc.id, " => ", doc.data());
-    });
-    if (allBookingData.length > 0) {
-        bookingData.value = allBookingData; // Assign the retrieved booking data to the data property
-        console.log('Booking data:', bookingData.value);
-    } else {
-        // No booking data exists
-        bookingData.value = null; // Handle the case where no booking data exists
+async function fetchData() {
+    try {
+        // Fetch the 'Users' collection
+        const usersQuerySnapshot = await getDocs(collection(db, 'Users'));
+        console.log('Users Collection:', usersQuerySnapshot.docs.map(doc => doc.data()));
+
+        // For each user document, access the 'userBookingData' subcollection under 'Bookings'
+        await Promise.all(usersQuerySnapshot.docs.map(async (userDoc) => {
+            const userId = userDoc.id;
+            const userBookingCollectionRef = collection(db, `Bookings/${userId}/userBookingData`);
+            const userBookingQuerySnapshot = await getDocs(userBookingCollectionRef);
+            console.log(`User Id: ${userId}, Bookings Collection:`, userBookingQuerySnapshot.docs.map(doc => doc.data()));
+
+            const routeQuery = {
+                theater: JSON.parse(route.query.theater),
+                movie: route.query.movie,
+                language: route.query.language,
+                city: route.query.city,
+                state: route.query.state,
+                date: route.query.date,
+            };
+
+            userBookingQuerySnapshot.forEach((bookingDoc) => {
+                const bookingData = bookingDoc.data();
+                const { theater, movie, language, city, state, date, seats } = bookingData;
+
+                const isMatch =
+                    theater.id === routeQuery.theater.id &&
+                    theater.name === routeQuery.theater.name &&
+                    theater.timing === routeQuery.theater.timing &&
+                    theater.day === routeQuery.theater.day &&
+                    movie === routeQuery.movie &&
+                    language === routeQuery.language &&
+                    city === routeQuery.city &&
+                    state === routeQuery.state &&
+                    date === routeQuery.date;
+
+                console.log(isMatch);
+                if (isMatch) {
+                    seats.forEach((seat) => {
+                        bookedSeats.value.push(seat);
+                    });
+                    console.log(bookedSeats.value);
+                }
+            });
+        }));
+    } catch (error) {
+        console.error('Error fetching data:', error);
     }
-});
+}
+
+
+
+// // Call the fetchData function whenever needed
+fetchData();
 
 watch(selectedOption, (newOption) => {
     numSeats.value = parseInt(newOption);
@@ -264,9 +341,9 @@ watch(selectedSeats, () => {
     calculatePayment();
 }, { deep: true });
 
-function saveSelectedSeats() {
-    localStorage.setItem('selectedSeats', JSON.stringify(selectedSeats.value));
-}
+// function saveSelectedSeats() {
+
+// }
 
 function calculatePayment() {
     payment.value = selectedSeats.value.reduce((total, seat) => {
@@ -540,7 +617,3 @@ function getSeatClass(side, row, seat) {
     opacity: 1;
 }
 </style>
-
-
-
-

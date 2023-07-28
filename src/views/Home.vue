@@ -13,7 +13,7 @@ import { RouterView } from 'vue-router'
 <script>
 
 
-import MovieComponent from '../components/Movies.vue';
+import MovieComponent from '../components/Home.vue';
 
 export default {
   name: 'App',

@@ -7,13 +7,14 @@
         class="trailer-player w-[80vw] sm:w-[60vw] rounded-2xl shadow-red-200 shadow-md hover:shadow-red-300 transition-colors hover:shadow-xl duration-300">
 
         <div class="player-wrapper rounded-2xl flex justify-center items-center w-[80vw] sm:w-[60vw]">
-          <iframe class="w-[80vw] sm:w-[60vw]" :src="videoUrl" frameborder="0" ref="videoPlayer"></iframe>
+          <iframe class="w-[80vw] sm:w-[60vw]" v-if="videoUrl!=''" :src="videoUrl" frameborder="0" ref="videoPlayer"></iframe>
+          <img class="w-[80vw] sm:w-[60vw]" v-else src="https://media.tenor.com/V9Z08mOcTJwAAAAC/this-content-is-not-available.gif" />
           <!-- <img v-else class="sm:w-[60vw]" src="https://media.tenor.com/V9Z08mOcTJwAAAAC/this-content-is-not-available.gif" /> -->
         </div>
       </div>
     </div>
 
-    <div class="mt-5 container mx-auto flex border-b border-gray-600 pb-4 mx-30 items-center justify-center">
+    <div class="mt-5 container mx-auto flex border-b border-gray-500 pb-4 mx-30 items-center justify-center">
       <div class="ml-5 flex flex-col items-center justify-center gap-10">
         <div class="flex justify-between mt-6 w-[79vw] sm:w-[59vw]">
           <div class="flex flex-col">
@@ -36,6 +37,7 @@
     </div>
     <div class="mt-12 mb-11 px-5 py-4 w-[80vw] text-center">
       <h1 v-if="castImages.length > 0" class="text-4xl font-bold font-serif text-red-300">Cast</h1>
+      <h1 v-else class="text-4xl font-serif font-semibold text-red-400">Cast Information is unavailable</h1>
     </div>
     <div
       class="w-[80vw] border-b border-gray-500 p-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4">
@@ -49,6 +51,7 @@
     </div>
     <div class="px-5 py-4 ">
       <h1 v-if="movieImages.length > 0" class="mt-12 mb-11 text-4xl font-bold font-serif text-red-300">Images</h1>
+      <h1 v-else class="text-4xl font-serif font-semibold text-red-400">Images are not available</h1>
     </div>
     <div class="w-[80vw] border-b border-gray-500 p-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
       <div v-for="(image, index) in movieImages" :key="index">
@@ -307,12 +310,10 @@ export default {
               }
             };
           } else {
-
             console.log('No trailer available for this movie.');
           }
         })
         .catch((error) => {
-          this.videoUrl = 'https://media.tenor.com/V9Z08mOcTJwAAAAC/this-content-is-not-available.gif';
           console.error('Error:', error);
         });
     },

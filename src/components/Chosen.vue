@@ -14,19 +14,24 @@
         <div v-else-if="Object.keys(movies).length > 0">
           <div class=" flex flex-col gap-12">
             <div class="language-row" v-for="(languageMovies, language) in movies" :key="language">
-              <h3 v-if="languageMovies.length > 0" class="ml-4 text-2xl text-gray-200 font-semibold mb-2">{{ getLanguageName(language) }} Movies:</h3>
-              <div v-if="languageMovies.length > 0" class="content p-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-8">
-                <div 
-                  class="flex flex-col justify-stretch gap-3 pb-1 items-center bg-slate-700 rounded-xl hover:opacity-70 transition-all ease-in duration-300"
+              <h3 v-if="languageMovies.length > 0" class="ml-4 text-2xl text-gray-200 font-semibold mb-2">{{
+                getLanguageName(language) }} Movies:</h3>
+              <div v-if="languageMovies.length > 0"
+                class="content p-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-8">
+                <div
+                  class="flex flex-col justify-stretch gap-3 pb-1 items-center "
                   v-for="movie in languageMovies" :key="movie.id" @click="showDetails(movie.id)">
                   <router-link
                     :to="{ name: 'moviebook', query: { id: movie.id, language: getLanguageName(language), city: city, state: state } }">
-                    <div class="movie-poster">
-                      <img :src="getMoviePosterURL(movie.poster_path)" :alt="movie.title" class="rounded-lg shadow-lg" />
+                    <div class="movie-poster bg-slate-700 rounded-xl hover:opacity-75 hover:scale-105 transition-all ease-in duration-300">
+                      <img v-if="getMoviePosterURL(movie.poster_path) !== ''" :src="getMoviePosterURL(movie.poster_path)"
+                        alt="Movie Poster" class="rounded-lg shadow-lg w-96 h-auto" />
+                      <img v-else src="https://cdn.download.it/ms/static/images/poster-placeholder.png"
+                        class="rounded-lg shadow-lg w-96 h-auto " />
                     </div>
                   </router-link>
                   <div class="text-center">
-                    <h3 class="text-red-200 text-xl font-serif font-semibold">{{ movie.title }}</h3>
+                    <h3 class="mt-4 text-red-200 text-xl font-serif font-semibold">{{ movie.title }}</h3>
                     <p class="text-gray-200 font-mono text-lg">IMDB Rating: {{ movie.vote_average }}</p>
                   </div>
                 </div>

@@ -261,7 +261,7 @@
 
 <script>
 // import Cookies from 'js-cookie'
-// import Swal from 'sweetalert2'
+import Swal from 'sweetalert2'
 // import { useRouter } from 'vue-router';
 export default {
     props: {
@@ -356,7 +356,7 @@ export default {
             const timer = document.querySelector('[data-id=timer]');
             let timeLeft = (60 * 5); // Set the initial time to 5 minutes
             this.timerExpired = false; // Variable to keep track of whether the timer has expired
-
+            let count = 0;
             const tick = () => {
                 if (timeLeft > 0) {
                     timeLeft--;
@@ -369,8 +369,10 @@ export default {
                     timer.children[4].innerText = str[18];
                 } else {
                     this.timerExpired = true;
+                    count++;
                     // 5 minutes have passed, close the payment gateway or perform any necessary actions
-                    this.closePaymentGateway();
+                    if (count === 1) this.closePaymentGateway();
+                    return;
 
                 }
             };
@@ -388,11 +390,11 @@ export default {
             // }
             // const router = useRouter();
             this.$router.push('/bookings');
-            // Swal.fire({
-            //     title: "Payment Gateway Closed",
-            //     html: "<p>Please try again after reloading</p>",
-            //     icon: "info"
-            // })
+            Swal.fire({
+                title: "Payment Gateway Closed",
+                html: "<p>Please try again!</p>",
+                icon: "info"
+            })
         },
 
         payNow() {

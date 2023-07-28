@@ -1,23 +1,27 @@
 <!-- eslint-disable vue/multi-word-component-names -->
 <template>
-    <div class="bg-slate-800 min-h-screen">
+    <div class="bg-slate-900 min-h-screen">
         <div class="flex flex-col mt-32 p-2 pt-6 justify-center items-center">
             <!-- <p class="text-red-300 pl-3 text-3xl font-serif font-bold">Favorited Movies:</p> -->
             <div v-if="loading" class="flex justify-center items-center">
-                <img class="mt-32 w-64" src="https://cdn.pixabay.com/animation/2022/07/31/05/09/05-09-47-978_512.gif"
+                <img class="mt-32 w-64" src="https://cdn.dribbble.com/users/121337/screenshots/916951/small-load.gif"
                     alt="Loading ..." />
             </div>
 
-            <div v-else class="bg-slate-800 px-3 py-6 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
-                <div class="flex flex-col justify-stretch gap-3 items-center bg-slate-700 rounded-xl hover:opacity-70 hover:scale-105 transition-all ease-in duration-300"
+            <div v-else class="bg-slate-900 px-3 py-6 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
+                <div class="flex flex-col justify-stretch gap-3 items-center"
                     v-for="(favorite, index) in favorites" :key="favorite">
                     <div class="relative">
-                        <router-link :to="{ name: 'overview', params: { id: favorite } }">
-                            <img :src="getMoviePosterUrl(favorite)" class="rounded-lg shadow-lg" />
+                        <router-link :to="{ name: 'overview', params: { id: favorite } }" class="bg-slate-700 rounded-xl hover:opacity-75 hover:scale-105 transition-all ease-in duration-300">
+                            <img v-if="getMoviePosterUrl(favorite) !== ''"
+                                :src="getMoviePosterUrl(favorite)" alt="Movie Poster"
+                                class="rounded-lg shadow-lg w-96 h-auto" />
+                            <img v-else src="https://cdn.download.it/ms/static/images/poster-placeholder.png"
+                                class="rounded-lg shadow-lg w-96 h-auto " />
                         </router-link>
                     </div>
                     <div class="text-center">
-                        <h3 class="text-red-200 text-xl font-serif font-semibold mb-1">{{ movieTitles[index] }}</h3>
+                        <h3 class="mt-4 text-red-200 text-xl font-serif font-semibold mb-1">{{ movieTitles[index] }}</h3>
                         <p class="text-gray-200 font-mono text-lg">IMDB Rating: {{ movieRatings[index] }}</p>
                     </div>
                 </div>
@@ -142,8 +146,8 @@ export default {
         onMounted(() => {
             const auth = getAuth();
             onAuthStateChanged(auth, () => {
-                    const userId = JSON.parse(localStorage.getItem('user')).uid;
-                    fetchFavoriteMovies(userId);
+                const userId = JSON.parse(localStorage.getItem('user')).uid;
+                fetchFavoriteMovies(userId);
             });
         });
 

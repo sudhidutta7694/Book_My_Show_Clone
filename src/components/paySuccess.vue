@@ -2,7 +2,7 @@
     <div class="mt-[-55vh] bg-slate-800 p-6 md:p-12">
         <div>
             <router-link to="/bookings" class="relative flex justify-center item-center">
-                <button id="bookingButton" @click="storeBookingData" :class="{ 'disabled-button': isButtonDisabled }"
+                <button id="bookingButton" :class="{ 'disabled-button': isButtonDisabled }"
                     :disabled="isButtonDisabled"
                     class="bg-red-600 absolute  z-10000 h-16 w-64 mt-[70vh] text-lg font-sans shadow-xl rounded-lg font-semibold text-white p-4 hover:bg-red-700">
                     Continue to Bookings
@@ -19,18 +19,18 @@
                     <div class="main-contents flex flex-col justify-center items-center">
                         <div class="success-icon">&#10004;</div>
                         <div class="success-title">
-                            Payment of ₹{{ payment }} Complete
+                            Payment of ₹{{ bookingData.payment }} Complete
                         </div>
                         <div class="success-description">
-                            Hurray! You have successfully booked {{ seatLength }} seat
-                            <span v-if="seatLength !== 1">s</span> of {{ movie }} (language:
-                            {{ language }}) in {{ theater.name }}, {{ city }}
-                            <br />Be ready to enjoy the movie at {{ theater.timing }} on
-                            {{ theater.day }}
+                            Hurray! You have successfully booked {{ bookingData.seatLength }} seat<span
+                                v-if="bookingData.seatLength !== 1">s</span> of {{ bookingData.movie }} (language:
+                            {{ bookingData.language }}) in {{ bookingData.theater.name }}, {{ bookingData.city }}
+                            <br />Be ready to enjoy the movie at {{ bookingData.theater.timing }} on
+                            {{ bookingData.theater.day }}, {{ bookingData.date }}
                         </div>
                         <div class="order-details">
                             <div class="order-number-label">Token no.</div>
-                            <div class="order-number">{{ token }}</div>
+                            <div class="order-number">{{ generateToken() }}</div>
                         </div>
                         <div class="order-footer">Thank you!</div>
                     </div>
@@ -44,81 +44,80 @@
 <script>
 
 import swal from 'sweetalert2';
+// import { onMounted } from 'vue';
 // import { db } from '@/firebase'
 // import { signInWithEmailAndPassword } from 'firebase/auth';
 import { getFirestore, collection, doc, setDoc, getDoc } from 'firebase/firestore';
 
 export default {
-    props: {
-        date: {
-            type: String,
-            required: true,
-        },
-        token: {
-            type: String,
-            required: true,
-        },
-        seatLength: {
-            type: Number,
-            required: true,
-        },
-        theater: {
-            type: Object,
-            required: true,
-        },
-        movie: {
-            type: String,
-            required: true,
-        },
-        language: {
-            type: String,
-            required: true,
-        },
-        city: {
-            type: String,
-            required: true,
-        },
-        state: {
-            type: String,
-            required: true,
-        },
-    },
     data() {
         return {
             isButtonDisabled: true,
             bookingData: {
-                token: '',
-                cardNumber: 0,
-                payment: 0,
-                seatLength: 0,
-                theater: {},
-                movie: '',
-                language: '',
-                city: '',
-                state: '',
+                token: null,
+                payment: JSON.parse(localStorage.getItem('payment')),
+                seatLength: JSON.parse(localStorage.getItem('totalSeats')),
+                theater: JSON.parse(localStorage.getItem('theater')),
+                movie: localStorage.getItem('movie').slice(1,-1),
+                language: localStorage.getItem('language').slice(1,-1),
+                city: localStorage.getItem('city').slice(1,-1),
+                state: localStorage.getItem('state').slice(1,-1),
+                date: localStorage.getItem('date').slice(1,-1),
             },
         };
     },
     methods: {
+        generateToken() {
+            const theater = JSON.parse(localStorage.getItem('theater'));
+            const movie = this.bookingData.movie;
+
+            // Get the first letter of the movie
+            const movieInitial = movie.charAt(0);
+            const payment = JSON.parse(localStorage.getItem('payment'));
+            const seats = JSON.parse(localStorage.getItem('selectedSeats'));
+
+            // Get the initials of the theater
+            const theaterInitials = theater.name
+                ? theater.name.split(' ').map(word => word.charAt(0)).join('')
+                : '';
+
+            // Generate a random number
+            const randomNumber = Math.floor(Math.random() * 100000000);
+
+            // Combine the bits from the props and the random number to create the order number
+            const token = `${movieInitial}${payment}${seats.length}${theaterInitials}${randomNumber}`;
+
+            // Trim or pad the order number to make it 15 characters long
+            if (token.length < 15) {
+                this.bookingData.token = token.padEnd(15, '0');
+                return token.padEnd(15, '0');
+            } else if (token.length > 15) {
+                this.bookingData.token = token.slice(0, 15);
+                return token.slice(0, 15);
+            } else {
+                this.bookingData.token = token;
+                return token;
+            }
+        },
         async storeBookingData() {
             const user = JSON.parse(localStorage.getItem('user')).uid;
             // const payment = JSON.parse(localStorage.getItem('payment'));
             const db = getFirestore(); // Access the Firestore instance
 
             if (user) {
-                console.log(this.theater.type);
+                console.log(this.bookingData.theater.type);
                 // Construct the booking data object
                 const bookingData = {
-                    token: this.token,
-                    cardNumber: JSON.parse(localStorage.getItem('cardNumber')),
-                    payment: 1.18 * JSON.parse(localStorage.getItem('payment')),
-                    date: this.date,
-                    seatLength: this.seatLength,
-                    theater: this.theater.type === undefined ? JSON.parse(this.theater) : this.theater,
-                    movie: this.movie,
-                    language: this.language,
-                    city: this.city,
-                    state: this.state,
+                    token: this.generateToken(),
+                    // date: this.bookingData.date,
+                    payment: this.bookingData.payment,
+                    date: this.bookingData.date,
+                    seatLength: this.bookingData.seatLength,
+                    theater: this.bookingData.theater,
+                    movie: this.bookingData.movie,
+                    language: this.bookingData.language,
+                    city: this.bookingData.city,
+                    state: this.bookingData.state,
                     seats: JSON.parse(localStorage.getItem('selectedSeats'))
                 };
 
@@ -159,6 +158,8 @@ export default {
 
     },
     mounted() {
+        console.log("Component mounted")
+        this.storeBookingData()
         setTimeout(() => {
             this.isButtonDisabled = false;
         }, 3000);

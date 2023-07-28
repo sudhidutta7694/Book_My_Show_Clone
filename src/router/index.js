@@ -1,6 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import Home from '../views/Movies.vue';
-import Movies from '../components/All.vue';
+import Home from '../views/Home.vue';
 import Chosen from '../components/Chosen.vue';
 import Bookings from '../views/Bookings.vue';
 import Login from '../views/LoginView.vue';
@@ -12,6 +11,9 @@ import theatres from '../components/theater.vue';
 import hall from '../components/Hall.vue';
 import payment from '../components/payment.vue';
 import paySuccess from '../components/paySuccess.vue';
+import payFailure from '../views/payFailure.vue';
+import NotFound from '../components/NotFound.vue';
+
 
 const isAuthenticated = () => {
   const user = localStorage.getItem('user');
@@ -25,12 +27,6 @@ const router = createRouter({
       path: '/home',
       name: 'home',
       component: Home,
-      meta: { requiresAuth: true, fromUI: true },
-    },
-    {
-      path: '/movies',
-      name: 'movies',
-      component: Movies,
       meta: { requiresAuth: true, fromUI: true },
     },
     {
@@ -132,27 +128,25 @@ const router = createRouter({
       path: '/paySuccess',
       name: 'paySuccess',
       component: paySuccess,
-      props: (route) => ({
-        token: route.query.token,
-        // cardNumber: route.query.cardNumber,
-        // payment: parseInt(route.query.payment),
-        date: route.query.date,
-        seatLength: parseInt(route.query.seatLength),
-        // seats: route.query.seats ? route.query.seats : [],
-        theater: JSON.parse(route.query.theater),
-        movie: route.query.movie,
-        language: route.query.language,
-        city: route.query.city,
-        state: route.query.state,
-      }),
+      meta: { requiresAuth: true, fromUI: true },
+    },
+    {
+      path: '/payFailure',
+      name: 'payFailure',
+      component: payFailure,
       meta: { requiresAuth: true, fromUI: true },
     },
     {
       path: '/terms',
       name: 'terms',
       component: terms,
-      meta: { requiresAuth: true, fromUI: true },
+      meta: { requiresAuth: false, fromUI: true },
     },
+    {
+      path: '/:catchAll(.*)',
+      name: 'NotFound',
+      component: NotFound
+    }
   ],
 });
 

@@ -1,9 +1,9 @@
 <!-- eslint-disable vue/multi-word-component-names -->
 <template>
-  <nav class="bg-gray-950 rounded-b-2xl">
+  <nav class="bg-gray-950">
     <div class="container mx-auto px-2 sm:px-4 md:px-6 lg:px-8">
-      <div class="flex justify-around items-center py-6">
-        <div class="flex items-center justify-around">
+      <div class="flex justify-between items-center py-6">
+        <div class="flex items-center justify-between">
           <router-link to="/home" class=" md:ml-[-100px] flex items-center mr-6">
             <img class="h-8 sm:h-12 md:h-20" src="../../public/favicon.ico" alt="Logo" />
           </router-link>
@@ -13,20 +13,15 @@
               active-class="text-white bg-gray-800">
               Home
             </router-link>
-            <router-link to="/movies"
-              class="text-red-100 hover:text-red-200 px-3 py-2 rounded-md text-md md:text-lg font-sans transition-colors duration-300"
+            <router-link to="/favorites"
+              class="text-red-100 hover:text-red-200 px-2 py-2 rounded-md text-md md:text-lg font-sans transition-colors duration-300"
               active-class="text-white bg-gray-800">
-              Movies
+              Favorites
             </router-link>
             <router-link to="/bookings"
               class="text-red-100 hover:text-red-200 px-2 py-2 rounded-md text-md md:text-lg font-sans transition-colors duration-300"
               active-class="text-white bg-gray-800">
               Bookings
-            </router-link>
-            <router-link to="/favorites"
-              class="text-red-100 hover:text-red-200 px-2 py-2 rounded-md text-md md:text-lg font-sans transition-colors duration-300"
-              active-class="text-white bg-gray-800">
-              Favorites
             </router-link>
           </div>
         </div>
@@ -50,8 +45,8 @@
               <li v-for="movie in searchResultsWithPoster" :key="movie.id"
                 class="flex opacity-90 hover:bg-slate-800 gap-3 hover:opacity-100 items-center p-2 pb-3 w-32 md:w-64 lg:w-96"
                 @click="logMovieId(movie.id)">
-                <router-link :to="{ name: 'overview', params: { id: movie.id } }">
-                  <div class="flex justify-center items-center gap-3" @click="clear">
+                <router-link :to="{ name: 'overview', params: { id: movie.id } }" @click="clear">
+                  <div class="flex justify-center items-center gap-3">
                     <img class="rounded-xl border border-red-300 hover:border-red-400 w-10"
                       :src="getMoviePosterURL(movie.poster_path)" />
                     <span class="text-red-100 font-serif font-semibold text-lg hover:text-red-200">{{ movie.title }}</span>

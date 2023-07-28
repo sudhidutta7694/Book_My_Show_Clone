@@ -2,12 +2,12 @@
 
 <template>
     <div class="bg-slate-800 flex flex-col justify-center items-center flex-center">
-        <div class="flex">
+        <div class="w-[80vw] flex border-b p-4 border-gray-500 justify-between">
             <img :src="getMoviePoster(movieId)" alt="Movie Poster"
-                class="mt-40 w-[25vw] relative rounded-xl shadow:lg hover:opacity-75 transition ease-in"
-                @mouseover="playTrailer = true" @mouseleave="playTrailer = false" @click="playTrailerFullscreen()">
-            <p v-if="playTrailer" class="absolute text-white font-bold">Play Trailer?</p>
-            <div class="mt-5 container mx-auto flex border-b border-gray-600 pb-4 mx-30 items-center justify-center">
+                class="mt-40 w-[25vw] rounded-xl shadow:lg hover:opacity-75 transition ease-in"
+                @click="playTrailerFullscreen()">
+            <!-- <p v-if="playTrailer" class="absolute text-white font-bold">Play Trailer?</p> -->
+            <div class="mt-5 container mx-auto flex pt-4 pb-4 mx-30 items-center justify-center">
                 <div class="ml-5 flex flex-col items-center justify-center gap-10">
                     <div class="flex justify-between mt-6 w-[40vw]">
                         <div class="flex flex-col w-[40vw] text-center">
@@ -31,6 +31,7 @@
         </div>
         <div class="mt-12 mb-11 px-5 py-4 w-[80vw] text-center">
             <h1 v-if="castImages.length > 0" class="font-bold text-4xl font-serif text-red-300">Cast</h1>
+            <h1 v-else class="text-4xl font-serif font-semibold text-red-400">Cast Information is unavailable</h1>
         </div>
         <div
             class="w-[80vw] border-b font-serif border-gray-500 p-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4">
@@ -44,6 +45,8 @@
         </div>
         <div class="px-5 py-4 ">
             <h1 v-if="movieImages.length > 0" class="mt-12 mb-11 text-4xl font-bold font-serif text-red-300">Images</h1>
+            <h1 v-else class="mt-12 mb-11 text-4xl font-serif font-semibold text-red-400">Images are not available</h1>
+
         </div>
         <div class="w-[80vw] border-b border-gray-500 p-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
             <div v-for="(image, index) in movieImages" :key="index">
@@ -148,6 +151,7 @@ export default {
 
         getMoviePoster() {
             if (this.movies.poster_path) {
+                localStorage.setItem('posterUrl', `https://image.tmdb.org/t/p/w780/${this.movies.poster_path}`)
                 return `https://image.tmdb.org/t/p/w780/${this.movies.poster_path}`;
             } else {
                 return 'https://cdn.download.it/ms/static/images/poster-placeholder.png';

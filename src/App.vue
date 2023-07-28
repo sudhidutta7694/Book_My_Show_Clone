@@ -53,8 +53,8 @@ onMounted(async () => {
 
 <template>
   <div>
-    <div v-if="isLoading" class="flex justify-center items-center min-h-screen">
-      <img src="../public/loading.gif" alt="Loading" />
+    <div v-if="isLoading" class="bg-slate-900 flex justify-center items-center min-h-screen">
+      <img src="https://cdn.dribbble.com/users/121337/screenshots/916951/small-load.gif" alt="Loading" />
     </div>
     <Headers v-else />
     <Router-view v-if="!isLoading" />
