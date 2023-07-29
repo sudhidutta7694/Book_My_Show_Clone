@@ -138,9 +138,9 @@ const handleSubmit = async () => {
       localStorage.setItem('user', JSON.stringify(newUser))
       console.log('User data stored successfully. Document ID:', docRef.id);
       localStorage.setItem("access_token", docRef.id)
-      const gender = Math.random() < 0.5 ? "men" : "women";
-      const randomIndex = Math.floor(Math.random() * 100) + 1;
-      localStorage.setItem('userImage', `https://randomuser.me/api/portraits/${gender}/${randomIndex}.jpg`)
+      // const gender = Math.random() < 0.5 ? "men" : "women";
+      // const randomIndex = Math.floor(Math.random() * 100) + 1;
+      // localStorage.setItem('userImage', `https://randomuser.me/api/portraits/${gender}/${randomIndex}.jpg`)
       router.push('/home');
     } catch (error) {
       console.error('Error storing user data:', error);

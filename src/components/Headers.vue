@@ -39,7 +39,7 @@
             </button>
           </form>
 
-          <div v-if="searchQuery.length > 0" 
+          <div v-if="searchQuery.length > 0"
             class="cursor-pointer absolute mt-2 ml-[-10px] rounded-2xl bg-slate-700 overflow-y-auto max-h-96">
             <ul>
               <li v-for="movie in searchResultsWithPoster" :key="movie.id"
@@ -49,7 +49,8 @@
                   <div class="flex justify-center items-center gap-3">
                     <img class="rounded-xl border border-red-300 hover:border-red-400 w-10"
                       :src="getMoviePosterURL(movie.poster_path)" />
-                    <span class="text-red-100 font-serif font-semibold text-lg hover:text-red-200">{{ movie.title }}</span>
+                    <span class="text-red-100 font-serif font-semibold text-lg hover:text-red-200">{{ movie.title
+                    }}</span>
                   </div>
                 </router-link>
               </li>
@@ -62,25 +63,15 @@
             class="flex shadow-xl justify-center items-center cursor-pointer p-1 sm:p-2 md:p-3 gap1 sm:gap-2 md:gap-3font-bold text-red-200 lg:scale-110">
             <div
               class="rounded-full w-6 sm:w-8 md:w-16 md:h-16 hover:shadow-lg flex items-center justify-center transition-all duration-300">
-              <img v-if="photoURL.length > 0" :src="photoURL" alt=""
+              <img v-if="photoURL !== ''" :src="photoURL" alt="ProfilePicture"
                 class="w-8 h-8 relative sm:w-9 sm:h-9 md:w-16 md:h-16 border-2 border-red-300 rounded-full hover:scale-105 ease-in"
                 @click="toggleAppearance = !toggleAppearance" />
-              <i v-else class="w-6 sm:w-8 md:w-10 rounded-full far fa-user-circle"></i>
+              <i v-else @click="toggleAppearance = !toggleAppearance"
+                class="hover:scale-105 ease-in fas fa-user-circle text-red-300 text-5xl text-center" />
               <div v-if="toggleAppearance"
                 class="mt-2 absolute top-20 bg-slate-900 p-3 rounded-xl flex flex-col opacity-90 border border-red-500 transition-transform duration-200 w-60 items-center justify-center">
                 <p class="text-sm sm:text-md md:text-lg text-center font-mono mb-2">{{ storedUsername }}</p>
                 <hr class="border-1 w-full border-gray-300" />
-                <!-- <div @click="showProfile = !showProfile"
-                  class="rounded-md pt-3 text-sm sm:text-md md:text-lg font-mono transition-colors text-red-200 hover:text-red-300 duration-300">
-                  <i class="fas fa-user" />
-                  Profile
-                </div> -->
-                <!-- <teleport to="#profile">
-                  <div v-if="showProfile" class="fixed z-10 top-40 right-20 bg-slate-700 w-[80vw] h-[80vh] rounded-xl opacity-90">
-
-                  </div>
-                </teleport> -->
-                <!-- <hr class="border-1 w-full border-gray-300"/> -->
                 <router-link to="/login" @click="logout"
                   class="text-center rounded-md pt-1 text-sm sm:text-md md:text-lg font-mono transition-colors text-red-200 hover:text-red-300 duration-300">
                   Logout
@@ -124,8 +115,8 @@ export default {
     const auth = getAuth(app);
     const toggleAppearance = ref(false);
     const storedUsername = ref('');
-    const gender = Math.random() < 0.5 ? "men" : "women";
-    const randomIndex = Math.floor(Math.random() * 100) + 1;
+    // const gender = Math.random() < 0.5 ? "men" : "women";
+    // const randomIndex = Math.floor(Math.random() * 100) + 1;
     const photoURL = ref(``);
 
     onAuthStateChanged(auth, (user) => {
@@ -133,13 +124,13 @@ export default {
         photoURL.value = user.photoURL;
       } else {
         // Set a placeholder image URL for the dummy face
-        photoURL.value = `https://randomuser.me/api/portraits/${gender}/${randomIndex}.jpg`;
+        photoURL.value = ``;
       }
     });
     onMounted(() => {
       if (JSON.parse(localStorage.getItem('user'))) {
         storedUsername.value = JSON.parse(localStorage.getItem('user')).displayName;
-      } 
+      }
       toggleAppearance.value = false;
       console.log(storedUsername.value)
     })

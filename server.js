@@ -32,8 +32,8 @@ app.post('/create-checkout-session', async (req, res) => {
                // description: `Movie: ${item.movieName}, Amount: ₹${item.totalPayment}, Tickets: ${item.numTickets}`,
             };
          }),
-         success_url: `https://book-my-show-clone-sable.vercel.app/paySuccess`,
-         cancel_url: `https://book-my-show-clone-sable.vercel.app/payFailure`,
+         success_url: `http://localhost:3000/paySuccess`,
+         cancel_url: `http://localhost:3000/payFailure`,
       });
       res.json({ url: session.url });
    } catch (err) {

@@ -193,7 +193,7 @@ const handlePayment = () => {
     }).then(({ url }) => {
         // window.open(url, '_blank');
         // console.log(selectedSeats.value)
-        const stripedUrl = url.replace('https://book-my-show-clone-sable.vercel.app', '');
+        const stripedUrl = url.replace('http://localhost:3000.app', '');
 
         // Navigate to the modified Stripe Checkout URL
         localStorage.setItem('date', JSON.stringify(props.date));
