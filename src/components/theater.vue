@@ -17,28 +17,38 @@
               </option>
             </select>
           </div>
-          <ul v-if="selectedDay" class="fade-enter-active">
-            <li v-for="(theater, index) in filteredTheaters" :key="theater.id" :style="getTheaterAnimation(index)"
-              class="mb-12 fade-enter hover:scale-105 transition-all duration-300 ease-in shadow-lg">
+          <ul v-if="selectedDay" class="fade-enter-active flex flex-col gap-10">
+            <li v-for="(theater, index) in filteredTheaters" :key="theater.id" :class="getTheaterAnimation(index)">
               <div
-                class="theater-item flex justify-between bg-slate-800 p-6 rounded-xl w-[30vw] transition-all ease-linear">
+                class="theater-item flex justify-between bg-slate-800 p-6 rounded-xl w-[30vw] transition-all ease-linear hover:scale-105">
                 <div class="">
-                  <h3 class="text-xl font-semibold">{{ theater.name }} {{ findSelectedDate() }}</h3>
-                  <p class="text-green-200">Timing: {{ theater.timing }}</p>
+                  <h3 class="text-xl font-semibold">{{ theater.name }}</h3>
+
                 </div>
-                <routerLink :to="{
-                  name: 'hall', query: {
-                    date: findSelectedDate(),
-                    theater: JSON.stringify(theater),
-                    movie: movie,
-                    language: language,
-                    city: city,
-                    state: state
-                  }
-                }" @click="addToUserTheaters(theater)">
-                  <button class="bg-red-700 hover:bg-red-800 text-gray-100 font-bold py-2 px-3 text-center rounded">Book
-                    Seats</button>
-                </routerLink>
+                <div class="flex flex-col items-center gap-4">
+                  <p class="text-green-200">Book Seats: </p>
+                  <routerLink class="" :to="{
+                    name: 'hall', query: {
+                      date: findSelectedDate(),
+                      theater: JSON.stringify(theater),
+                      movie: movie,
+                      language: language,
+                      city: city,
+                      state: state
+                    }
+                  }">
+
+                    <!-- <p class="text-green-200">Timing: {{ theater.timing[1] }}</p> -->
+                    <div class="flex gap-6">
+                      <button @click="updateTiming(theater, theater.timing[0])"
+                        class="border-2 border-green-700 hover:bg-green-800 text-gray-100 font-bold py-2 px-3 text-center rounded">{{
+                          theater.timing[0] }}</button>
+                      <button @click="updateTiming(theater, theater.timing[1])"
+                        class="border-2 border-green-700 hover:bg-green-800 text-gray-100 font-bold py-2 px-3 text-center rounded">{{
+                          theater.timing[1] }}</button>
+                    </div>
+                  </routerLink>
+                </div>
               </div>
             </li>
           </ul>
@@ -78,22 +88,22 @@ export default {
     return {
       showButton: false,
       theaters: [
-        { id: 1, name: 'Bio-Scope', timing: '5:00 PM', day: 'Sunday' },
-        { id: 2, name: 'Carnival Cinemas', timing: '10:00 PM', day: 'Sunday' },
-        { id: 3, name: 'Bio-Scope', timing: '12:00 PM', day: 'Monday' },
-        { id: 4, name: 'Carnival Cinemas', timing: '12:00 PM', day: 'Monday' },
-        { id: 5, name: 'Bio-Scope', timing: '3:00 PM', day: 'Tuesday' },
-        { id: 6, name: 'Carnival Cinemas', timing: '4:00 PM', day: 'Tuesday' },
-        { id: 7, name: 'Bio-Scope', timing: '6:00 PM', day: 'Wednesday' },
-        { id: 8, name: 'Carnival Cinemas', timing: '6:00 PM', day: 'Wednesday' },
-        { id: 9, name: 'Bio-Scope', timing: '8:00 PM', day: 'Thursday' },
-        { id: 10, name: 'Carnival Cinemas', timing: '4:00 PM', day: 'Thursday' },
-        { id: 11, name: 'Bio-Scope', timing: '9:00 PM', day: 'Friday' },
-        { id: 12, name: 'Carnival Cinemas', timing: '7:00 PM', day: 'Friday' },
-        { id: 13, name: 'Bio-Scope', timing: '9:00 PM', day: 'Saturday' },
-        { id: 14, name: 'Carnival Cinemas', timing: '2:00 PM', day: 'Saturday' },
+        { id: 1, name: 'Bio-Scope', timing: ['5:00 PM', '3:00 PM'], day: 'Sunday' },
+        { id: 2, name: 'Carnival Cinemas', timing: ['1:00 PM', '10:00 PM'], day: 'Sunday' },
+        { id: 3, name: 'Bio-Scope', timing: ['12:00 PM', '6:00 PM'], day: 'Monday' },
+        { id: 4, name: 'Carnival Cinemas', timing: ['4:00 PM', '9:00 PM'], day: 'Monday' },
+        { id: 5, name: 'Bio-Scope', timing: ['3:00 PM', '7:00 PM'], day: 'Tuesday' },
+        { id: 6, name: 'Carnival Cinemas', timing: ['4:00 PM', '9:00 PM'], day: 'Tuesday' },
+        { id: 7, name: 'Bio-Scope', timing: ['6:00 PM', '10:00 PM'], day: 'Wednesday' },
+        { id: 8, name: 'Carnival Cinemas', timing: ['1:00 PM', '7:00 PM'], day: 'Wednesday' },
+        { id: 9, name: 'Bio-Scope', timing: ['4:00 PM', '8:00 PM'], day: 'Thursday' },
+        { id: 10, name: 'Carnival Cinemas', timing: ['2:00 PM', '9:00 PM'], day: 'Thursday' },
+        { id: 11, name: 'Bio-Scope', timing: ['1:00 PM', '10:00 PM'], day: 'Friday' },
+        { id: 12, name: 'Carnival Cinemas', timing: ['4:00 PM', "8:00 PM"], day: 'Friday' },
+        { id: 13, name: 'Bio-Scope', timing: ['2:00 PM', '9:00 PM'], day: 'Saturday' },
+        { id: 14, name: 'Carnival Cinemas', timing: ['3:00 PM', '9:00 PM'], day: 'Saturday' },
       ],
-      timings: ['12:00 PM', '3:00 PM', '4:00 PM', '3:00 PM', '4:00 PM', '5:00 PM', '6:00 PM', '7:00 PM', '8:00 PM', '9:00 PM', '10:00 PM'],
+      timings: ['12:00 PM', '1:00 PM', '2:00 PM', '3:00 PM', '4:00 PM', '5:00 PM', '6:00 PM', '7:00 PM', '8:00 PM', '9:00 PM', '10:00 PM'],
       selectedTiming: '',
       selectedDay: '',
       selectedTheaters: [],
@@ -143,9 +153,14 @@ export default {
   methods: {
     findSelectedDate() {
       if (this.selectedDay) {
-        let selected = this.days.filter(day => day.value.split(' ')[0]==this.selectedDay.trim())
+        let selected = this.days.filter(day => day.value.split(' ')[0] == this.selectedDay.trim())
         return (selected[0].value.split(' ').slice(1).join(' '));
       }
+    },
+    updateTiming(theater, selectedTiming) {
+      // Update the theater.timing with the selectedTiming
+      // Assuming theater is a reactive object, it will automatically update in the UI
+      theater.timing = selectedTiming;
     },
     getTheaterAnimation(index) {
       const delay = index * 1000; // Delay each theater by 100 milliseconds
@@ -179,5 +194,4 @@ export default {
 .fade-enter-active .theater-item {
   opacity: 1;
   transform: translateY(0);
-}
-</style>
+}</style>

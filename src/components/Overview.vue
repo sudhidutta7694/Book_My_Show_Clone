@@ -3,12 +3,14 @@
 <template>
   <div class="bg-slate-800 flex flex-col justify-center items-center flex-center">
     <div class="mt-[-50px] sm:mt-0 w-[80vw] sm:w-[60vw] relative"> {{ playTrailer(movieId) }}
-      <div 
+      <div
         class="trailer-player w-[80vw] sm:w-[60vw] rounded-2xl shadow-red-200 shadow-md hover:shadow-red-300 transition-colors hover:shadow-xl duration-300">
 
         <div class="player-wrapper rounded-2xl flex justify-center items-center w-[80vw] sm:w-[60vw]">
-          <iframe class="w-[80vw] sm:w-[60vw]" v-if="videoUrl!=''" :src="videoUrl" frameborder="0" ref="videoPlayer"></iframe>
-          <img class="w-[80vw] sm:w-[60vw]" v-else src="https://media.tenor.com/V9Z08mOcTJwAAAAC/this-content-is-not-available.gif" />
+          <iframe class="w-[80vw] sm:w-[60vw]" v-if="videoUrl != ''" :src="videoUrl" frameborder="0"
+            ref="videoPlayer"></iframe>
+          <img class="w-[80vw] sm:w-[60vw]" v-else
+            src="https://media.tenor.com/V9Z08mOcTJwAAAAC/this-content-is-not-available.gif" />
           <!-- <img v-else class="sm:w-[60vw]" src="https://media.tenor.com/V9Z08mOcTJwAAAAC/this-content-is-not-available.gif" /> -->
         </div>
       </div>
@@ -64,7 +66,7 @@
 
 
 <script>
-
+import swal from 'sweetalert2'
 import { ref, onMounted } from 'vue';
 import {
   getFirestore,
@@ -88,8 +90,8 @@ export default {
 
     async function favoriteMovie(movieId) {
       // const { uid } = useStore(); // Get the Pinia store instance
-      const user = JSON.parse(localStorage.getItem('user')).uid;
-
+      const user = JSON.parse(localStorage.getItem('user')).uid || localStorage.getItem('access_token');
+      console.log("User token is: ", user);
       if (user) {
         try {
           const favoritesData = {
@@ -121,7 +123,10 @@ export default {
         }
       } else {
         // User is not logged in, prompt them to log in
-        alert('Please log in to add movies to your favorites.');
+        swal.fire({
+          text: 'An Error Occured. Please try again!',
+          icon: 'error'
+        });
       }
     }
     // Fetch favorite movies for the authenticated user

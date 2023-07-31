@@ -1,18 +1,18 @@
 <!-- eslint-disable vue/multi-word-component-names -->
 <template>
-  <div class="bg-slate-800 pt-32 h-screen flex gap-24 flex-col-reverse justify-center items-center">
+  <div class="bg-slate-800 mt-20 md:mt-28 py-24 flex gap-10 flex-col-reverse justify-around items-center">
     <div>
       <p class="text-2xl mb-6 font-bold text-red-400">Recent Bookings:-</p>
       <TableComponent v-if="bookingData.length > 0" class="rounded-xl" :bookingData="bookingData" />
       <h1 v-else class="text-xl font-serif text-slate-200 font-semibold">No bookings as of right now</h1>
     </div>
     <div v-if="!choose"
-      class="bg-slate-700 location-container p-6 w-96 rounded-xl flex justify-center font-serif hover:shadow-xl  transition-all ease-in duration-200 flex-col text-white">
+      class="bg-slate-700 location-container pt-12 p-6 w-72 md:w-96 rounded-xl flex justify-center font-serif hover:shadow-xl  transition-all ease-in duration-200 flex-col text-white">
       <h1 class="text-2xl font-bold mb-4 text-center">Location Information</h1>
       <div class="flex gap-3 justify-between items-center">
         <label for="cityInput" class="font-semibold text-red-200">Enter City:</label>
         <input id="cityInput" v-model="cityInput" @input="searchCity"
-          class="border rounded-xl max-w-56 border-red-500 px-4 h-8 bg-black py-2" placeholder="Enter a city name" />
+          class="border rounded-xl w-40 max-w-40 md:max-w-48 md:w-48 border-red-500 px-4 h-8 bg-black py-2" placeholder="Enter a city name" />
       </div>
       <div class="flex justify-between mt-4">
         <h2 class="text-xl font-semibold text-red-200">State: </h2>
@@ -36,7 +36,7 @@
 
     </div>
     <div v-if="choose"
-      class="bg-slate-700 location-container p-6 w-96 rounded-xl flex justify-center font-serif hover:shadow-xl  transition-all ease-in duration-200 flex-col">
+      class="bg-slate-700 location-container pt-12 p-6 w-72 md:w-96 rounded-xl flex justify-center font-serif hover:shadow-xl  transition-all ease-in duration-200 flex-col">
       <h2 class="text-white font-semibold mb-6 text-center text-2xl">Location Information</h2>
 
       <div v-if="loading" class="text-green-200 loading-message">Loading...</div>

@@ -1,78 +1,78 @@
 <!-- eslint-disable vue/multi-word-component-names -->
 <template>
   <div class="login-1 bg-white flex items-center relative h-screen">
-    <div class="overlay absolute inset-0 z-0 bg-black opacity-75"></div>
+    <div class="overlay absolute inset-0 z-0 bg-slate-800 opacity-50"></div>
     <div class="container px-4 mx-auto relative z-10">
       <div class="sm:w-10/12 md:w-8/12 lg:w-6/12 xl:w-5/12 mx-auto">
-        <div class="box bg-slate-800 p-6 md:px-12 md:pt-12 border-t-10 border-solid border-red-700">
-          <h2 class="text-3xl text-gray-200 text-center">Login</h2>
+        <div class="box backdrop-blur backdrop-brightness-50 opacity-90 hover:opacity-100 p-6 md:px-12 md:pt-12 border-t-10 border-solid border-red-700">
+          <h2 class="text-3xl color text-center">Login</h2>
 
           <form @submit.prevent="handleLogin" class="login-form mt-6 md:mt-12">
             <div v-if="!showForgotPasswordSection" class="border-2 border-solid rounded flex items-center mb-4">
               <div class="w-10 h-10 flex justify-center items-center flex-shrink-0">
-                <span class="far fa-envelope text-gray-200"></span>
+                <span class="far fa-envelope color"></span>
               </div>
               <div class="flex-1">
                 <input type="text" v-model="email" placeholder="Enter your E-mail" pattern="[^\s@]+@[^\s@]+\.[^\s@]+"
-                  class="p-4 h-10 bg-slate-700 text-gray-200 py-1 pr-3 w-full" required />
+                  class="p-4 h-10 colour text-red-700 font-mono font-semibold py-1 pr-3 w-full" required />
               </div>
             </div>
 
             <div v-if="!showForgotPasswordSection" class="border-2 border-solid rounded flex items-center mb-4">
               <div class="w-10 h-10 flex justify-center items-center flex-shrink-0">
-                <span class="fas fa-asterisk text-gray-200"></span>
+                <span class="fas fa-asterisk color"></span>
               </div>
               <div class="flex-1">
                 <input v-model="password" placeholder="Enter your Password" :type="showPassword ? 'text' : 'password'"
-                  class="p-4 h-10 bg-slate-700 text-gray-200 py-1 pr-3 w-full"
+                  class="p-4 h-10 colour text-red-700 font-mono font-semibold py-1 pr-3 w-full"
                   pattern="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$" required />
               </div>
-              <button type="button" class="eye-button" @click="showPassword = !showPassword">
+              <button type="button" class="eye-button color" @click="showPassword = !showPassword">
                 <i :class="showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
               </button>
             </div>
 
             <div v-if="showForgotPasswordSection" class="border-2 border-solid rounded flex items-center mb-4">
               <div class="w-10 h-10 flex justify-center items-center flex-shrink-0">
-                <span class="fas fa-question-circle text-gray-200"></span>
+                <span class="fas fa-question-circle color"></span>
               </div>
               <div class="flex-1">
                 <input v-model="forgotEmail" placeholder="Enter your E-mail"
-                  class="p-4 h-10 bg-slate-700 text-gray-200 py-1 pr-3 w-full" />
+                  class="p-4 h-10 colour text-red-700 font-mono font-semibold py-1 pr-3 w-full" />
               </div>
             </div>
 
-            <p v-if="!showForgotPasswordSection" class="text-sm text-center text-gray-200 mt-6">
+            <p v-if="!showForgotPasswordSection" class="text-sm text-center color mt-6">
               <a href="#" class="text-red-600 hover:underline" @click="toggleForgotPasswordSection">Forgot Password?</a>
             </p>
 
             <div v-if="showForgotPasswordSection" class="text-center mt-6">
               <button type="button"
-                class="bg-red-700 hover:bg-red-800 text-gray-200 text-xl py-2 px-4 md:px-6 rounded transition-colors duration-300"
+                class="bg-red-700 hover:bg-red-800 color text-xl py-2 px-4 md:px-6 rounded transition-colors duration-300"
                 @click="handleForgotPassword">
-                Reset Password<span class="fas fa-key ml-2"></span>
+                Reset Password<span class="fas fa-key ml-2 color"></span>
               </button>
             </div>
 
             <div class="text-center mt-6 md:mt-12">
               <button type="submit" v-if="!showForgotPasswordSection"
-                class="bg-red-700 hover:bg-red-800 text-gray-200 text-xl py-2 px-4 md:px-6 rounded transition-colors duration-300">
-                Log In<span class="far fa-paper-plane ml-2"></span>
+                class="bg-red-700 hover:bg-red-800 color text-xl py-2 px-4 md:px-6 rounded transition-colors duration-300">
+                Log In<span class="far fa-paper-plane color ml-2"></span>
               </button>
             </div>
 
-            <!-- Sign in with Google button -->
-            <div class="text-center mt-6">
-              <button v-if="!showForgotPasswordSection"
-                class="bg-red-700 hover:bg-red-800 text-gray-200 text-xl py-2 px-4 md:px-6 rounded transition-colors duration-300"
-                @click="handleSigninWithGoogle">
-                Sign In with Google <span class="fab fa-google ml-2"></span>
-              </button>
-            </div>
           </form>
+          <!-- Sign in with Google button -->
+          <div class="text-center mt-6">
+            <button v-if="!showForgotPasswordSection"
+              class="bg-red-700 hover:bg-red-800 color text-xl py-2 px-4 md:px-6 rounded transition-colors duration-300"
+              @click="handleSigninWithGoogle">
+              Sign In with Google <span class="fab fa-google color ml-2"></span>
+            </button>
+          </div>
 
-          <div class="border-t border-solid mt-6 md:mt-12 pt-4">
-            <p class="text-gray-500 text-center">
+          <div class="border-t border-solid mt-6 md:mt-12 color pt-4">
+            <p class="color text-center">
               Don't have an account? <router-link to="/" class="text-red-600 hover:underline">Sign Up</router-link>
             </p>
           </div>
@@ -261,8 +261,23 @@ export default {
 
 
 <style scoped>
+
+input ::placeholder {
+  color: #FF0000
+}
+.colour {
+  background-color: #ffcd96;
+}
+
+.color {
+  color: #ffcd96;
+}
+
 .login-1 {
   z-index: 1000;
+  background-image: url("../assets/true-story-movies-2019-1550256450.gif");
+  background-size: cover;
+  background-position: center;
 }
 
 .box {

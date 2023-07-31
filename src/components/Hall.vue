@@ -99,7 +99,7 @@
 
 <script setup>
 import { app } from '@/firebase';
-import { onAuthStateChanged, getAuth } from 'firebase/auth';
+import { getAuth } from 'firebase/auth';
 import { getDocs, collection, getFirestore } from 'firebase/firestore';
 import Cookies from 'js-cookie';
 import { onMounted, watch, ref, computed, onUnmounted } from 'vue';
