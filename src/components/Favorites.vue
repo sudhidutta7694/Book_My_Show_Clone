@@ -146,7 +146,7 @@ export default {
         onMounted(() => {
             const auth = getAuth();
             onAuthStateChanged(auth, () => {
-                const userId = JSON.parse(localStorage.getItem('user')).uid;
+                const userId = JSON.parse(localStorage.getItem('user'))?.uid || localStorage.getItem('access_token');
                 fetchFavoriteMovies(userId);
             });
         });

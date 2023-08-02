@@ -90,7 +90,8 @@ export default {
 
     async function favoriteMovie(movieId) {
       // const { uid } = useStore(); // Get the Pinia store instance
-      const user = JSON.parse(localStorage.getItem('user')).uid || localStorage.getItem('access_token');
+      const user = JSON.parse(localStorage.getItem('user'))?.uid || localStorage.getItem('access_token');
+
       console.log("User token is: ", user);
       if (user) {
         try {
@@ -151,7 +152,7 @@ export default {
       const auth = getAuth();
       onAuthStateChanged(auth, () => {
 
-        const userId = JSON.parse(localStorage.getItem('user')).uid;
+        const userId = JSON.parse(localStorage.getItem('user'))?.uid || localStorage.getItem('access_token');
         fetchFavoriteMovies(userId);
 
       });

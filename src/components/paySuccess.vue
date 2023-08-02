@@ -2,7 +2,7 @@
     <div class="mt-[-55vh] bg-slate-800 p-6 md:p-12">
         <div>
             <router-link to="/bookings" class="relative flex justify-center item-center">
-                <button id="bookingButton" :class="{ 'disabled-button': isButtonDisabled }"
+                <button id="bookingButton" :class="{ 'disabled-button': isButtonDisabled }" @click="deleteBookingData"
                     :disabled="isButtonDisabled"
                     class="bg-red-600 absolute  z-10000 h-16 w-64 mt-[70vh] text-lg font-sans shadow-xl rounded-lg font-semibold text-white p-4 hover:bg-red-700">
                     Continue to Bookings
@@ -58,15 +58,26 @@ export default {
                 payment: JSON.parse(localStorage.getItem('payment')),
                 seatLength: JSON.parse(localStorage.getItem('totalSeats')),
                 theater: JSON.parse(localStorage.getItem('theater')),
-                movie: localStorage.getItem('movie').slice(1,-1),
-                language: localStorage.getItem('language').slice(1,-1),
-                city: localStorage.getItem('city').slice(1,-1),
-                state: localStorage.getItem('state').slice(1,-1),
-                date: localStorage.getItem('date').slice(1,-1),
+                movie: localStorage.getItem('movie').slice(1, -1),
+                language: localStorage.getItem('language').slice(1, -1),
+                city: localStorage.getItem('city').slice(1, -1),
+                state: localStorage.getItem('state').slice(1, -1),
+                date: localStorage.getItem('date').slice(1, -1),
             },
         };
     },
     methods: {
+        deleteBookingData() {
+            localStorage.removeItem('payment');
+            localStorage.removeItem('seatLength');
+            localStorage.removeItem('movie');
+            localStorage.removeItem('theater');
+            localStorage.removeItem('language');
+            localStorage.removeItem('city');
+            localStorage.removeItem('date');
+            localStorage.removeItem('selectedSeats');
+            localStorage.removeItem('state');
+        },
         generateToken() {
             const theater = JSON.parse(localStorage.getItem('theater'));
             const movie = this.bookingData.movie;
@@ -100,7 +111,7 @@ export default {
             }
         },
         async storeBookingData() {
-            const user = JSON.parse(localStorage.getItem('user')).uid;
+            const user = JSON.parse(localStorage.getItem('user'))?.uid || localStorage.getItem('access_token');
             // const payment = JSON.parse(localStorage.getItem('payment'));
             const db = getFirestore(); // Access the Firestore instance
 
@@ -121,22 +132,22 @@ export default {
                     seats: JSON.parse(localStorage.getItem('selectedSeats'))
                 };
 
+
+
                 try {
                     // Create a userBookingData document within a collection named after the user's ID
                     const userBookingCollectionRef = collection(db, `Bookings/${user}/userBookingData`);
                     const userBookingDocRef = doc(userBookingCollectionRef);
 
                     const userBookingDocSnapshot = await getDoc(userBookingDocRef);
-                    if (userBookingDocSnapshot.exists()) {
-                        // Document already exists
-                        // ...
-                    } else {
-                        // Document doesn't exist, create it
+                    if (!userBookingDocSnapshot.exists()) {
                         await setDoc(userBookingDocRef, bookingData);
                         // ...
                     }
 
                     console.log('Booking data saved successfully!');
+                    // localStorage.removeItem('token');
+
                 } catch (error) {
                     swal.fire({
                         title: 'Error saving booking data',

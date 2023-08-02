@@ -101,7 +101,7 @@ export default {
     const db = getFirestore(); // Access the Firestore instance
 
     onAuthStateChanged(auth, () => {
-      const userId = JSON.parse(localStorage.getItem('user')).uid;
+      const userId = JSON.parse(localStorage.getItem('user'))?.uid || localStorage.getItem('access_token');;
       const bookingCollectionRef = collection(db, `Bookings/${userId}/userBookingData`);
       onSnapshot(bookingCollectionRef, (querySnapshot) => {
         const bookings = [];
