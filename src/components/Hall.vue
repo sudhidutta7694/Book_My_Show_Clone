@@ -102,7 +102,7 @@ import { app } from '@/firebase';
 import { getAuth } from 'firebase/auth';
 import { getDocs, collection, getFirestore } from 'firebase/firestore';
 import Cookies from 'js-cookie';
-import { onMounted, watch, ref, computed, onUnmounted } from 'vue';
+import { onMounted, watch, ref, computed, onUnmounted, onUpdated } from 'vue';
 import { useRoute } from 'vue-router';
 
 
@@ -158,15 +158,56 @@ const prices = {
 };
 const payment = ref(0);
 const bookingData = ref(null);
+// const token = generateToken();
+
+const generateToken = (() => {
+    const theater = props.theater;
+    const movie = props.movie;
+
+    // Get the first letter of the movie
+    const movieInitial = movie.slice(0, 2).toLocaleUpperCase();
+    // const payment = localStorage.getItem('payment');
+    // const seats = JSON.parse(localStorage.getItem('selectedSeats'));
+
+    // Get the initials of the theater
+    const theaterInitials = theater.name
+        ? theater.name.split(' ').map(word => word.charAt(0)).join('')
+        : '';
+
+    // Generate a random number
+    const randomNumber = 290821019;
+
+    // Combine the bits from the props and the random number to create the order number
+    const movieToken = `${movieInitial}${theaterInitials}${randomNumber}`;
+
+    // Trim or pad the order number to make it 15 characters long
+    if (movieToken.length < 15) {
+        // token.value = movieToken.padEnd(15, '0');
+        return movieToken.padEnd(15, '0');
+    } else if (movieToken.length > 15) {
+        // token.value = movieToken.slice(0, 15);
+        return movieToken.slice(0, 15);
+    } else {
+        // token.value = movieToken;
+        return movieToken;
+    }
+})
+
+// onUpdated(() => {
+//     generateToken();
+// })
 
 onUnmounted(() => {
+    // alert(`Token: ${generateToken()}`)
     localStorage.setItem("payment", JSON.stringify(payment.value));
-    Cookies.set('payment', payment);
+    Cookies.set('payment', payment.value);
 })
 
 const totalSeats = computed(() => {
     return selectedSeats.value.length;
 })
+
+const emailID = ref(JSON.parse(localStorage.getItem('user')).email);
 
 const handlePayment = () => {
     fetch('/create-checkout-session', {
@@ -181,11 +222,11 @@ const handlePayment = () => {
                     movieName: props.movie,
                     numTickets: totalSeats.value,
                     imageUrl: localStorage.getItem('posterUrl'),
-                    totalPayment: payment.value
+                    totalPayment: payment.value,
+                    email: emailID.value,
+                    movieToken: generateToken(),
                 },
-                // { id: 2, quantity: totalSeats.value, image: 'https://img.freepik.com/free-vector/realistic-horizontal-cinema-movie-time-poster-with-3d-glasses-snacks-tickets-clapper-reel-blue-background-with-bokeh-vector-illustration_1284-77013.jpg?w=200' },
             ],
-
         })
     }).then(res => {
         if (res.ok) return res.json();
@@ -205,6 +246,7 @@ const handlePayment = () => {
         localStorage.setItem('totalSeats', JSON.stringify(totalSeats.value));
         localStorage.setItem('selectedSeats', JSON.stringify(selectedSeats.value));
         localStorage.setItem('payment', JSON.stringify(payment.value));
+        localStorage.setItem('token', JSON.stringify(generateToken()));
         setTimeout(() => {
             window.location.href = stripedUrl;
         }, 1000);
@@ -214,6 +256,7 @@ const handlePayment = () => {
         console.error(err.error);
     });
 }
+
 
 // const router = useRouter();
 const route = useRoute();

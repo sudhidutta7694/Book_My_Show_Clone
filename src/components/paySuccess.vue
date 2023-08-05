@@ -30,7 +30,7 @@
                         </div>
                         <div class="order-details">
                             <div class="order-number-label">Token no.</div>
-                            <div class="order-number">{{ generateToken() }}</div>
+                            <div class="order-number">{{ bookingData.token }}</div>
                         </div>
                         <div class="order-footer">Thank you!</div>
                     </div>
@@ -54,7 +54,7 @@ export default {
         return {
             isButtonDisabled: true,
             bookingData: {
-                token: null,
+                token: localStorage.getItem('token'),
                 payment: JSON.parse(localStorage.getItem('payment')),
                 seatLength: JSON.parse(localStorage.getItem('totalSeats')),
                 theater: JSON.parse(localStorage.getItem('theater')),
@@ -77,39 +77,40 @@ export default {
             localStorage.removeItem('date');
             localStorage.removeItem('selectedSeats');
             localStorage.removeItem('state');
+            localStorage.removeItem('token');
         },
-        generateToken() {
-            const theater = JSON.parse(localStorage.getItem('theater'));
-            const movie = this.bookingData.movie;
+        // generateToken() {
+        //     const theater = JSON.parse(localStorage.getItem('theater'));
+        //     const movie = this.bookingData.movie;
 
-            // Get the first letter of the movie
-            const movieInitial = movie.charAt(0);
-            const payment = JSON.parse(localStorage.getItem('payment'));
-            const seats = JSON.parse(localStorage.getItem('selectedSeats'));
+        //     // Get the first letter of the movie
+        //     const movieInitial = movie.charAt(0);
+        //     const payment = JSON.parse(localStorage.getItem('payment'));
+        //     const seats = JSON.parse(localStorage.getItem('selectedSeats'));
 
-            // Get the initials of the theater
-            const theaterInitials = theater.name
-                ? theater.name.split(' ').map(word => word.charAt(0)).join('')
-                : '';
+        //     // Get the initials of the theater
+        //     const theaterInitials = theater.name
+        //         ? theater.name.split(' ').map(word => word.charAt(0)).join('')
+        //         : '';
 
-            // Generate a random number
-            const randomNumber = Math.floor(Math.random() * 100000000);
+        //     // Generate a random number
+        //     const randomNumber = Math.floor(Math.random() * 100000000);
 
-            // Combine the bits from the props and the random number to create the order number
-            const token = `${movieInitial}${payment}${seats.length}${theaterInitials}${randomNumber}`;
+        //     // Combine the bits from the props and the random number to create the order number
+        //     const token = `${movieInitial}${payment}${seats.length}${theaterInitials}${randomNumber}`;
 
-            // Trim or pad the order number to make it 15 characters long
-            if (token.length < 15) {
-                this.bookingData.token = token.padEnd(15, '0');
-                return token.padEnd(15, '0');
-            } else if (token.length > 15) {
-                this.bookingData.token = token.slice(0, 15);
-                return token.slice(0, 15);
-            } else {
-                this.bookingData.token = token;
-                return token;
-            }
-        },
+        //     // Trim or pad the order number to make it 15 characters long
+        //     if (token.length < 15) {
+        //         this.bookingData.token = token.padEnd(15, '0');
+        //         return token.padEnd(15, '0');
+        //     } else if (token.length > 15) {
+        //         this.bookingData.token = token.slice(0, 15);
+        //         return token.slice(0, 15);
+        //     } else {
+        //         this.bookingData.token = token;
+        //         return token;
+        //     }
+        // },
         async storeBookingData() {
             const user = JSON.parse(localStorage.getItem('user'))?.uid || localStorage.getItem('access_token');
             // const payment = JSON.parse(localStorage.getItem('payment'));
@@ -119,7 +120,7 @@ export default {
                 console.log(this.bookingData.theater.type);
                 // Construct the booking data object
                 const bookingData = {
-                    token: this.generateToken(),
+                    token: localStorage.getItem('token'),
                     // date: this.bookingData.date,
                     payment: this.bookingData.payment,
                     date: this.bookingData.date,

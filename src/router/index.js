@@ -14,7 +14,6 @@ import paySuccess from '../components/paySuccess.vue';
 import payFailure from '../views/payFailure.vue';
 import NotFound from '../components/NotFound.vue';
 
-
 const isAuthenticated = () => {
   const user = localStorage.getItem('user');
   return user !== null;

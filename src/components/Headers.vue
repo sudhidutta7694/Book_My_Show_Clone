@@ -5,7 +5,7 @@
       <div class="flex justify-between items-center py-6">
         <div class="flex items-center justify-between">
           <router-link to="/home" class=" md:ml-[-100px] flex items-center mr-6">
-            <img class="h-8 sm:h-12 md:h-20" src="../../public/favicon.ico" alt="Logo" />
+            <img class="h-8 sm:h-12 md:h-20" src="../../public/favicon.jpeg" alt="Logo" />
           </router-link>
           <div class="hidden md:block">
             <router-link to="/home"

@@ -9,13 +9,10 @@
       <div class="flex justify-between item-center">
         <div class="mt-20 ml-48 justify-center items-center">
           <div class="filter mt-16 mb-12 flex">
-            <select id="day-filter" v-model="selectedDay"
-              class="p-4 text-xl font-serif font-semibold border border-spacing-x-3 border-red-300 bg-slate-900 rounded flex gap-4">
-              <option value="" hidden>Please Select a Date</option>
-              <option class="m-4 text-xl font-serif font-semibold border border-red-600 bg-slate-900 rounded-full"
-                v-for="day in days" :key="day.value.slice(0, -6)" :value="day.value.slice(0, -6)">{{ day.value }}
-              </option>
-            </select>
+            <VueDatePicker class="dp__theme_dark w-80 border-2 border-red-600 hover:border-green-600 rounded-2xl" v-model="selectedDay"
+              :dark="true" :min-date="new Date().getDate() + 1" :max-date="maxDate" :enable-time-picker="false"
+              :week-start="tomorrowDate.getDay()" placeholder="Select a Date" :calendar="calendarFn"
+              disable-month-year-select />
           </div>
           <ul v-if="selectedDay" class="fade-enter-active flex flex-col gap-10">
             <li v-for="(theater, index) in filteredTheaters" :key="theater.id" :class="getTheaterAnimation(index)">
@@ -41,17 +38,22 @@
                     <!-- <p class="text-green-200">Timing: {{ theater.timing[1] }}</p> -->
                     <div class="flex gap-6">
                       <button @click="updateTiming(theater, theater.timing[0])"
-                        class="border-2 border-green-700 hover:bg-green-800 text-gray-100 font-bold py-2 px-3 text-center rounded">{{
-                          theater.timing[0] }}</button>
+                        class="border-2 border-green-700 hover:bg-green-800 text-gray-100 font-bold py-2 px-3 text-center rounded">
+                        {{ theater.timing[0] }}
+                      </button>
                       <button @click="updateTiming(theater, theater.timing[1])"
-                        class="border-2 border-green-700 hover:bg-green-800 text-gray-100 font-bold py-2 px-3 text-center rounded">{{
-                          theater.timing[1] }}</button>
+                        class="border-2 border-green-700 hover:bg-green-800 text-gray-100 font-bold py-2 px-3 text-center rounded">
+                        {{ theater.timing[1] }}
+                      </button>
                     </div>
                   </routerLink>
                 </div>
               </div>
             </li>
           </ul>
+          <div v-else>
+            <p class="text-center font-mono text-red-300 font-semibold">No Date has been selected!</p>
+          </div>
         </div>
         <img class="mr-48"
           src="https://media1.giphy.com/media/g6UKQJ1y9Bh0RH2pOY/giphy.gif?cid=6c09b952c22b1418a908ebcad9c45e35003baa8909b7f776&ep=v1_internal_gifs_gifId&rid=giphy.gif&ct=s"
@@ -61,6 +63,35 @@
   </div>
 </template>
 
+<script setup>
+import { computed } from 'vue';
+import VueDatePicker from '@vuepic/vue-datepicker';
+import '@vuepic/vue-datepicker/dist/main.css'
+
+// Calculate tomorrow's date
+const tomorrowDate = new Date();
+tomorrowDate.setDate(tomorrowDate.getDate() + 1);
+
+const maxDate = computed(() => {
+  return (
+    // new Date(),
+    new Date(new Date().setDate(new Date().getDate() + 4))
+  );
+});
+
+const calendarFn = (weeks) => {
+  const date = new Date().getDate() + 1;
+  return weeks.filter((week) => week.days.some((day) => day.text === date)).map((week) => ({
+    ...week,
+    days: week.days.map((day) => {
+      day.classData['custom-class'] = true;
+      return day;
+    }),
+  }));
+}
+
+
+</script>
 
 <script>
 // import { db } from '@/firebase';
@@ -108,6 +139,7 @@ export default {
       selectedDay: '',
       selectedTheaters: [],
       userTheaters: [],
+      currentTime: null,
     };
   },
   onBeforeUnmount() {
@@ -130,14 +162,19 @@ export default {
       return [
         { label: 'Today', value: days[currentDayIndex] + ' ' + this.getFormattedDate(currentDate, 1) },
         { label: 'Tomorrow', value: days[nextDayIndex] + ' ' + this.getFormattedDate(currentDate, 2) },
-        { label: 'Day After Tomorrow', value: days[dayAfterNextIndex] + ' ' + this.getFormattedDate(currentDate, 3) }
+        { label: 'Day After Tomorrow', value: days[dayAfterNextIndex] + ' ' + this.getFormattedDate(currentDate, 3) },
+        { label: 'Day After Tomorrow', value: days[dayAfterNextIndex + 1] + ' ' + this.getFormattedDate(currentDate, 4) }
       ];
     },
     filteredTheaters() {
       if (this.selectedDay !== '') {
-        console.log(this.selectedDay)
-        return this.theaters.filter(theater => theater.day == this.selectedDay.trim());
+        const dateObj = new Date(this.selectedDay);
+        // Get the day name
+        const dayName = dateObj.toLocaleDateString('en-US', { weekday: 'long' });
+        console.log(dayName)
+        return this.theaters.filter(theater => theater.day == dayName.trim());
       } else {
+        console.log("false")
         return null
       }
     }
@@ -153,7 +190,10 @@ export default {
   methods: {
     findSelectedDate() {
       if (this.selectedDay) {
-        let selected = this.days.filter(day => day.value.split(' ')[0] == this.selectedDay.trim())
+        const dateObj = new Date(this.selectedDay);
+        // Get the day name
+        const dayName = dateObj.toLocaleDateString('en-US', { weekday: 'long' });
+        let selected = this.days.filter(day => day.value.split(' ')[0] == dayName.trim())
         return (selected[0].value.split(' ').slice(1).join(' '));
       }
     },
@@ -194,4 +234,93 @@ export default {
 .fade-enter-active .theater-item {
   opacity: 1;
   transform: translateY(0);
-}</style>
+}
+</style>
+
+<style>
+:root {
+  /*General*/
+  --dp-font-family: -apple-system, blinkmacsystemfont, "Segoe UI", roboto, oxygen, ubuntu, cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+  --dp-width: 400px;
+  --dp-border-radius: 15px;
+  /*Configurable border-radius*/
+  --dp-cell-border-radius: 10px;
+  /*Specific border radius for the calendar cell*/
+  --dp-common-transition: all 0.2s ease-in;
+  /*Generic transition applied on buttons and calendar cells*/
+
+  /*Sizing*/
+  --dp-button-height: 40px;
+  /*Size for buttons in overlays*/
+  --dp-month-year-row-height: 35px;
+  /*Height of the month-year select row*/
+  --dp-month-year-row-button-size: 35px;
+  /*Specific height for the next/previous buttons*/
+  --dp-button-icon-height: 20px;
+  /*Icon sizing in buttons*/
+  --dp-cell-size: 35px;
+  /*Width and height of calendar cell*/
+  --dp-cell-padding: 5px;
+  /*Padding in the cell*/
+  --dp-common-padding: 10px;
+  /*Common padding used*/
+  --dp-input-icon-padding: 35px;
+  /*Padding on the left side of the input if icon is present*/
+  --dp-input-padding: 6px 30px 6px 12px;
+  /*Padding in the input*/
+  --dp-menu-min-width: 260px;
+  /*Adjust the min width of the menu*/
+  --dp-action-buttons-padding: 1px 5px;
+  /*Adjust padding for the action buttons in action row*/
+  --dp-row-maring: 5px 0;
+  /*Adjust the spacing between rows in the calendar*/
+  --dp-calendar-header-cell-padding: 0.5rem;
+  /*Adjust padding in calendar header cells*/
+  --dp-two-calendars-spacing: 10px;
+  /*Space between multiple calendars*/
+  --dp-overlay-col-padding: 3px;
+  /*Padding in the overlay column*/
+  --dp-time-inc-dec-button-size: 32px;
+  /*Sizing for arrow buttons in the time picker*/
+  --dp-menu-padding: 6px 8px;
+  /*Menu padding*/
+
+  /*Font sizes*/
+  --dp-font-size: 1rem;
+  /*Default font-size*/
+  --dp-preview-font-size: 0.8rem;
+  /*Font size of the date preview in the action row*/
+  --dp-time-font-size: 0.8rem;
+  /*Font size in the time picker*/
+
+  /*Transitions*/
+  --dp-animation-duration: 0.2s;
+  /*Transition duration*/
+  --dp-menu-appear-transition-timing: cubic-bezier(.4, 0, 1, 1);
+  /*Timing on menu appear animation*/
+  --dp-transition-timing: ease-out;
+  /*Timing on slide animations*/
+}
+
+.dp__theme_dark {
+  --dp-background-color: #212121;
+  --dp-text-color: #ffffff;
+  --dp-hover-color: #484848;
+  --dp-hover-text-color: #ffffff;
+  --dp-hover-icon-color: #959595;
+  --dp-primary-color: #a81a17;
+  --dp-primary-text-color: #ffffff;
+  --dp-secondary-color: #a9a9a9;
+  --dp-border-color: #2d2d2d;
+  --dp-menu-border-color: #2d2d2d;
+  --dp-border-color-hover: #aaaeb7;
+  --dp-disabled-color: #737373;
+  --dp-scroll-bar-background: #212121;
+  --dp-scroll-bar-color: #484848;
+  --dp-success-color: #00701a;
+  --dp-success-color-disabled: #428f59;
+  --dp-icon-color: #959595;
+  --dp-danger-color: #e53935;
+  --dp-highlight-color: rgba(0, 92, 178, 0.2);
+}
+</style>

@@ -2,10 +2,10 @@
 <template>
   <div class="sm:mt-[133px] bg-slate-800 min-h-screen flex flex-col gap-4 justify-center items-center">
 
-    <div class="bg-slate-800 fixed top-32 w-full z-10 flex justify-between py-10 px-10 items-center">
+    <div class="bg-slate-800 fixed top-32 w-full z-10 flex flex-col lg:flex-row justify-between py-10 px-10 items-center">
       <h1 class="text-red-100 font-bold z-10 text-3xl font-serif">Explore Popular Movies:</h1>
       <div
-        class=" filters flex justify-end items-center gap-4 ">
+        class=" filters flex flex-col md:flex-row justify-end items-center gap-4 ">
         <label for="language" class="text-red-200 font-semi-bold text-2xl self-center">Language:</label>
         <select id="language" v-model="selectedLanguage"
           class="w-32 border p-2 rounded-lg bg-slate-900 text-center text-xl font-mono text-red-200 border-red-200">
